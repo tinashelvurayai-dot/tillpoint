@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { setMode } from "@/lib/session-mode";
+import { isManagerMode } from "@/lib/session-mode";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -40,8 +40,9 @@ function statusBadge(s: QueuedSale["status"]) {
 }
 
 function SyncQueuePage() {
+  const [manager, setManager] = useState(false);
   useEffect(() => {
-    setMode("manager");
+    setManager(isManagerMode());
   }, []);
   const online = useOnline();
   const [queue, setQueue] = useState<QueuedSale[]>([]);
@@ -100,7 +101,7 @@ function SyncQueuePage() {
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <Link to="/cashier">
+            <Link to={manager ? "/manager" : "/cashier"}>
               <Button variant="ghost" size="sm">
                 <ArrowLeft className="mr-1 h-4 w-4" /> Back
               </Button>

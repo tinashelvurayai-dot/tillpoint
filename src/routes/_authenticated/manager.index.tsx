@@ -160,7 +160,7 @@ function ManagerDashboard() {
         supabase
           .from("sales")
           .select(
-            "id, total_amount, payment_type, created_at, cashier:profiles!sales_cashier_id_fkey(full_name)",
+            "id, total_amount, payment_type, created_at, cashier_name",
           )
           .order("created_at", { ascending: false })
           .limit(6),
@@ -240,7 +240,7 @@ function ManagerDashboard() {
                 <li key={s.id} className="flex items-center justify-between py-3">
                   <div>
                     <div className="text-sm font-medium">
-                      {(s as any).cashier?.full_name ?? "Cashier"} ·{" "}
+                      {(s as any).cashier_name ?? "Cashier"} ·{" "}
                       <span className="capitalize text-muted-foreground">{s.payment_type}</span>
                     </div>
                     <div className="text-xs text-muted-foreground">{formatDate(s.created_at)}</div>

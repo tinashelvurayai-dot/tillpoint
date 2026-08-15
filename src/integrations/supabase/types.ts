@@ -446,6 +446,70 @@ export type Database = {
           },
         ]
       }
+      stock_in_records: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          quantity: number
+          received_at: string
+          recorded_by: string | null
+          stock_id: string
+          supplier_id: string | null
+          total_cost: number
+          unit_buying_price: number
+          variant_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          quantity: number
+          received_at?: string
+          recorded_by?: string | null
+          stock_id: string
+          supplier_id?: string | null
+          total_cost?: number
+          unit_buying_price?: number
+          variant_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          quantity?: number
+          received_at?: string
+          recorded_by?: string | null
+          stock_id?: string
+          supplier_id?: string | null
+          total_cost?: number
+          unit_buying_price?: number
+          variant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_in_records_stock_id_fkey"
+            columns: ["stock_id"]
+            isOneToOne: false
+            referencedRelation: "stock"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_in_records_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stock_in_records_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "product_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppliers: {
         Row: {
           active: boolean
@@ -522,6 +586,29 @@ export type Database = {
       mark_all_available: { Args: never; Returns: number }
       mark_variant_available: {
         Args: { _variant_id: string }
+        Returns: undefined
+      }
+      record_stock_in: {
+        Args: {
+          p_notes?: string
+          p_quantity: number
+          p_received_at?: string
+          p_stock_id: string
+          p_supplier_id?: string
+          p_unit_buying_price: number
+          p_variant_id: string
+        }
+        Returns: string
+      }
+      update_stock_in_record: {
+        Args: {
+          p_id: string
+          p_notes?: string
+          p_quantity: number
+          p_received_at?: string
+          p_supplier_id?: string
+          p_unit_buying_price: number
+        }
         Returns: undefined
       }
     }

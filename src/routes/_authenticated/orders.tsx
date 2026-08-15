@@ -12,7 +12,7 @@ import { SignOutButton } from "@/components/sign-out-button";
 import { ClipboardList, Plus, Check, Trash2, ArrowLeft } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { useEffect, useState } from "react";
-import { setMode } from "@/lib/session-mode";
+import { isManagerMode } from "@/lib/session-mode";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/orders")({
@@ -43,8 +43,9 @@ function parseEntry(raw: string): {
 }
 
 function OrdersPage() {
+  const [manager, setManager] = useState(false);
   useEffect(() => {
-    setMode("manager");
+    setManager(isManagerMode());
   }, []);
   const qc = useQueryClient();
   const { session, role } = useAuth();
@@ -111,7 +112,7 @@ function OrdersPage() {
   const pending = (orders.data ?? []).filter((o) => o.status !== "fulfilled");
   const done = (orders.data ?? []).filter((o) => o.status === "fulfilled");
 
-  const backTo = role === "manager" ? "/manager" : "/cashier";
+  const backTo = manager || role === "manager" ? "/manager" : "/cashier";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">

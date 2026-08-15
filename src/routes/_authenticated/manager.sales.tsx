@@ -31,7 +31,7 @@ function toCsv(rows: any[]): string {
   const body = rows.map((s) =>
     [
       new Date(s.created_at).toISOString(),
-      s.cashier?.full_name ?? "-",
+      s.cashier_name ?? "Cashier",
       s.items?.reduce((a: number, x: any) => a + x.quantity, 0) ?? 0,
       s.payment_type,
       Number(s.total_amount).toFixed(2),
@@ -52,7 +52,7 @@ function SalesPage() {
       const { data, error } = await supabase
         .from("sales")
         .select(
-          "id, total_amount, payment_type, status, created_at, cashier:profiles!sales_cashier_id_fkey(full_name), items:sale_items(quantity)",
+          "id, total_amount, payment_type, status, created_at, cashier_name, items:sale_items(quantity)",
         )
         .order("created_at", { ascending: false })
         .limit(2000);
@@ -71,7 +71,7 @@ function SalesPage() {
           : 0;
     const q = search.toLowerCase().trim();
     return (sales.data ?? []).filter((s: any) => {
-      const cashier = s.cashier?.full_name ?? "";
+      const cashier = s.cashier_name ?? "";
       return (
         new Date(s.created_at).getTime() >= start &&
         (payment === "all" || s.payment_type === payment) &&
@@ -192,7 +192,7 @@ function SalesPage() {
               filteredSales.map((s: any) => (
                 <TableRow key={s.id}>
                   <TableCell>{formatDate(s.created_at)}</TableCell>
-                  <TableCell>{s.cashier?.full_name ?? "-"}</TableCell>
+                  <TableCell>{s.cashier_name ?? "Cashier"}</TableCell>
                   <TableCell>
                     {s.items?.reduce((a: number, x: any) => a + x.quantity, 0) ?? 0}
                   </TableCell>
