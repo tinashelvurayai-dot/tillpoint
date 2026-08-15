@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthGate,
@@ -28,6 +29,15 @@ function AuthGate() {
     setUnlocked(hasUnlock());
     setHydrated(true);
   }, []);
+
+  // Unlocked device with no backend session (e.g. after a restart): restore one
+  // silently so saving keeps working.
+  useEffect(() => {
+    if (!hydrated || loading || !unlocked || session) return;
+    void supabase.auth
+      .signInAnonymously({ options: { data: { full_name: "Till Device" } } })
+      .catch(() => undefined);
+  }, [hydrated, loading, unlocked, session]);
 
   if (!hydrated || loading) {
     return (
