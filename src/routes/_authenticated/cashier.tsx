@@ -39,7 +39,7 @@ import { appendLog, type TxLogEntry } from "@/lib/transaction-log";
 import { printReceipt, downloadReceipt, receiptText, receiptNumber } from "@/lib/receipt";
 import { runSync } from "@/lib/sync-manager";
 import { recordSaleDelta, hydrateStockDeltas } from "@/lib/local-stock";
-import { CASHIER_NAME, setMode } from "@/lib/session-mode";
+import { CASHIER_NAME, setMode, isManagerMode } from "@/lib/session-mode";
 
 import { IDB_KEYS, idbGet, idbSet } from "@/lib/offline-db";
 import { SyncIndicator } from "@/components/sync-indicator";
@@ -144,8 +144,8 @@ function CashierScreen() {
     void idbGet<Variant[]>(IDB_KEYS.catalog).then((c) => {
       if (c?.length) setIdbCatalog(c);
     });
-    // Opening the till puts this device in cashier mode (manager rights drop away).
-    setMode("cashier");
+    // Opening the till switches to cashier mode, but a manager keeps their access.
+    if (!isManagerMode()) setMode("cashier");
     void hydrateStockDeltas();
   }, []);
 
