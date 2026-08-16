@@ -9,203 +9,603 @@ import { FileText, Download, Save } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/manager/agreement")({
+  head: () => ({
+    meta: [
+      { title: "Handover & Acceptance Agreement - TillPoint Retail OS" },
+      {
+        name: "description",
+        content:
+          "The final POS software development, handover and acceptance agreement for TillPoint Retail OS.",
+      },
+      { property: "og:title", content: "Handover & Acceptance Agreement - TillPoint Retail OS" },
+      {
+        property: "og:description",
+        content:
+          "The final POS software development, handover and acceptance agreement for TillPoint Retail OS.",
+      },
+      { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: AgreementPage,
 });
-const KEY = "tillpoint.handover.agreement.v1";
+
+const KEY = "tillpoint.handover.agreement.v3";
+
+const RECORD: Array<[string, string]> = [
+  ["Agreement Date", "17 August 2026"],
+  ["Project Name", "TillPoint Retail OS"],
+  ["Software Type", "Cloud-Based Point of Sale (POS) & Retail Management System"],
+  ["Application URL", "https://advanced-pos-tillpoint.vercel.app"],
+  ["Developers", "codedevelopers151@gmail.com"],
+  ["Client", "Mr Pride Tatire"],
+  ["Client Contact", "+263 77 688 9832"],
+  ["Document Version", "Version 1.0"],
+  ["Status", "Final Handover & Acceptance"],
+];
+
+type Block = { title: string; intro?: string; groups?: Array<{ label?: string; items: string[] }> };
+
+const SECTIONS: Block[] = [
+  {
+    title: "1. PREAMBLE",
+    intro:
+      'This POS Software Development, Handover & Acceptance Agreement ("Agreement") is entered into on 17 August 2026 between the Developers and Mr Pride Tatire ("the Client"). The purpose of this Agreement is to formally record the successful completion, demonstration, delivery, handover and acceptance of the custom-developed TillPoint Retail OS Point-of-Sale System. This document serves as the official record confirming that the software has been developed according to the agreed project scope and has been presented to the Client for operational use.',
+  },
+  {
+    title: "2. PROJECT OVERVIEW",
+    intro:
+      "The Developers successfully designed and implemented a modern retail Point-of-Sale platform capable of managing day-to-day business operations through an integrated cloud-based system. The software combines sales processing, inventory control, cashier management, reporting, offline capabilities and business analytics into one centralized application suitable for retail environments.",
+  },
+  {
+    title: "3. PROJECT OBJECTIVES",
+    intro: "The primary objectives of the project were to:",
+    groups: [
+      {
+        items: [
+          "Develop a modern retail management platform.",
+          "Improve inventory visibility.",
+          "Streamline cashier operations.",
+          "Automate sales recording.",
+          "Enable offline checkout functionality.",
+          "Reduce manual stock management.",
+          "Improve financial reporting.",
+          "Provide secure role-based access.",
+          "Support business scalability.",
+          "Deliver a production-ready application.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "4. SCOPE OF WORK COMPLETED",
+    intro: "The Developers completed the following project activities:",
+    groups: [
+      {
+        label: "System Analysis",
+        items: [
+          "Business workflow analysis",
+          "Retail process planning",
+          "Database planning",
+          "User role definition",
+        ],
+      },
+      {
+        label: "System Design",
+        items: [
+          "User Interface (UI) Design",
+          "User Experience (UX) Design",
+          "Navigation Structure",
+          "Mobile Responsiveness",
+        ],
+      },
+      {
+        label: "Development",
+        items: [
+          "Frontend Development",
+          "Backend Integration",
+          "Database Configuration",
+          "Authentication",
+          "Authorization",
+          "Data Validation",
+        ],
+      },
+      {
+        label: "Implementation",
+        items: [
+          "Inventory Module",
+          "Sales Module",
+          "Cashier Module",
+          "Reporting Module",
+          "Offline Module",
+          "Synchronization Engine",
+        ],
+      },
+      {
+        label: "Deployment",
+        items: [
+          "Production Deployment",
+          "Cloud Hosting Configuration",
+          "Environment Configuration",
+          "Application Publishing",
+        ],
+      },
+      {
+        label: "Quality Assurance",
+        items: [
+          "Functional Testing",
+          "Performance Testing",
+          "User Acceptance Demonstration",
+          "Bug Fixes",
+          "Production Verification",
+        ],
+      },
+    ],
+  },
+  {
+    title: "5. SYSTEM FEATURES DELIVERED",
+    intro:
+      "The delivered system includes, but is not limited to, the following capabilities:",
+    groups: [
+      {
+        label: "Management Dashboard",
+        items: [
+          "Business overview",
+          "Sales summaries",
+          "Performance metrics",
+          "Revenue tracking",
+          "Operational statistics",
+        ],
+      },
+      {
+        label: "Cashier Dashboard",
+        items: [
+          "Sales interface",
+          "Barcode-ready workflow",
+          "Cart management",
+          "Receipt generation",
+          "Customer checkout",
+        ],
+      },
+      {
+        label: "Product Management",
+        items: [
+          "Product creation",
+          "Product editing",
+          "Product deletion",
+          "Categories",
+          "Brands",
+          "Product variants",
+          "Pricing management",
+        ],
+      },
+      {
+        label: "Inventory Management",
+        items: [
+          "Stock levels",
+          "Stock adjustments",
+          "Stock-In Records",
+          "Low stock alerts",
+          "Inventory valuation",
+        ],
+      },
+      {
+        label: "Sales Management",
+        items: [
+          "Sales history",
+          "Transaction lookup",
+          "Daily sales",
+          "Monthly sales",
+          "Sales exports",
+          "Sales analytics",
+        ],
+      },
+      { label: "Order Management", items: ["Customer orders", "Order status", "Order tracking"] },
+      {
+        label: "Expense Management",
+        items: ["Expense recording", "Expense categorization", "Expense reporting"],
+      },
+      { label: "Supplier Management", items: ["Supplier information", "Supplier records"] },
+      {
+        label: "Reporting",
+        items: [
+          "Sales reports",
+          "Inventory reports",
+          "Profit reports",
+          "Operational summaries",
+        ],
+      },
+      {
+        label: "Offline Operations",
+        items: [
+          "Offline checkout",
+          "Local transaction storage",
+          "Automatic synchronization",
+          "Queue management",
+        ],
+      },
+      {
+        label: "Administrative Features",
+        items: [
+          "Role management",
+          "User permissions",
+          "System settings",
+          "Operational manuals",
+        ],
+      },
+    ],
+  },
+  {
+    title: "6. HANDOVER MATERIALS",
+    intro: "The Developers have provided the Client with the following:",
+    groups: [
+      {
+        items: [
+          "Fully deployed production application.",
+          "Operational system walkthrough.",
+          "Manager dashboard demonstration.",
+          "Cashier dashboard demonstration.",
+          "Product management workflow.",
+          "Inventory workflow.",
+          "Stock-In workflow.",
+          "Offline checkout workflow.",
+          "Synchronization process.",
+          "Sales reporting procedures.",
+          "Export functionality.",
+          "Administrative configuration.",
+          "Operational guidance.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "7. CLIENT ACCEPTANCE TESTING",
+    intro: "The Client has reviewed and verified the principal system workflows, including:",
+    groups: [
+      {
+        items: [
+          "Manager operations",
+          "Cashier sales process",
+          "Product creation",
+          "Product updates",
+          "Product variants",
+          "Inventory visibility",
+          "Stock-In Records",
+          "Sales recording",
+          "Offline checkout",
+          "Offline synchronization",
+          "Reporting",
+          "Data exports",
+          "User management",
+          "Administrative settings",
+        ],
+      },
+      {
+        label: "Confirmation",
+        items: [
+          "Following the demonstration and review, the Client confirms that the software performs substantially in accordance with the agreed project objectives.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "8. FEES AND PAYMENT",
+    intro:
+      "Total Software Development Fee: USD $170.00. Payment receipts and related financial records shall be retained by both parties for accounting and reference purposes.",
+  },
+  {
+    title: "9. WARRANTY AND POST-HANDOVER SUPPORT",
+    intro:
+      "The Developers shall provide reasonable clarification relating to the operation of the delivered system during the handover period. The following are not included within the original project scope unless agreed separately in writing:",
+    groups: [
+      {
+        items: [
+          "New feature requests",
+          "Major design changes",
+          "Third-party integrations",
+          "Business process redesign",
+          "Additional modules",
+          "Future enhancements",
+          "Large-scale modifications",
+        ],
+      },
+      {
+        label: "Note",
+        items: [
+          "Such work shall be treated as separate development projects and may be subject to additional quotations.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "10. CLIENT RESPONSIBILITIES",
+    intro: "The Client agrees to:",
+    groups: [
+      {
+        items: [
+          "Maintain accurate product information.",
+          "Maintain inventory records.",
+          "Control authorized user access.",
+          "Protect login credentials.",
+          "Maintain operational backups where applicable.",
+          "Make business decisions relating to system usage.",
+          "Retain payment documentation.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "11. DEVELOPER RESPONSIBILITIES",
+    intro: "The Developers confirm that they have:",
+    groups: [
+      {
+        items: [
+          "Delivered the agreed software.",
+          "Configured the production deployment.",
+          "Demonstrated the major workflows.",
+          "Performed reasonable testing.",
+          "Completed operational handover.",
+          "Provided implementation guidance.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "12. CONFIDENTIALITY",
+    intro:
+      "Both parties agree to exercise reasonable care in protecting confidential information exchanged during the development, deployment and operation of the system. Confidential information includes, but is not limited to:",
+    groups: [
+      {
+        items: [
+          "Business information",
+          "Commercial information",
+          "Technical documentation",
+          "Source configurations",
+          "User credentials",
+          "Internal operational procedures",
+        ],
+      },
+      {
+        label: "Note",
+        items: [
+          "Neither party shall disclose confidential information without prior written consent except where required by law.",
+        ],
+      },
+    ],
+  },
+  {
+    title: "13. LIMITATION OF LIABILITY",
+    intro:
+      "Following acceptance of the system, the Developers shall not be responsible for losses arising from:",
+    groups: [
+      {
+        items: [
+          "Incorrect data entry",
+          "Unauthorized user access",
+          "Hardware failures",
+          "Internet outages",
+          "Third-party service interruptions",
+          "Improper system usage",
+          "Failure to maintain operational backups",
+        ],
+      },
+    ],
+  },
+  {
+    title: "14. FINAL ACCEPTANCE",
+    intro: "By signing this Agreement, the Client acknowledges that:",
+    groups: [
+      {
+        items: [
+          "The software has been demonstrated.",
+          "The principal functionality has been reviewed.",
+          "The agreed scope has been delivered.",
+          "Operational handover has been completed.",
+          "The Client accepts the delivered system subject to any written exceptions recorded below.",
+        ],
+      },
+      { label: "Note", items: ["This Agreement constitutes the official project completion record."] },
+    ],
+  },
+];
+
 const initial = {
-  clientName: "",
-  clientDetails: "",
-  appUrl: window.location.origin,
-  systemName: "TillPoint Retail OS",
-  totalFee: "$170 USD",
-  handoverPayment: "",
-  outstandingPayment: "",
   developerOne: "",
   developerTwo: "",
-  clientSigner: "",
-  description:
-    "A dual-role retail point-of-sale system for product, variant, stock, cashier, sales, orders, expenses, reporting, offline checkout, synchronization, and operational handover.",
-  features:
-    "Manager dashboard and cashier dashboard\nProduct and variant management\nStock, low-stock alerts, and Stock-In Records\nOffline checkout with queued synchronization\nSales, transaction search, exports, and storage monitoring\nOrders, suppliers, expenses, profit, manuals, and role settings",
-  scope:
-    "Discovery, interface design, frontend implementation, database integration, offline workflow implementation, deployment configuration, testing, documentation, and operational handover.",
-  acceptance:
-    "The Client has reviewed the principal workflows, including cashier checkout, manager operations, product and stock visibility, sales records, offline queue behavior, exports, and administrative settings, and accepts the system subject to the terms of this Agreement.",
-  support:
-    "The Developers will provide reasonable handover clarification and defect triage for the agreed implementation. New features, material scope changes, third-party service changes, and post-acceptance enhancements are separate work unless expressly agreed in writing.",
-  responsibilities:
-    "The Client is responsible for accurate catalog data, authorized user access, payment settlement, Supabase/Vercel account ownership, backups and operational decisions. The Developers are responsible for delivering the agreed software scope and handover materials.",
-  confidentiality:
-    "Each party shall use reasonable care with non-public business, access, commercial, and technical information received from the other party.",
+  clientSigner: "Mr Pride Tatire",
+  exceptions: "",
 };
-function readAgreement() {
+
+function readAgreement(): typeof initial {
+  if (typeof window === "undefined") return initial;
   try {
     return { ...initial, ...JSON.parse(localStorage.getItem(KEY) ?? "{}") };
   } catch {
     return initial;
   }
 }
+
+function buildDocument(form: typeof initial): string {
+  const lines: string[] = [
+    "POS SOFTWARE DEVELOPMENT, HANDOVER & ACCEPTANCE AGREEMENT",
+    "",
+    "EXECUTIVE RECORD",
+    ...RECORD.map(([k, v]) => `${k}: ${v}`),
+    "",
+  ];
+  for (const s of SECTIONS) {
+    lines.push(s.title);
+    if (s.intro) lines.push(s.intro);
+    for (const g of s.groups ?? []) {
+      if (g.label) lines.push(g.label);
+      for (const item of g.items) lines.push(`- ${item}`);
+    }
+    lines.push("");
+  }
+  lines.push(
+    "15. OUTSTANDING ITEMS / EXCEPTIONS",
+    form.exceptions || "____________________________________________________________",
+    "",
+    "16. SIGNATURES",
+    "The undersigned certify that they are authorized representatives of their respective parties and agree to the terms contained in this Agreement.",
+    `Developer 1 Name: ${form.developerOne || "__________________________________________"}`,
+    "Developer 1 Signature: __________________________________________",
+    "Date: 17 August 2026",
+    `Developer 2 Name: ${form.developerTwo || "__________________________________________"}`,
+    "Developer 2 Signature: __________________________________________",
+    "Date: 17 August 2026",
+    `Client Name: ${form.clientSigner || "Mr Pride Tatire"}`,
+    "Client Signature: __________________________________________",
+    "Date: 17 August 2026",
+    "",
+    "CERTIFICATE OF COMPLETION",
+    "The Developers hereby certify that the TillPoint Retail OS has been successfully designed, developed, deployed and formally handed over to the Client in accordance with the agreed project scope. The Client acknowledges receipt of the delivered software, associated operational workflows and system demonstration, subject only to any written exceptions recorded within this Agreement.",
+    "",
+    "Document Title: POS Software Development, Handover & Acceptance Agreement",
+    "Project: TillPoint Retail OS",
+    "Version: 3.0",
+    "Status: Final",
+    "Date: 17 August 2026",
+  );
+  return lines.join("\n");
+}
+
 function AgreementPage() {
   const [form, setForm] = useState(readAgreement);
   const update = (key: keyof typeof initial, value: string) =>
-    setForm((current: typeof initial) => ({ ...current, [key]: value }));
+    setForm((current) => ({ ...current, [key]: value }));
+
   const save = () => {
     localStorage.setItem(KEY, JSON.stringify(form));
-    toast.success("Agreement draft saved on this device.");
+    toast.success("Agreement details saved on this device.");
   };
+
   const download = () => {
-    const body = `POS SOFTWARE DEVELOPMENT, HANDOVER & ACCEPTANCE AGREEMENT\n\nEXECUTIVE RECORD\nAgreement date: ${new Date().toLocaleDateString()}\nSystem: ${form.systemName}\nApplication URL: ${form.appUrl}\nClient: ${form.clientName}\nClient details: ${form.clientDetails}\n\n1. PURPOSE AND PROJECT DESCRIPTION\n${form.description}\n\n2. AGREED SCOPE OF DELIVERY\n${form.scope}\n\n3. DELIVERED SYSTEM CAPABILITIES\n${form.features}\n\n4. HANDOVER MATERIALS\nThe handover includes the deployed application, configured user journeys, product and stock workflows, operational manuals, export workflows, relevant environment configuration held by the Client, and a walkthrough of the principal system functions.\n\n5. ACCEPTANCE CRITERIA\n${form.acceptance}\n\n6. FEES AND PAYMENT\nTotal development fee: ${form.totalFee}\nHandover payment: ${form.handoverPayment}\nOutstanding payment due within three days: ${form.outstandingPayment}\nPayment status and receipts should be retained by the parties.\n\n7. SUPPORT, DEFECTS, AND CHANGES\n${form.support}\n\n8. CLIENT RESPONSIBILITIES\n${form.responsibilities}\n\n9. CONFIDENTIALITY\n${form.confidentiality}\n\n10. ACCEPTANCE AND SIGN-OFF\nBy signing below, the parties confirm that the system has been presented for handover and that any exceptions or outstanding items have been recorded in writing.\n\nSIGNATURES\nDeveloper 1: ${form.developerOne}\nDeveloper 2: ${form.developerTwo}\nClient / Authorized Representative: ${form.clientSigner}\nDate: ${new Date().toLocaleDateString()}\n\nOutstanding notes / exceptions:\n____________________________________________________________\n____________________________________________________________\n\nThis document records a software delivery and acceptance arrangement. The parties should obtain independent legal advice where required.`;
-    const blob = new Blob([body], { type: "application/msword" });
+    const blob = new Blob([buildDocument(form)], { type: "application/msword" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "POS-Software-Development-Handover-Agreement.doc";
+    a.download = "TillPoint-Handover-Acceptance-Agreement-v3.doc";
     a.click();
     URL.revokeObjectURL(url);
   };
+
   return (
     <div className="min-h-screen bg-slate-950 p-4 text-slate-900 md:p-10">
       <header className="mx-auto mb-8 max-w-5xl text-white">
         <div className="mb-4 flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.28em] text-amber-300">
-          <FileText className="h-4 w-4" /> Executive handover record
+          <FileText className="h-4 w-4" /> Executive record - Version 3.0 - Final
         </div>
         <h1 className="max-w-4xl font-serif text-4xl font-semibold tracking-tight md:text-6xl">
-          POS Software Development, Handover & Acceptance Agreement
+          POS Software Development, Handover &amp; Acceptance Agreement
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
-          A detailed, editable record of delivery, operational readiness, acceptance, ownership
-          responsibilities, and post-handover support.
+          TillPoint Retail OS - final handover and acceptance record dated 17 August 2026.
         </p>
       </header>
+
       <Card className="mx-auto max-w-5xl border-amber-200/70 bg-white p-6 shadow-2xl md:p-10">
-        <div className="grid gap-5 sm:grid-cols-2">
-          <div>
-            <Label>Client name</Label>
-            <Input value={form.clientName} onChange={(e) => update("clientName", e.target.value)} />
-          </div>
-          <div>
-            <Label>Client details</Label>
-            <Input
-              value={form.clientDetails}
-              onChange={(e) => update("clientDetails", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>System name</Label>
-            <Input value={form.systemName} onChange={(e) => update("systemName", e.target.value)} />
-          </div>
-          <div>
-            <Label>App URL</Label>
-            <Input value={form.appUrl} onChange={(e) => update("appUrl", e.target.value)} />
-          </div>
-          <div>
-            <Label>Total development fee</Label>
-            <Input value={form.totalFee} onChange={(e) => update("totalFee", e.target.value)} />
-          </div>
-          <div>
-            <Label>Handover payment</Label>
-            <Input
-              value={form.handoverPayment}
-              onChange={(e) => update("handoverPayment", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Three-day outstanding payment</Label>
-            <Input
-              value={form.outstandingPayment}
-              onChange={(e) => update("outstandingPayment", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Developer 1 signature</Label>
-            <Input
-              value={form.developerOne}
-              onChange={(e) => update("developerOne", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Developer 2 signature</Label>
-            <Input
-              value={form.developerTwo}
-              onChange={(e) => update("developerTwo", e.target.value)}
-            />
-          </div>
-          <div>
-            <Label>Client signature</Label>
-            <Input
-              value={form.clientSigner}
-              onChange={(e) => update("clientSigner", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>System description</Label>
+        <h2 className="font-serif text-2xl font-semibold text-slate-950">Executive record</h2>
+        <dl className="mt-4 divide-y divide-slate-200 border-y border-slate-200 text-sm">
+          {RECORD.map(([k, v]) => (
+            <div key={k} className="grid grid-cols-1 gap-1 py-2 sm:grid-cols-[220px_1fr]">
+              <dt className="font-medium text-slate-600">{k}</dt>
+              <dd className="text-slate-900">{v}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <div className="mt-8 space-y-8 text-sm leading-relaxed text-slate-800">
+          {SECTIONS.map((s) => (
+            <section key={s.title}>
+              <h3 className="font-serif text-lg font-semibold text-slate-950">{s.title}</h3>
+              {s.intro && <p className="mt-2 text-slate-700">{s.intro}</p>}
+              {(s.groups ?? []).map((g, gi) => (
+                <div key={`${s.title}-${g.label ?? gi}`} className="mt-3">
+                  {g.label && <div className="font-medium text-slate-900">{g.label}</div>}
+                  <ul className="mt-1 list-disc space-y-1 pl-6 text-slate-700">
+                    {g.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          ))}
+
+          <section>
+            <h3 className="font-serif text-lg font-semibold text-slate-950">
+              15. OUTSTANDING ITEMS / EXCEPTIONS
+            </h3>
             <Textarea
-              rows={4}
-              value={form.description}
-              onChange={(e) => update("description", e.target.value)}
+              className="mt-2"
+              rows={5}
+              placeholder="Record any written exceptions here."
+              value={form.exceptions}
+              onChange={(e) => update("exceptions", e.target.value)}
             />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Features</Label>
-            <Textarea
-              rows={8}
-              value={form.features}
-              onChange={(e) => update("features", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2 border-t border-slate-200 pt-6">
-            <h2 className="font-serif text-2xl font-semibold text-slate-950">Agreement schedule</h2>
-            <p className="mb-4 text-sm text-slate-500">
-              Complete the commercial and operational record before signing or downloading.
+          </section>
+
+          <section>
+            <h3 className="font-serif text-lg font-semibold text-slate-950">16. SIGNATURES</h3>
+            <p className="mt-2 text-slate-700">
+              The undersigned certify that they are authorized representatives of their respective
+              parties and agree to the terms contained in this Agreement.
             </p>
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Scope of delivery</Label>
-            <Textarea
-              rows={4}
-              value={form.scope}
-              onChange={(e) => update("scope", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Acceptance criteria</Label>
-            <Textarea
-              rows={4}
-              value={form.acceptance}
-              onChange={(e) => update("acceptance", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Support, defects, and changes</Label>
-            <Textarea
-              rows={4}
-              value={form.support}
-              onChange={(e) => update("support", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Client responsibilities</Label>
-            <Textarea
-              rows={4}
-              value={form.responsibilities}
-              onChange={(e) => update("responsibilities", e.target.value)}
-            />
-          </div>
-          <div className="sm:col-span-2">
-            <Label>Confidentiality</Label>
-            <Textarea
-              rows={3}
-              value={form.confidentiality}
-              onChange={(e) => update("confidentiality", e.target.value)}
-            />
-          </div>
+            <div className="mt-4 grid gap-5 sm:grid-cols-2">
+              <div>
+                <Label>Developer 1 name</Label>
+                <Input
+                  value={form.developerOne}
+                  onChange={(e) => update("developerOne", e.target.value)}
+                />
+                <p className="mt-2 text-xs text-slate-500">
+                  Signature: __________________ · Date: 17 August 2026
+                </p>
+              </div>
+              <div>
+                <Label>Developer 2 name</Label>
+                <Input
+                  value={form.developerTwo}
+                  onChange={(e) => update("developerTwo", e.target.value)}
+                />
+                <p className="mt-2 text-xs text-slate-500">
+                  Signature: __________________ · Date: 17 August 2026
+                </p>
+              </div>
+              <div className="sm:col-span-2">
+                <Label>Client name</Label>
+                <Input
+                  value={form.clientSigner}
+                  onChange={(e) => update("clientSigner", e.target.value)}
+                />
+                <p className="mt-2 text-xs text-slate-500">
+                  Signature: __________________ · Date: 17 August 2026
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className="border-t border-slate-200 pt-6">
+            <h3 className="font-serif text-lg font-semibold text-slate-950">
+              CERTIFICATE OF COMPLETION
+            </h3>
+            <p className="mt-2 text-slate-700">
+              The Developers hereby certify that the TillPoint Retail OS has been successfully
+              designed, developed, deployed and formally handed over to the Client in accordance
+              with the agreed project scope. The Client acknowledges receipt of the delivered
+              software, associated operational workflows and system demonstration, subject only to
+              any written exceptions recorded within this Agreement.
+            </p>
+            <p className="mt-4 text-xs uppercase tracking-[0.18em] text-slate-500">
+              Project: TillPoint Retail OS · Version 3.0 · Status: Final · 17 August 2026
+            </p>
+          </section>
         </div>
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6">
-          <p className="text-xs uppercase tracking-[0.18em] text-slate-500">
-            Draft locally, then issue the signed record
-          </p>
+
+        <div className="mt-8 flex flex-wrap items-center justify-end gap-3 border-t border-slate-200 pt-6">
           <Button variant="outline" onClick={save}>
-            <Save className="mr-2 h-4 w-4" /> Save draft
+            <Save className="mr-2 h-4 w-4" /> Save details
           </Button>
           <Button onClick={download}>
             <Download className="mr-2 h-4 w-4" /> Download document
