@@ -68,7 +68,7 @@ function ManagerSettingsPage() {
   const qc = useQueryClient();
   const [form, setForm] = useState<SettingsForm>(defaults);
   const [saving, setSaving] = useState(false);
-  const [showInstall, setShowInstall] = useState_install();
+  const [showInstall, setShowInstall] = useShowInstallButton();
   const [confirmReset, setConfirmReset] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [storage, setStorage] = useState({ usage: 0, quota: 0 });
