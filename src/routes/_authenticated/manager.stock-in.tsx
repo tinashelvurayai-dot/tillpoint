@@ -15,7 +15,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ClipboardList, Pencil, Plus, Search } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Check, ChevronsUpDown, ClipboardList, Pencil, Plus, Search } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { toast } from "sonner";
 
@@ -56,6 +66,7 @@ function StockInRecordsPage() {
   const [form, setForm] = useState(blank);
   const [editing, setEditing] = useState<RecordRow | null>(null);
   const [search, setSearch] = useState("");
+  const [variantOpen, setVariantOpen] = useState(false);
   const [supplierFilter, setSupplierFilter] = useState("all");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -152,6 +163,8 @@ function StockInRecordsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const selectedVariant = (variants.data ?? []).find((v) => v.id === form.variantId);
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     return (records.data ?? []).filter((r) => {
@@ -207,22 +220,58 @@ function StockInRecordsPage() {
           <div className="space-y-4">
             <div>
               <Label>Product / variant</Label>
-              <Select
-                value={form.variantId}
-                onValueChange={(value) => setForm({ ...form, variantId: value })}
-                disabled={!!editing}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {(variants.data ?? []).map((v) => (
-                    <SelectItem key={v.id} value={v.id}>
-                      {v.product?.name} · {v.variant_name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Popover open={variantOpen} onOpenChange={setVariantOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={variantOpen}
+                    disabled={!!editing}
+                    className="w-full justify-between font-normal"
+                  >
+                    <span className="truncate">
+                      {selectedVariant
+                        ? `${selectedVariant.product?.name} \u00b7 ${selectedVariant.variant_name}`
+                        : "Search product or variant"}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                  <Command
+                    filter={(value, search) =>
+                      value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0
+                    }
+                  >
+                    <CommandInput placeholder="Type a product, variant or category..." />
+                    <CommandList>
+                      <CommandEmpty>No matching product.</CommandEmpty>
+                      <CommandGroup>
+                        {(variants.data ?? []).map((v) => (
+                          <CommandItem
+                            key={v.id}
+                            value={`${v.product?.name ?? ""} ${v.variant_name} ${v.product?.category ?? ""}`}
+                            onSelect={() => {
+                              setForm({ ...form, variantId: v.id });
+                              setVariantOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                form.variantId === v.id ? "opacity-100" : "opacity-0",
+                              )}
+                            />
+                            <span className="truncate">
+                              {v.product?.name} &middot; {v.variant_name}
+                            </span>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <Label>Supplier</Label>

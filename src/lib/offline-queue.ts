@@ -245,3 +245,8 @@ export async function flushQueue(): Promise<{ ok: number; failed: number; total:
   void persist(queueCache.filter((s) => !uploaded.has(s.id)));
   return { ok, failed: queueCache.length, total: list.length };
 }
+
+/** Wipe every queued sale from this device (used by Transaction Reset). */
+export function clearQueue(): Promise<boolean> {
+  return persist([]);
+}

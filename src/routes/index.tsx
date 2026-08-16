@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { ShoppingCart, Package, BarChart3, Users, ShieldCheck, Zap } from "lucide-react";
 import { verifyManagerCodes } from "@/lib/manager-codes";
 import { getMode, setMode } from "@/lib/session-mode";
+import { useShowInstallButton } from "@/hooks/use-app-prefs";
 
 export const Route = createFileRoute("/")({
   component: Landing,
@@ -29,6 +30,7 @@ function Landing() {
   const tapCountRef = useRef(0);
   const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [showInstall] = useShowInstallButton();
 
   // Preload authenticated route chunks so they work offline after first visit.
   useEffect(() => {
@@ -139,7 +141,7 @@ function Landing() {
             <Button asChild variant="ghost" className="hidden sm:inline-flex">
               <a href="#features">Features</a>
             </Button>
-            <PWAInstallButton variant="outline" size="sm" className="hidden sm:inline-flex" />
+            {showInstall && <PWAInstallButton variant="outline" size="sm" className="hidden sm:inline-flex" />}
           </div>
         </div>
       </header>
@@ -156,7 +158,7 @@ function Landing() {
             A point-of-sale built for modern retail. Variant-level inventory, dual-role dashboards and real-time stock in one operating system for your shop floor and back office.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <PWAInstallButton size="lg" variant="outline" className="h-12 px-6 text-base" label="Install this app" />
+            {showInstall && <PWAInstallButton size="lg" variant="outline" className="h-12 px-6 text-base" label="Install this app" />}
           </div>
           <p className="mt-3 text-xs text-muted-foreground">
             {guestBusy ? "Opening the till..." : "Just scroll down to open the till - no password needed. Install the app so it appears on the home screen and keeps working offline."}

@@ -1,14 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Progress } from "@/components/ui/progress";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-import { Settings, Save } from "lucide-react";
+import { Settings, Save, RotateCcw, Download, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useShowInstallButton } from "@/hooks/use-app-prefs";
+import { PEAK_QUANTITY, runTransactionReset } from "@/lib/transaction-reset";
 
 export const Route = createFileRoute("/_authenticated/manager/settings")({
   component: ManagerSettingsPage,
@@ -31,7 +45,7 @@ const defaults: SettingsForm = {
   shopName: "Green Shop",
   currency: "USD",
   taxRate: "0",
-  lowStockDefault: "5",
+  lowStockDefault: "10",
   managerName: "Mr Pride Tatire",
   managerTitle: "Manager",
   cashierName: "Cashier",
@@ -51,9 +65,29 @@ function readSettings(): SettingsForm {
 
 function ManagerSettingsPage() {
   const { profile } = useAuth();
+  const qc = useQueryClient();
   const [form, setForm] = useState<SettingsForm>(defaults);
   const [saving, setSaving] = useState(false);
+  const [showInstall, setShowInstall] = useShowInstallButton();
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [storage, setStorage] = useState({ usage: 0, quota: 0 });
+
+  async function resetTransactions() {
+    setResetting(true);
+    try {
+      await runTransactionReset(PEAK_QUANTITY);
+      ["sales", "sales-by-day", "stock", "products", "cashier", "manager", "daily-cash"].forEach(
+        (key) => qc.invalidateQueries({ queryKey: [key] }),
+      );
+      toast.success(`Transactions cleared and every product returned to ${PEAK_QUANTITY} units.`);
+      setConfirmReset(false);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Transaction reset failed.");
+    } finally {
+      setResetting(false);
+    }
+  }
   useEffect(() => {
     void navigator.storage
       ?.estimate()
@@ -106,6 +140,78 @@ function ManagerSettingsPage() {
           </p>
         </div>
       </header>
+
+      <Card className="mb-6 max-w-2xl border-destructive/30 p-6">
+        <div className="flex items-center gap-2 font-semibold text-destructive">
+          <RotateCcw className="h-4 w-4" /> Transaction Reset
+        </div>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Clears the Sales and Transaction Log pages back to zero and returns every product variant
+          to its highest registered peak of {PEAK_QUANTITY} units. Products, suppliers, expenses and
+          cash records are never deleted. Export your sales first if you need a copy.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button variant="outline" asChild>
+            <a href="/manager/sales">
+              <Download className="mr-2 h-4 w-4" /> Export sales first
+            </a>
+          </Button>
+          <Button variant="destructive" onClick={() => setConfirmReset(true)} disabled={resetting}>
+            <RotateCcw className="mr-2 h-4 w-4" />
+            {resetting ? "Resetting..." : "Transaction Reset"}
+          </Button>
+        </div>
+      </Card>
+
+      <AlertDialog open={confirmReset} onOpenChange={setConfirmReset}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently deletes every recorded transaction and resets all product quantities
+              to {PEAK_QUANTITY}. Products are kept. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={resetting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={resetting}
+              onClick={(e) => {
+                e.preventDefault();
+                void resetTransactions();
+              }}
+            >
+              {resetting ? "Resetting..." : "Yes, reset transactions"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Card className="mb-6 max-w-2xl p-6">
+        <div className="flex items-start justify-between gap-6">
+          <div>
+            <div className="flex items-center gap-2 font-semibold">
+              {showInstall ? (
+                <Eye className="h-4 w-4 text-primary" />
+              ) : (
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
+              )}
+              Show the &quot;Install app&quot; button on the home page
+            </div>
+            <p className="mt-1 max-w-xl text-sm text-muted-foreground">
+              Turn off once every device has installed TillPoint to keep the welcome page clean.
+            </p>
+          </div>
+          <Switch
+            checked={showInstall}
+            onCheckedChange={(v) => {
+              setShowInstall(v);
+              toast.success(v ? "Install button is visible" : "Install button is hidden");
+            }}
+          />
+        </div>
+      </Card>
+
       <Card className="mb-6 max-w-2xl p-6">
         <h2 className="font-semibold">Online database storage monitor</h2>
         <p className="mt-1 text-sm text-muted-foreground">

@@ -600,6 +600,7 @@ export type Database = {
         }
         Returns: string
       }
+      reset_transactions: { Args: { p_peak?: number }; Returns: undefined }
       update_stock_in_record: {
         Args: {
           p_id: string

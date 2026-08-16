@@ -12,101 +12,182 @@ export const Route = createFileRoute("/_authenticated/manager/manuals")({
   component: ManualsPage,
 });
 
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h3 className="font-semibold text-base">{title}</h3>
+      <div className="text-muted-foreground space-y-2">{children}</div>
+    </section>
+  );
+}
+
 function ManagerManualContent() {
   return (
-    <div className="space-y-4 text-sm leading-relaxed">
-      <section>
-        <h3 className="font-semibold text-base">1. Overview</h3>
-        <p className="text-muted-foreground">
-          The manager console is your full control room. Use the sidebar to move between Dashboard,
-          Products, Stock, Staff, Sales, Daily Cash Collection, Expenses & Profit, Suppliers,
-          Forecast, Orders, and Manuals.
+    <div className="space-y-5 text-sm leading-relaxed">
+      <Section title="1. How the system fits together">
+        <p>
+          TillPoint has one catalogue and one sales ledger shared by every screen. Products create
+          variants, variants create stock rows, cashier sales consume stock and write transactions,
+          and every report page (Dashboard, Sales, Daily Cash, Expenses &amp; Profit, Forecast,
+          Alerts) simply reads that same data from a different angle. Change something in Products
+          or Stock and every other page updates immediately.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">2. Dashboard</h3>
-        <p className="text-muted-foreground">
-          See today's revenue, transaction count, active product count, and low-stock alerts at a
-          glance, plus a live feed of recent sales.
+        <p>
+          Flow: <span className="font-medium">Suppliers → Stock-In Records → Stock → Cashier till →
+          Sales → Daily Cash + Expenses → Profit &amp; Forecast</span>, with Orders and Low Stock
+          Alerts feeding back into Stock-In.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">3. Products</h3>
-        <p className="text-muted-foreground">
-          Create products with base info, take a product photo, or upload an image from the device.
-          Each product can have multiple variants - size, flavour or colour, price, SKU, and initial
-          stock. Managers can edit prices and details later.
+      </Section>
+
+      <Section title="2. Dashboard (/manager)">
+        <p>
+          Today&apos;s revenue, transaction count, active products and low-stock alerts, plus a live
+          feed of recent sales with the cashier name. Revenue comes from the Sales ledger, the alert
+          count comes from Stock (any variant at or below its alert level, now set to 10).
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">4. Stock - how it works now</h3>
-        <p className="text-muted-foreground">
-          Every product is treated as <span className="font-medium">In Stock by default</span>.
-          Cashiers can sell any item without a quantity check. When a cashier notices an item has
-          run out on the shelf, they press <span className="font-medium">Out of Stock</span> on that
-          product tile - it is instantly flagged and blocked from further sales. Managers can
-          un-flag one item with <span className="font-medium">Stock Available</span> or reset
-          everything with <span className="font-medium">Stock Available (All)</span> after a
-          restock.
+      </Section>
+
+      <Section title="3. Products">
+        <p>
+          Create a product with name, category and photo (camera or upload), then add its variants -
+          size, flavour or colour - each with its own selling price, SKU and opening stock. Deleting
+          or deactivating a variant removes it from the cashier grid but keeps historical sales
+          intact. Prices set here are the prices the till charges.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">5. Recording new stock received</h3>
-        <p className="text-muted-foreground">
-          When a delivery arrives, open Stock, find the variant, press the{" "}
-          <span className="font-medium">+</span> button and enter the number of{" "}
-          <span className="font-medium">units brought in</span> (for example,{" "}
-          <span className="italic">10 units of Sugar (Huletts)</span>). The system adds that to the
-          on-hand count. You do not need to count the whole shop - only what came in.
+      </Section>
+
+      <Section title="4. Stock">
+        <p>
+          Every variant is in stock by default and cashiers can sell without a quantity check. When
+          a shelf runs out the cashier presses <span className="font-medium">Out of Stock</span> on
+          the tile; it is flagged instantly and blocked from sale. Managers clear a single flag with{" "}
+          <span className="font-medium">Stock Available</span>, or clear everything with{" "}
+          <span className="font-medium">Stock Available (All)</span> after a restock. Use the{" "}
+          <span className="font-medium">+</span> button to add the units that were brought in - you
+          never recount the whole shop. The low-stock alert level is 10 units for every variant.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">6. Staff</h3>
-        <p className="text-muted-foreground">
-          See everyone who has access. Managers can update cashier names, IDs, details, and active
-          status. Cashier mode opens without a password from the welcome page for shared counter
-          devices.
+      </Section>
+
+      <Section title="5. Stock-In Records">
+        <p>
+          The delivery register. Pick the product/variant using the smart search bar (type any part
+          of a product name, variant or category), choose the supplier, enter units received, the
+          unit buying price and the date. Saving adds the units to Stock automatically and stores
+          the buying cost, which is what makes profit reporting accurate. Records can be edited and
+          the stock level corrects itself. Filter by supplier, text or date range and export.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">7. Sales, daily cash, expenses, and profit</h3>
-        <p className="text-muted-foreground">
-          Transaction log with cashier, payment method, item count, and total. Use{" "}
-          <span className="font-medium">Export CSV</span> on the Sales page for accounting or
-          backup.
+      </Section>
+
+      <Section title="6. Suppliers">
+        <p>
+          Supplier contacts and purchase records. Suppliers chosen here appear in the Stock-In
+          Records supplier list and in supplier cost totals.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">8. Suppliers, orders, and forecasting</h3>
-        <p className="text-muted-foreground">
-          Use Suppliers for purchase orders and auto-reorder, Orders for dated out-of-stock requests
-          from cashiers, Stock-In Records to record deliveries and buying cost, and Low Stock Alerts
-          to act on items that need attention.
+      </Section>
+
+      <Section title="7. Orders">
+        <p>
+          Dated restock requests raised by cashiers when they flag an item out of stock. Work
+          through the list, buy the goods, then close the loop by recording the delivery in
+          Stock-In Records - that is what returns the item to sale.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">9. Cashier manual toggle</h3>
-        <p className="text-muted-foreground">
-          On this Manuals page you can show or hide the cashier manual button inside the cashier
-          dashboard.
+      </Section>
+
+      <Section title="8. Low Stock Alerts">
+        <p>
+          Every variant at or below 10 units, ranked by urgency. This page is the shortlist for your
+          next purchase order.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">10. Offline behaviour and installation</h3>
-        <p className="text-muted-foreground">
-          Install from Chrome so the app appears alongside other device apps. Once the cashier
-          dashboard has loaded once online, cashiers can sell fully offline - sales queue on the
-          device and sync automatically when the connection returns.
+      </Section>
+
+      <Section title="9. Sales">
+        <p>
+          The full transaction ledger: date, cashier name, payment method, item count and total.
+          Search, filter by date and use <span className="font-medium">Export CSV</span> for
+          accounting or backup. This ledger feeds the Dashboard, Daily Cash expectation and Profit
+          figures.
         </p>
-      </section>
-      <section>
-        <h3 className="font-semibold text-base">11. Storage, exports, and handover</h3>
-        <p className="text-muted-foreground">
-          Open Settings to monitor Online database storage monitor. Choose a date range and export
-          sales before clearing storage. Products and Stock-In Records are protected from clearing
-          and require their own export before any manual deletion on their dedicated pages.
+      </Section>
+
+      <Section title="10. Daily Cash Collection">
+        <p>
+          Record the cash physically collected each day. The page balances it for you:{" "}
+          <span className="font-medium">cash sales for the day minus expenses paid out that day =
+          the amount expected in the drawer</span>. The variance card shows any shortfall or
+          overage, so a day where money was spent on expenses still balances correctly.
         </p>
-      </section>
+      </Section>
+
+      <Section title="11. Expenses &amp; Profit">
+        <p>
+          Log every business expense with a category and date. Expenses are subtracted from sales
+          revenue for the profit view and from the day&apos;s expected cash on the Daily Cash page,
+          so both screens always agree.
+        </p>
+      </Section>
+
+      <Section title="12. Forecast">
+        <p>
+          Projects demand from recent sales history so you can order ahead. Accuracy depends on
+          having real sales recorded - a fresh Transaction Reset restarts the history.
+        </p>
+      </Section>
+
+      <Section title="13. Staff / Cashiers">
+        <p>
+          Everyone with access, with editable names, IDs and active status. Cashier mode opens
+          without a password from the welcome page for shared counter devices; manager access is
+          behind the hidden logo taps and two access codes.
+        </p>
+      </Section>
+
+      <Section title="14. Transaction Log, Sync Queue and Shift Report">
+        <p>
+          The Transaction Log is the device&apos;s own copy of every sale, including offline ones,
+          with receipt reprint and CSV export. The Sync Queue shows offline sales still waiting to
+          upload and lets you retry. The Shift Report totals a cashier&apos;s shift for handover.
+          Leaving these pages keeps you signed in as manager.
+        </p>
+      </Section>
+
+      <Section title="15. Settings">
+        <p>
+          Shop name, currency, tax rate, default low-stock threshold and role identities, plus the
+          storage monitor for this device.
+        </p>
+        <p>
+          <span className="font-medium">Transaction Reset</span> clears the Sales and Transaction
+          Log pages back to zero and returns every product quantity to its highest registered peak
+          of 40 units. Products, suppliers, expenses and cash records are kept. It asks &quot;Are
+          you sure?&quot; before anything is deleted - export your sales first.
+        </p>
+        <p>
+          <span className="font-medium">Install app button</span> - a switch that shows or hides the
+          &quot;Install app&quot; button on the home page once all devices are set up.
+        </p>
+      </Section>
+
+      <Section title="16. Manuals">
+        <p>
+          This page. The switch above shows or hides the Manual button inside the cashier dashboard.
+        </p>
+      </Section>
+
+      <Section title="17. Offline behaviour and installation">
+        <p>
+          Install from Chrome so the app sits alongside other device apps. Once the cashier
+          dashboard has loaded online at least once, cashiers can sell fully offline - sales queue
+          on the device and sync automatically when the connection returns, then appear in Sales and
+          on the Dashboard.
+        </p>
+      </Section>
+
+      <Section title="18. Handover agreement">
+        <p>
+          The Agreement page holds the signed POS Software Development, Handover &amp; Acceptance
+          Agreement and can be downloaded as a document at any time.
+        </p>
+      </Section>
     </div>
   );
 }

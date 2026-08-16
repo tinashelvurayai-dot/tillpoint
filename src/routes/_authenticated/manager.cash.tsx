@@ -51,6 +51,20 @@ function DailyCashPage() {
     },
   });
 
+  const expenses = useQuery({
+    queryKey: ["expenses"],
+    queryFn: async () => {
+      const since = new Date();
+      since.setDate(since.getDate() - 30);
+      const { data, error } = await supabase
+        .from("expenses")
+        .select("amount, expense_date")
+        .gte("expense_date", since.toISOString().slice(0, 10));
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
   const stats = useMemo(() => {
     const list = entries.data ?? [];
     const today = new Date().toISOString().slice(0, 10);
@@ -63,10 +77,24 @@ function DailyCashPage() {
     const cashSalesToday = (salesToday.data ?? [])
       .filter((s) => s.payment_type === "cash" && s.created_at.slice(0, 10) === today)
       .reduce((s, r) => s + Number(r.total_amount), 0);
-    const variance = (Number(todayEntry?.amount ?? 0)) - cashSalesToday;
+    // Cash paid out for expenses on the same day reduces the cash that should
+    // still be in the drawer, so the collection balances against it.
+    const expensesToday = (expenses.data ?? [])
+      .filter((e) => String(e.expense_date).slice(0, 10) === today)
+      .reduce((s, e) => s + Number(e.amount), 0);
+    const expectedToday = cashSalesToday - expensesToday;
+    const variance = Number(todayEntry?.amount ?? 0) - expectedToday;
 
-    return { todayTotal: Number(todayEntry?.amount ?? 0), total7, total30, expectedToday: cashSalesToday, variance };
-  }, [entries.data, salesToday.data]);
+    return {
+      todayTotal: Number(todayEntry?.amount ?? 0),
+      total7,
+      total30,
+      cashSalesToday,
+      expensesToday,
+      expectedToday,
+      variance,
+    };
+  }, [entries.data, salesToday.data, expenses.data]);
 
   const add = useMutation({
     mutationFn: async () => {
@@ -101,7 +129,9 @@ function DailyCashPage() {
 
   const cards = [
     { label: "Today's collection", value: formatCurrency(stats.todayTotal), icon: Wallet, tint: "text-blue-600" },
-    { label: "Expected from cash sales", value: formatCurrency(stats.expectedToday), icon: Calendar, tint: "text-slate-600" },
+    { label: "Cash sales today", value: formatCurrency(stats.cashSalesToday), icon: Calendar, tint: "text-slate-600" },
+    { label: "Expenses today", value: formatCurrency(stats.expensesToday), icon: TrendingDown, tint: "text-amber-600" },
+    { label: "Expected in drawer (sales - expenses)", value: formatCurrency(stats.expectedToday), icon: Wallet, tint: "text-slate-600" },
     { label: "Variance today", value: formatCurrency(stats.variance), icon: stats.variance >= 0 ? TrendingUp : TrendingDown, tint: stats.variance >= 0 ? "text-emerald-600" : "text-destructive" },
     { label: "Last 7 days", value: formatCurrency(stats.total7), icon: TrendingUp, tint: "text-blue-600" },
   ];
@@ -113,7 +143,7 @@ function DailyCashPage() {
         <p className="mt-1 text-sm text-muted-foreground">Track cash collected from shop sales and compare against recorded cash transactions.</p>
       </header>
 
-      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {cards.map((c) => (
           <Card key={c.label} className="border-blue-100 bg-gradient-to-br from-white to-blue-50/50 p-5">
             <div className="flex items-center justify-between">
@@ -144,11 +174,16 @@ function DailyCashPage() {
             <Button className="w-full" onClick={() => add.mutate()} disabled={add.isPending}>
               {add.isPending ? "Saving…" : "Record collection"}
             </Button>
-            {stats.variance !== 0 && stats.expectedToday > 0 && (
+            <div className="rounded-md border border-blue-100 bg-blue-50/60 p-3 text-xs text-slate-700">
+              Balance check for today: cash sales {formatCurrency(stats.cashSalesToday)} - expenses{" "}
+              {formatCurrency(stats.expensesToday)} = {formatCurrency(stats.expectedToday)} expected
+              against {formatCurrency(stats.todayTotal)} collected.
+            </div>
+            {stats.variance !== 0 && (stats.cashSalesToday > 0 || stats.expensesToday > 0) && (
               <div className={`rounded-md border p-3 text-xs ${stats.variance < 0 ? "border-destructive/40 bg-destructive/10 text-destructive" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>
                 {stats.variance < 0
-                  ? `Shortfall of ${formatCurrency(Math.abs(stats.variance))} vs recorded cash sales today.`
-                  : `Overage of ${formatCurrency(stats.variance)} vs recorded cash sales today.`}
+                  ? `Shortfall of ${formatCurrency(Math.abs(stats.variance))} against cash sales less expenses today.`
+                  : `Overage of ${formatCurrency(stats.variance)} against cash sales less expenses today.`}
               </div>
             )}
           </div>
