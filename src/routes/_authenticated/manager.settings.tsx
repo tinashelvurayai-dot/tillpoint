@@ -45,7 +45,7 @@ const defaults: SettingsForm = {
   shopName: "Green Shop",
   currency: "USD",
   taxRate: "0",
-  lowStockDefault: "5",
+  lowStockDefault: "10",
   managerName: "Mr Pride Tatire",
   managerTitle: "Manager",
   cashierName: "Cashier",
