@@ -65,9 +65,29 @@ function readSettings(): SettingsForm {
 
 function ManagerSettingsPage() {
   const { profile } = useAuth();
+  const qc = useQueryClient();
   const [form, setForm] = useState<SettingsForm>(defaults);
   const [saving, setSaving] = useState(false);
+  const [showInstall, setShowInstall] = useState_install();
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const [storage, setStorage] = useState({ usage: 0, quota: 0 });
+
+  async function resetTransactions() {
+    setResetting(true);
+    try {
+      await runTransactionReset(PEAK_QUANTITY);
+      ["sales", "sales-by-day", "stock", "products", "cashier", "manager", "daily-cash"].forEach(
+        (key) => qc.invalidateQueries({ queryKey: [key] }),
+      );
+      toast.success(`Transactions cleared and every product returned to ${PEAK_QUANTITY} units.`);
+      setConfirmReset(false);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Transaction reset failed.");
+    } finally {
+      setResetting(false);
+    }
+  }
   useEffect(() => {
     void navigator.storage
       ?.estimate()
