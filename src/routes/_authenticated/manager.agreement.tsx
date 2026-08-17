@@ -612,6 +612,8 @@ function AgreementPage() {
           </Button>
         </div>
       </Card>
+
+      <HandoverReceipt />
     </div>
   );
 }
