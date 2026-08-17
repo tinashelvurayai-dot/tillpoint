@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { FileText, Download, Save } from "lucide-react";
 import { toast } from "sonner";
+import { HandoverReceipt } from "@/components/handover-receipt";
 
 export const Route = createFileRoute("/_authenticated/manager/agreement")({
   head: () => ({
@@ -612,6 +613,8 @@ function AgreementPage() {
           </Button>
         </div>
       </Card>
+
+      <HandoverReceipt />
     </div>
   );
 }
