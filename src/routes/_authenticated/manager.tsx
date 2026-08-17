@@ -113,7 +113,7 @@ function ManagerLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 flex-col border-r border-slate-300/60 bg-gradient-to-b from-slate-100 to-blue-50 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 flex-col overflow-y-auto overscroll-contain border-r border-slate-300/60 bg-gradient-to-b from-slate-100 to-blue-50 md:flex">
         {SidebarInner}
       </aside>
 
@@ -129,7 +129,7 @@ function ManagerLayout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col bg-gradient-to-b from-slate-100 to-blue-50 shadow-xl">
+          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b from-slate-100 to-blue-50 shadow-xl">
             <div className="flex justify-end p-2">
               <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}>
                 <X className="h-5 w-5" />
