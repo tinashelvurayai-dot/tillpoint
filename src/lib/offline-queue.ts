@@ -148,9 +148,22 @@ export function enqueueSale(
   return entry;
 }
 
+/** Connection failures are never the cashier's fault - keep retrying those. */
+export function isNetworkError(message?: string): boolean {
+  if (!message) return false;
+  return /failed to fetch|networkerror|offline|load failed|timeout|503|econn/i.test(message);
+}
+
+/** Sales parked as failed - surfaced as a persistent banner in the app. */
+export function failedSales(): QueuedSale[] {
+  return queueCache.filter((s) => s.status === "failed");
+}
+
 /** A sale is eligible for an automatic retry until it burns its attempts. */
 export function isRetryable(s: QueuedSale): boolean {
-  if ((s.attempts ?? 0) >= MAX_ATTEMPTS) return false;
+  // A network error never burns the attempt budget: the sale must not be
+  // silently abandoned just because the shop lost signal for a while.
+  if ((s.attempts ?? 0) >= MAX_ATTEMPTS && !isNetworkError(s.last_error)) return false;
   if (s.next_attempt_at && Date.now() < Date.parse(s.next_attempt_at)) return false;
   return true;
 }
@@ -203,11 +216,14 @@ export async function uploadSale(q: QueuedSale, uid: string): Promise<boolean> {
   } catch (e) {
     const attempts = (q.attempts ?? 0) + 1;
     // Exponential backoff: 5s, 20s, 80s before the sale is parked for manual retry.
-    const delay = 5_000 * 4 ** (attempts - 1);
+    const message = e instanceof Error ? e.message : "Upload failed";
+    const delay = isNetworkError(message)
+      ? 30_000
+      : Math.min(5_000 * 4 ** (attempts - 1), 300_000);
     patch(q.id, {
       status: "failed",
       attempts,
-      last_error: e instanceof Error ? e.message : "Upload failed",
+      last_error: message,
       next_attempt_at: new Date(Date.now() + delay).toISOString(),
     });
     markLogStatus(q.id, "queued");
