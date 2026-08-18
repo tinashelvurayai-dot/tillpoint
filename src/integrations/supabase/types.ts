@@ -288,6 +288,47 @@ export type Database = {
           },
         ]
       }
+      refunds: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string | null
+          id: string
+          kind: string
+          reason: string | null
+          restocked: boolean
+          sale_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          reason?: string | null
+          restocked?: boolean
+          sale_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          kind?: string
+          reason?: string | null
+          restocked?: boolean
+          sale_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_sale_id_fkey"
+            columns: ["sale_id"]
+            isOneToOne: false
+            referencedRelation: "sales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       restock_orders: {
         Row: {
           created_at: string
@@ -416,6 +457,7 @@ export type Database = {
           available: boolean
           id: string
           low_stock_alert_level: number
+          peak_quantity: number
           quantity: number
           updated_at: string
           variant_id: string
@@ -424,6 +466,7 @@ export type Database = {
           available?: boolean
           id?: string
           low_stock_alert_level?: number
+          peak_quantity?: number
           quantity?: number
           updated_at?: string
           variant_id: string
@@ -432,6 +475,7 @@ export type Database = {
           available?: boolean
           id?: string
           low_stock_alert_level?: number
+          peak_quantity?: number
           quantity?: number
           updated_at?: string
           variant_id?: string
@@ -597,6 +641,15 @@ export type Database = {
           p_supplier_id?: string
           p_unit_buying_price: number
           p_variant_id: string
+        }
+        Returns: string
+      }
+      refund_sale: {
+        Args: {
+          p_kind?: string
+          p_reason?: string
+          p_restock?: boolean
+          p_sale_id: string
         }
         Returns: string
       }
