@@ -244,7 +244,7 @@ function StockInRecordsPage() {
                     }
                   >
                     <CommandInput placeholder="Type a product, variant or category..." />
-                    <CommandList>
+                    <CommandList className="max-h-72 overflow-y-auto overscroll-contain">
                       <CommandEmpty>No matching product.</CommandEmpty>
                       <CommandGroup>
                         {(variants.data ?? []).map((v) => (
@@ -264,6 +264,9 @@ function StockInRecordsPage() {
                             />
                             <span className="truncate">
                               {v.product?.name} &middot; {v.variant_name}
+                            </span>
+                            <span className="ml-auto pl-2 text-xs text-muted-foreground">
+                              {v.stock?.[0]?.quantity ?? 0} in stock
                             </span>
                           </CommandItem>
                         ))}
@@ -387,7 +390,7 @@ function StockInRecordsPage() {
               aria-label="To date"
             />
           </div>
-          <div className="divide-y divide-border">
+          <div className="max-h-[560px] divide-y divide-border overflow-y-auto overscroll-contain pr-1">
             {filtered.map((r) => (
               <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 py-4">
                 <div>

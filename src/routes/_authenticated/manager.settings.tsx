@@ -22,7 +22,7 @@ import { Settings, Save, RotateCcw, Download, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useShowInstallButton } from "@/hooks/use-app-prefs";
-import { PEAK_QUANTITY, runTransactionReset } from "@/lib/transaction-reset";
+import { runTransactionReset } from "@/lib/transaction-reset";
 
 export const Route = createFileRoute("/_authenticated/manager/settings")({
   component: ManagerSettingsPage,
@@ -76,11 +76,11 @@ function ManagerSettingsPage() {
   async function resetTransactions() {
     setResetting(true);
     try {
-      await runTransactionReset(PEAK_QUANTITY);
+      await runTransactionReset(null);
       ["sales", "sales-by-day", "stock", "products", "cashier", "manager", "daily-cash"].forEach(
         (key) => qc.invalidateQueries({ queryKey: [key] }),
       );
-      toast.success(`Transactions cleared and every product returned to ${PEAK_QUANTITY} units.`);
+      toast.success("Transactions cleared and every product returned to its registered peak quantity.");
       setConfirmReset(false);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Transaction reset failed.");
@@ -147,7 +147,7 @@ function ManagerSettingsPage() {
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
           Clears the Sales and Transaction Log pages back to zero and returns every product variant
-          to its highest registered peak of {PEAK_QUANTITY} units. Products, suppliers, expenses and
+          to its own highest registered peak quantity. Products, suppliers, expenses and
           cash records are never deleted. Export your sales first if you need a copy.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -169,7 +169,7 @@ function ManagerSettingsPage() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This permanently deletes every recorded transaction and resets all product quantities
-              to {PEAK_QUANTITY}. Products are kept. This cannot be undone.
+              to their registered peak. Products are kept. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -248,14 +248,10 @@ function ManagerSettingsPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="taxRate">Tax rate (%)</Label>
-            <Input
-              id="taxRate"
-              type="number"
-              min="0"
-              step="0.01"
-              value={form.taxRate}
-              onChange={(e) => update("taxRate", e.target.value)}
-            />
+            <Input id="taxRate" value="0" readOnly disabled />
+            <p className="text-xs text-muted-foreground">
+              This shop operates tax free - prices and receipts are the final amount.
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="lowStockDefault">Default low-stock threshold</Label>
