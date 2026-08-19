@@ -8,7 +8,11 @@ import { clearAllDeltas } from "@/lib/local-stock";
 
 export const PEAK_QUANTITY = 40;
 
-export async function runTransactionReset(peak = PEAK_QUANTITY): Promise<void> {
+/**
+ * Pass a peak to force every variant to the same number; pass null (default)
+ * to restore each variant to its own registered peak quantity.
+ */
+export async function runTransactionReset(peak: number | null = null): Promise<void> {
   const { error } = await (supabase as unknown as {
     rpc: (fn: string, args: Record<string, unknown>) => Promise<{ error: { message: string } | null }>;
   }).rpc("reset_transactions", { p_peak: peak });

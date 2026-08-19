@@ -22,9 +22,11 @@ import {
   Lock as LockIcon,
   HardDrive,
   Settings,
+  Undo2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isManagerMode } from "@/lib/session-mode";
+import { SyncAlertBanner } from "@/components/sync-alert-banner";
 
 export const Route = createFileRoute("/_authenticated/manager")({
   component: ManagerLayout,
@@ -42,6 +44,8 @@ const navItems: Array<{
   { to: "/manager/stock-in", label: "Stock-In Records", icon: ClipboardList },
   { to: "/manager/alerts", label: "Low Stock Alerts", icon: AlertTriangle },
   { to: "/manager/sales", label: "Sales", icon: Receipt },
+  { to: "/manager/refunds", label: "Refunds & Voids", icon: Undo2 },
+  { to: "/manager/profit", label: "Profit View", icon: TrendingUp },
   { to: "/manager/cash", label: "Daily Cash", icon: Wallet },
   { to: "/manager/expenses", label: "Expenses & Profit", icon: TrendingUp },
   { to: "/manager/suppliers", label: "Suppliers & PO", icon: Truck },
@@ -141,6 +145,7 @@ function ManagerLayout() {
       )}
 
       <main className="flex-1 overflow-auto pt-14 md:pt-0">
+        <SyncAlertBanner />
         <Outlet />
       </main>
     </div>

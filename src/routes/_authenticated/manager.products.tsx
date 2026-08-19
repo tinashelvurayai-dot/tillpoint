@@ -185,19 +185,34 @@ function ProductsPage() {
           "A product with this name already exists. Add a variant to the existing product instead.",
         );
       const { data: user } = await supabase.auth.getUser();
-      const { error } = await supabase.from("products").insert({
-        name: input.name,
-        description: input.description || null,
-        category: input.category || null,
-        base_price: input.base_price || null,
-        image_url: input.image_url || null,
-        created_by: user.user?.id,
-      });
+      const { data: created, error } = await supabase
+        .from("products")
+        .insert({
+          name: input.name,
+          description: input.description || null,
+          category: input.category || null,
+          base_price: input.base_price || null,
+          image_url: input.image_url || null,
+          created_by: user.user?.id,
+        })
+        .select("id")
+        .single();
       if (error) throw error;
+      // Stock is tracked per variant, so every new product gets a default one.
+      // Without it the product would never appear on Stock or Stock-In Records.
+      const { error: variantError } = await supabase.from("product_variants").insert({
+        product_id: created.id,
+        variant_name: "Standard",
+        price: input.base_price || 0,
+        image_url: input.image_url || null,
+      });
+      if (variantError) throw variantError;
     },
     onSuccess: () => {
-      toast.success("Product created");
-      qc.invalidateQueries({ queryKey: ["products"] });
+      toast.success("Product created - a Standard variant was added so it appears in Stock");
+      ["products", "stock", "stock-in-variants", "cashier", "alerts"].forEach((key) =>
+        qc.invalidateQueries({ queryKey: [key] }),
+      );
       setOpenNewProduct(false);
       setImage("");
     },
@@ -286,8 +301,9 @@ function ProductsPage() {
     },
     onSuccess: () => {
       toast.success("Variant added");
-      qc.invalidateQueries({ queryKey: ["products"] });
-      qc.invalidateQueries({ queryKey: ["stock"] });
+      ["products", "stock", "stock-in-variants", "cashier", "alerts"].forEach((key) =>
+        qc.invalidateQueries({ queryKey: [key] }),
+      );
       setVariantFor(null);
     },
     onError: (e: Error) => toast.error(e.message),
