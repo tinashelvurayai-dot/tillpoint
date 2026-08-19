@@ -35,7 +35,8 @@ import {
   Lock as LockIcon,
 } from "lucide-react";
 import { enqueueSale, flushQueue, getQueue } from "@/lib/offline-queue";
-import { appendLog, type TxLogEntry } from "@/lib/transaction-log";
+import { appendLog, subscribeLog, type TxLogEntry } from "@/lib/transaction-log";
+import { SyncAlertBanner } from "@/components/sync-alert-banner";
 import { printReceipt, downloadReceipt, receiptText, receiptNumber } from "@/lib/receipt";
 import { runSync } from "@/lib/sync-manager";
 import { recordSaleDelta, hydrateStockDeltas } from "@/lib/local-stock";
@@ -79,6 +80,9 @@ function CashierScreen() {
   const [checkingOut, setCheckingOut] = useState(false);
   const [manualOpen, setManualOpen] = useState(false);
   const [queuedCount, setQueuedCount] = useState<number>(() => getQueue().length);
+  // Today's takings, read from the local transaction log so the figure is
+  // correct even with no connection.
+  const [today, setToday] = useState({ total: 0, count: 0 });
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [amountPaid, setAmountPaid] = useState("");
@@ -107,6 +111,19 @@ function CashierScreen() {
     window.addEventListener("storage", onSettings);
     return () => window.removeEventListener("storage", onSettings);
   }, []);
+
+  useEffect(
+    () =>
+      subscribeLog((list) => {
+        const stamp = new Date().toDateString();
+        const mine = list.filter((e) => new Date(e.created_at).toDateString() === stamp);
+        setToday({
+          total: mine.reduce((sum, e) => sum + Number(e.total), 0),
+          count: mine.length,
+        });
+      }),
+    [],
+  );
 
   const variants = useQuery({
     queryKey: ["cashier", "variants"],
@@ -452,6 +469,17 @@ function CashierScreen() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-right">
+              <div className="text-[10px] font-medium uppercase tracking-wider text-blue-700">
+                Sales today
+              </div>
+              <div className="text-base font-bold tabular-nums text-blue-950">
+                {formatCurrency(today.total)}
+              </div>
+              <div className="text-[10px] text-blue-700">
+                {today.count} sale{today.count === 1 ? "" : "s"}
+              </div>
+            </div>
             <SyncIndicator />
             <Button
               variant="outline"
@@ -496,6 +524,8 @@ function CashierScreen() {
             <SignOutButton variant="outline" />
           </div>
         </header>
+
+        <SyncAlertBanner />
 
         <div
           className={`border-b px-4 py-3 text-xs sm:px-6 ${online ? "border-blue-100 bg-blue-50 text-blue-950" : "border-amber-200 bg-amber-50 text-amber-950"}`}
