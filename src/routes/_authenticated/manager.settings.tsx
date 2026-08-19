@@ -22,7 +22,7 @@ import { Settings, Save, RotateCcw, Download, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useShowInstallButton } from "@/hooks/use-app-prefs";
-import { PEAK_QUANTITY, runTransactionReset } from "@/lib/transaction-reset";
+import { runTransactionReset } from "@/lib/transaction-reset";
 
 export const Route = createFileRoute("/_authenticated/manager/settings")({
   component: ManagerSettingsPage,
@@ -76,11 +76,11 @@ function ManagerSettingsPage() {
   async function resetTransactions() {
     setResetting(true);
     try {
-      await runTransactionReset(PEAK_QUANTITY);
+      await runTransactionReset(null);
       ["sales", "sales-by-day", "stock", "products", "cashier", "manager", "daily-cash"].forEach(
         (key) => qc.invalidateQueries({ queryKey: [key] }),
       );
-      toast.success(`Transactions cleared and every product returned to ${PEAK_QUANTITY} units.`);
+      toast.success("Transactions cleared and every product returned to its registered peak quantity.");
       setConfirmReset(false);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Transaction reset failed.");
@@ -248,14 +248,10 @@ function ManagerSettingsPage() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="taxRate">Tax rate (%)</Label>
-            <Input
-              id="taxRate"
-              type="number"
-              min="0"
-              step="0.01"
-              value={form.taxRate}
-              onChange={(e) => update("taxRate", e.target.value)}
-            />
+            <Input id="taxRate" value="0" readOnly disabled />
+            <p className="text-xs text-muted-foreground">
+              This shop operates tax free - prices and receipts are the final amount.
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="lowStockDefault">Default low-stock threshold</Label>
