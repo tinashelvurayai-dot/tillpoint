@@ -25,6 +25,8 @@ import { Route as AuthenticatedManagerStockInRouteImport } from './routes/_authe
 import { Route as AuthenticatedManagerStockRouteImport } from './routes/_authenticated/manager.stock'
 import { Route as AuthenticatedManagerSettingsRouteImport } from './routes/_authenticated/manager.settings'
 import { Route as AuthenticatedManagerSalesRouteImport } from './routes/_authenticated/manager.sales'
+import { Route as AuthenticatedManagerRefundsRouteImport } from './routes/_authenticated/manager.refunds'
+import { Route as AuthenticatedManagerProfitRouteImport } from './routes/_authenticated/manager.profit'
 import { Route as AuthenticatedManagerProductsRouteImport } from './routes/_authenticated/manager.products'
 import { Route as AuthenticatedManagerManualsRouteImport } from './routes/_authenticated/manager.manuals'
 import { Route as AuthenticatedManagerExpensesRouteImport } from './routes/_authenticated/manager.expenses'
@@ -120,6 +122,18 @@ const AuthenticatedManagerSalesRoute =
     path: '/sales',
     getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
+const AuthenticatedManagerRefundsRoute =
+  AuthenticatedManagerRefundsRouteImport.update({
+    id: '/refunds',
+    path: '/refunds',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
+const AuthenticatedManagerProfitRoute =
+  AuthenticatedManagerProfitRouteImport.update({
+    id: '/profit',
+    path: '/profit',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
 const AuthenticatedManagerProductsRoute =
   AuthenticatedManagerProductsRouteImport.update({
     id: '/products',
@@ -179,6 +193,8 @@ export interface FileRoutesByFullPath {
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
   '/manager/products': typeof AuthenticatedManagerProductsRoute
+  '/manager/profit': typeof AuthenticatedManagerProfitRoute
+  '/manager/refunds': typeof AuthenticatedManagerRefundsRoute
   '/manager/sales': typeof AuthenticatedManagerSalesRoute
   '/manager/settings': typeof AuthenticatedManagerSettingsRoute
   '/manager/stock': typeof AuthenticatedManagerStockRoute
@@ -202,6 +218,8 @@ export interface FileRoutesByTo {
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
   '/manager/products': typeof AuthenticatedManagerProductsRoute
+  '/manager/profit': typeof AuthenticatedManagerProfitRoute
+  '/manager/refunds': typeof AuthenticatedManagerRefundsRoute
   '/manager/sales': typeof AuthenticatedManagerSalesRoute
   '/manager/settings': typeof AuthenticatedManagerSettingsRoute
   '/manager/stock': typeof AuthenticatedManagerStockRoute
@@ -228,6 +246,8 @@ export interface FileRoutesById {
   '/_authenticated/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/_authenticated/manager/manuals': typeof AuthenticatedManagerManualsRoute
   '/_authenticated/manager/products': typeof AuthenticatedManagerProductsRoute
+  '/_authenticated/manager/profit': typeof AuthenticatedManagerProfitRoute
+  '/_authenticated/manager/refunds': typeof AuthenticatedManagerRefundsRoute
   '/_authenticated/manager/sales': typeof AuthenticatedManagerSalesRoute
   '/_authenticated/manager/settings': typeof AuthenticatedManagerSettingsRoute
   '/_authenticated/manager/stock': typeof AuthenticatedManagerStockRoute
@@ -254,6 +274,8 @@ export interface FileRouteTypes {
     | '/manager/expenses'
     | '/manager/manuals'
     | '/manager/products'
+    | '/manager/profit'
+    | '/manager/refunds'
     | '/manager/sales'
     | '/manager/settings'
     | '/manager/stock'
@@ -277,6 +299,8 @@ export interface FileRouteTypes {
     | '/manager/expenses'
     | '/manager/manuals'
     | '/manager/products'
+    | '/manager/profit'
+    | '/manager/refunds'
     | '/manager/sales'
     | '/manager/settings'
     | '/manager/stock'
@@ -302,6 +326,8 @@ export interface FileRouteTypes {
     | '/_authenticated/manager/expenses'
     | '/_authenticated/manager/manuals'
     | '/_authenticated/manager/products'
+    | '/_authenticated/manager/profit'
+    | '/_authenticated/manager/refunds'
     | '/_authenticated/manager/sales'
     | '/_authenticated/manager/settings'
     | '/_authenticated/manager/stock'
@@ -431,6 +457,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManagerSalesRouteImport
       parentRoute: typeof AuthenticatedManagerRoute
     }
+    '/_authenticated/manager/refunds': {
+      id: '/_authenticated/manager/refunds'
+      path: '/refunds'
+      fullPath: '/manager/refunds'
+      preLoaderRoute: typeof AuthenticatedManagerRefundsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
+    '/_authenticated/manager/profit': {
+      id: '/_authenticated/manager/profit'
+      path: '/profit'
+      fullPath: '/manager/profit'
+      preLoaderRoute: typeof AuthenticatedManagerProfitRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
     '/_authenticated/manager/products': {
       id: '/_authenticated/manager/products'
       path: '/products'
@@ -491,6 +531,8 @@ interface AuthenticatedManagerRouteChildren {
   AuthenticatedManagerExpensesRoute: typeof AuthenticatedManagerExpensesRoute
   AuthenticatedManagerManualsRoute: typeof AuthenticatedManagerManualsRoute
   AuthenticatedManagerProductsRoute: typeof AuthenticatedManagerProductsRoute
+  AuthenticatedManagerProfitRoute: typeof AuthenticatedManagerProfitRoute
+  AuthenticatedManagerRefundsRoute: typeof AuthenticatedManagerRefundsRoute
   AuthenticatedManagerSalesRoute: typeof AuthenticatedManagerSalesRoute
   AuthenticatedManagerSettingsRoute: typeof AuthenticatedManagerSettingsRoute
   AuthenticatedManagerStockRoute: typeof AuthenticatedManagerStockRoute
@@ -508,6 +550,8 @@ const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
   AuthenticatedManagerExpensesRoute: AuthenticatedManagerExpensesRoute,
   AuthenticatedManagerManualsRoute: AuthenticatedManagerManualsRoute,
   AuthenticatedManagerProductsRoute: AuthenticatedManagerProductsRoute,
+  AuthenticatedManagerProfitRoute: AuthenticatedManagerProfitRoute,
+  AuthenticatedManagerRefundsRoute: AuthenticatedManagerRefundsRoute,
   AuthenticatedManagerSalesRoute: AuthenticatedManagerSalesRoute,
   AuthenticatedManagerSettingsRoute: AuthenticatedManagerSettingsRoute,
   AuthenticatedManagerStockRoute: AuthenticatedManagerStockRoute,
