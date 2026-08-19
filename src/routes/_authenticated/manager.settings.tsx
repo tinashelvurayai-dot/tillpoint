@@ -147,7 +147,7 @@ function ManagerSettingsPage() {
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
           Clears the Sales and Transaction Log pages back to zero and returns every product variant
-          to its highest registered peak of {PEAK_QUANTITY} units. Products, suppliers, expenses and
+          to its own highest registered peak quantity. Products, suppliers, expenses and
           cash records are never deleted. Export your sales first if you need a copy.
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -169,7 +169,7 @@ function ManagerSettingsPage() {
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
               This permanently deletes every recorded transaction and resets all product quantities
-              to {PEAK_QUANTITY}. Products are kept. This cannot be undone.
+              to their registered peak. Products are kept. This cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
