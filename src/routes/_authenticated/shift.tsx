@@ -20,6 +20,11 @@ import {
   type ShiftReport,
 } from "@/lib/shift-report";
 import { isManagerMode, CASHIER_NAME } from "@/lib/session-mode";
+import { printZReport } from "@/lib/z-report";
+import { cachedQuery } from "@/lib/cached-query";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { FileText } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/shift")({
   head: () => ({
@@ -39,6 +44,33 @@ function ShiftPage() {
   const [counted, setCounted] = useState("");
   const [note, setNote] = useState("");
   const [manager, setManager] = useState(false);
+
+  // Expenses per day, so the Z-report reconciles cash against the money that
+  // actually left the drawer.
+  const expenses = useQuery({
+    queryKey: ["shift-expenses"],
+    ...cachedQuery<Array<{ expense_date: string; amount: number; category: string }>>(
+      "shift-expenses",
+      async () => {
+        const { data, error } = await supabase
+          .from("expenses")
+          .select("expense_date, amount, category")
+          .order("expense_date", { ascending: false })
+          .limit(500);
+        if (error) throw error;
+        return data ?? [];
+      },
+    ),
+  });
+
+  function expensesFor(iso: string) {
+    const day = iso.slice(0, 10);
+    const list = (expenses.data ?? []).filter((e) => e.expense_date === day);
+    return {
+      total: list.reduce((t, e) => t + Number(e.amount), 0),
+      lines: list.map((e) => ({ label: e.category, amount: Number(e.amount) })),
+    };
+  }
 
   useEffect(() => {
     setManager(isManagerMode());
@@ -167,7 +199,16 @@ function ShiftPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <span className="text-base font-bold">{formatCurrency(r.total)}</span>
-                    <Button variant="outline" size="sm" onClick={() => downloadZ(r)}><Download className="mr-2 h-4 w-4" /> Z-report</Button>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        const e = expensesFor(r.closed_at);
+                        printZReport(r, { expenses: e.total, expenseLines: e.lines });
+                      }}
+                    >
+                      <FileText className="mr-2 h-4 w-4" /> Z-report PDF
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => downloadZ(r)}><Download className="mr-2 h-4 w-4" /> Text</Button>
                   </div>
                 </div>
                 {r.counted_cash !== null && (
