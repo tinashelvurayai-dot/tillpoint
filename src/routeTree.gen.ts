@@ -29,6 +29,7 @@ import { Route as AuthenticatedManagerRefundsRouteImport } from './routes/_authe
 import { Route as AuthenticatedManagerProfitRouteImport } from './routes/_authenticated/manager.profit'
 import { Route as AuthenticatedManagerProductsRouteImport } from './routes/_authenticated/manager.products'
 import { Route as AuthenticatedManagerManualsRouteImport } from './routes/_authenticated/manager.manuals'
+import { Route as AuthenticatedManagerLogsRouteImport } from './routes/_authenticated/manager.logs'
 import { Route as AuthenticatedManagerExpensesRouteImport } from './routes/_authenticated/manager.expenses'
 import { Route as AuthenticatedManagerCashiersRouteImport } from './routes/_authenticated/manager.cashiers'
 import { Route as AuthenticatedManagerCashRouteImport } from './routes/_authenticated/manager.cash'
@@ -146,6 +147,12 @@ const AuthenticatedManagerManualsRoute =
     path: '/manuals',
     getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
+const AuthenticatedManagerLogsRoute =
+  AuthenticatedManagerLogsRouteImport.update({
+    id: '/logs',
+    path: '/logs',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
 const AuthenticatedManagerExpensesRoute =
   AuthenticatedManagerExpensesRouteImport.update({
     id: '/expenses',
@@ -191,6 +198,7 @@ export interface FileRoutesByFullPath {
   '/manager/cash': typeof AuthenticatedManagerCashRoute
   '/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
+  '/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
   '/manager/products': typeof AuthenticatedManagerProductsRoute
   '/manager/profit': typeof AuthenticatedManagerProfitRoute
@@ -216,6 +224,7 @@ export interface FileRoutesByTo {
   '/manager/cash': typeof AuthenticatedManagerCashRoute
   '/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
+  '/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
   '/manager/products': typeof AuthenticatedManagerProductsRoute
   '/manager/profit': typeof AuthenticatedManagerProfitRoute
@@ -244,6 +253,7 @@ export interface FileRoutesById {
   '/_authenticated/manager/cash': typeof AuthenticatedManagerCashRoute
   '/_authenticated/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
   '/_authenticated/manager/expenses': typeof AuthenticatedManagerExpensesRoute
+  '/_authenticated/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/_authenticated/manager/manuals': typeof AuthenticatedManagerManualsRoute
   '/_authenticated/manager/products': typeof AuthenticatedManagerProductsRoute
   '/_authenticated/manager/profit': typeof AuthenticatedManagerProfitRoute
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
     | '/manager/cash'
     | '/manager/cashiers'
     | '/manager/expenses'
+    | '/manager/logs'
     | '/manager/manuals'
     | '/manager/products'
     | '/manager/profit'
@@ -297,6 +308,7 @@ export interface FileRouteTypes {
     | '/manager/cash'
     | '/manager/cashiers'
     | '/manager/expenses'
+    | '/manager/logs'
     | '/manager/manuals'
     | '/manager/products'
     | '/manager/profit'
@@ -324,6 +336,7 @@ export interface FileRouteTypes {
     | '/_authenticated/manager/cash'
     | '/_authenticated/manager/cashiers'
     | '/_authenticated/manager/expenses'
+    | '/_authenticated/manager/logs'
     | '/_authenticated/manager/manuals'
     | '/_authenticated/manager/products'
     | '/_authenticated/manager/profit'
@@ -485,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManagerManualsRouteImport
       parentRoute: typeof AuthenticatedManagerRoute
     }
+    '/_authenticated/manager/logs': {
+      id: '/_authenticated/manager/logs'
+      path: '/logs'
+      fullPath: '/manager/logs'
+      preLoaderRoute: typeof AuthenticatedManagerLogsRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
     '/_authenticated/manager/expenses': {
       id: '/_authenticated/manager/expenses'
       path: '/expenses'
@@ -529,6 +549,7 @@ interface AuthenticatedManagerRouteChildren {
   AuthenticatedManagerCashRoute: typeof AuthenticatedManagerCashRoute
   AuthenticatedManagerCashiersRoute: typeof AuthenticatedManagerCashiersRoute
   AuthenticatedManagerExpensesRoute: typeof AuthenticatedManagerExpensesRoute
+  AuthenticatedManagerLogsRoute: typeof AuthenticatedManagerLogsRoute
   AuthenticatedManagerManualsRoute: typeof AuthenticatedManagerManualsRoute
   AuthenticatedManagerProductsRoute: typeof AuthenticatedManagerProductsRoute
   AuthenticatedManagerProfitRoute: typeof AuthenticatedManagerProfitRoute
@@ -548,6 +569,7 @@ const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
   AuthenticatedManagerCashRoute: AuthenticatedManagerCashRoute,
   AuthenticatedManagerCashiersRoute: AuthenticatedManagerCashiersRoute,
   AuthenticatedManagerExpensesRoute: AuthenticatedManagerExpensesRoute,
+  AuthenticatedManagerLogsRoute: AuthenticatedManagerLogsRoute,
   AuthenticatedManagerManualsRoute: AuthenticatedManagerManualsRoute,
   AuthenticatedManagerProductsRoute: AuthenticatedManagerProductsRoute,
   AuthenticatedManagerProfitRoute: AuthenticatedManagerProfitRoute,
