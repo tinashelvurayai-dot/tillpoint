@@ -211,7 +211,7 @@ function ProductsPage() {
     onSuccess: () => {
       toast.success("Product created - a Standard variant was added so it appears in Stock");
       ["products", "stock", "stock-in-variants", "cashier", "alerts"].forEach((key) =>
-        qc.invalidateQueries({ queryKey: [key] }),
+        qc.invalidateQueries({ queryKey: [key], refetchType: "all" }),
       );
       setOpenNewProduct(false);
       setImage("");
@@ -302,7 +302,7 @@ function ProductsPage() {
     onSuccess: () => {
       toast.success("Variant added");
       ["products", "stock", "stock-in-variants", "cashier", "alerts"].forEach((key) =>
-        qc.invalidateQueries({ queryKey: [key] }),
+        qc.invalidateQueries({ queryKey: [key], refetchType: "all" }),
       );
       setVariantFor(null);
     },
