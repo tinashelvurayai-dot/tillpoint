@@ -35,7 +35,13 @@ import {
   Lock as LockIcon,
 } from "lucide-react";
 import { enqueueSale, flushQueue, getQueue } from "@/lib/offline-queue";
-import { appendLog, subscribeLog, type TxLogEntry } from "@/lib/transaction-log";
+import {
+  appendLog,
+  hydrateLogFromIdb,
+  subscribeLog,
+  type TxLogEntry,
+} from "@/lib/transaction-log";
+import { computeSalesToday, subscribeSalesTodayMarker } from "@/lib/sales-today";
 import { SyncAlertBanner } from "@/components/sync-alert-banner";
 import { printReceipt, downloadReceipt, receiptText, receiptNumber } from "@/lib/receipt";
 import { runSync } from "@/lib/sync-manager";
