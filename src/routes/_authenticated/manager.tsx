@@ -23,6 +23,7 @@ import {
   HardDrive,
   Settings,
   Undo2,
+  ScrollText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { isManagerMode } from "@/lib/session-mode";
@@ -56,6 +57,7 @@ const navItems: Array<{
 
   { to: "/manager/storage", label: "Storage & Exports", icon: HardDrive },
   { to: "/manager/settings", label: "Settings", icon: Settings },
+  { to: "/manager/logs", label: "Reset Logs", icon: ScrollText },
   { to: "/manager/manuals", label: "Manuals", icon: BookOpen },
 ];
 

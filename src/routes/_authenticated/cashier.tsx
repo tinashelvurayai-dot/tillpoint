@@ -112,18 +112,22 @@ function CashierScreen() {
     return () => window.removeEventListener("storage", onSettings);
   }, []);
 
-  useEffect(
-    () =>
-      subscribeLog((list) => {
-        const stamp = new Date().toDateString();
-        const mine = list.filter((e) => new Date(e.created_at).toDateString() === stamp);
-        setToday({
-          total: mine.reduce((sum, e) => sum + Number(e.total), 0),
-          count: mine.length,
-        });
-      }),
-    [],
-  );
+  useEffect(() => {
+    // Durable offline history lives in IndexedDB; pull it in so the header is
+    // right after a reload with no connection.
+    void hydrateLogFromIdb();
+    let latest: TxLogEntry[] = [];
+    const recompute = () => setToday(computeSalesToday(latest));
+    const offLog = subscribeLog((list) => {
+      latest = list;
+      recompute();
+    });
+    const offMarker = subscribeSalesTodayMarker(recompute);
+    return () => {
+      offLog();
+      offMarker();
+    };
+  }, []);
 
   const variants = useQuery({
     queryKey: ["cashier", "variants"],
