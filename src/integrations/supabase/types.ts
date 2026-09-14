@@ -59,6 +59,39 @@ export type Database = {
         }
         Relationships: []
       }
+      cashier_accounts: {
+        Row: {
+          active: boolean
+          code1: string
+          code2: string
+          created_at: string
+          id: string
+          name: string
+          sale_permission: boolean
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          code1: string
+          code2: string
+          created_at?: string
+          id?: string
+          name: string
+          sale_permission?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          code1?: string
+          code2?: string
+          created_at?: string
+          id?: string
+          name?: string
+          sale_permission?: boolean
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       daily_cash: {
         Row: {
           amount: number
