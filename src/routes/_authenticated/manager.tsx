@@ -26,7 +26,7 @@ import {
   ScrollText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { isManagerMode } from "@/lib/session-mode";
+
 import { SyncAlertBanner } from "@/components/sync-alert-banner";
 
 export const Route = createFileRoute("/_authenticated/manager")({
@@ -53,8 +53,9 @@ const navItems: Array<{
   { to: "/transactions", label: "Transaction Log", icon: ClipboardList },
   { to: "/sync", label: "Sync Queue", icon: RefreshCw },
   { to: "/shift", label: "Shift Close (Z)", icon: LockIcon },
-  { to: "/orders", label: "Orders", icon: ClipboardList },
 
+  { to: "/manager/cashiers", label: "Cashiers", icon: Users },
+  { to: "/manager/colours", label: "Colour charts", icon: Package },
   { to: "/manager/storage", label: "Storage & Exports", icon: HardDrive },
   { to: "/manager/settings", label: "Settings", icon: Settings },
   { to: "/manager/logs", label: "Reset Logs", icon: ScrollText },
@@ -72,8 +73,7 @@ function ManagerLayout() {
         Loading...
       </div>
     );
-  const unlocked = isManagerMode();
-  if (role !== "manager" && !unlocked) return <Navigate to="/cashier" />;
+  if (role !== "manager") return <Navigate to="/cashier" />;
 
   const SidebarInner = (
     <>
@@ -85,7 +85,9 @@ function ManagerLayout() {
       </div>
       <nav className="flex-1 space-y-1 px-3 py-4">
         {navItems.map((item) => {
-          const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
+          const active = item.exact
+            ? pathname === item.to
+            : pathname === item.to || pathname.startsWith(`${item.to}/`);
           return (
             <Link
               key={item.to}
@@ -106,9 +108,7 @@ function ManagerLayout() {
       </nav>
       <div className="border-t border-slate-300/60 p-4">
         <div className="mb-3 text-sm">
-          <div className="font-medium text-slate-900">
-            {profile?.full_name ?? "Mr Pride Tatire"}
-          </div>
+          <div className="font-medium text-slate-900">{profile?.full_name ?? "Manager"}</div>
           <div className="text-xs text-slate-500">Manager</div>
         </div>
         <SignOutButton variant="outline" />

@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SignOutButton } from "@/components/sign-out-button";
 import { ManagerGateLogo } from "@/components/manager-gate-logo";
 import { toast } from "sonner";
@@ -33,6 +34,8 @@ import {
   AlertTriangle,
   X,
   Lock as LockIcon,
+  Undo2,
+  Menu,
 } from "lucide-react";
 import { enqueueSale, flushQueue, getQueue } from "@/lib/offline-queue";
 import {
@@ -490,48 +493,30 @@ function CashierScreen() {
                 {today.count} sale{today.count === 1 ? "" : "s"}
               </div>
             </div>
-            <SyncIndicator />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => syncOfflineQueue(true)}
-              disabled={!online || syncStatus === "syncing"}
-            >
-              <RefreshCw
-                className={`mr-2 h-4 w-4 ${syncStatus === "syncing" ? "animate-spin" : ""}`}
-              />{" "}
-              Sync
-            </Button>
-            <PWAInstallButton variant="outline" size="sm" label="Install" />
-            <Link to="/transactions">
-              <Button variant="outline" size="sm">
-                <ClipboardList className="mr-2 h-4 w-4" /> Transaction log
-              </Button>
-            </Link>
-            <Link to="/sync">
-              <Button variant="outline" size="sm">
-                Sync queue
-              </Button>
-            </Link>
-
-            <Link to="/shift">
-              <Button variant="outline" size="sm">
-                <LockIcon className="mr-2 h-4 w-4" /> Shift close
-              </Button>
-            </Link>
-
-            <Link to="/orders">
-              <Button variant="outline" size="sm">
-                <ClipboardList className="mr-2 h-4 w-4" /> Orders
-              </Button>
-            </Link>
-
-            {showManual && (
-              <Button variant="outline" size="sm" onClick={() => setManualOpen(true)}>
-                <BookOpen className="mr-2 h-4 w-4" /> Manual
-              </Button>
-            )}
-            <SignOutButton variant="outline" />
+            <div className="hidden sm:block"><SyncIndicator /></div>
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" aria-label="Open cashier actions">
+                  <Menu data-icon="inline-start" /> Actions
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Cashier actions</SheetTitle>
+                  <SheetDescription>Operational tools and account controls.</SheetDescription>
+                </SheetHeader>
+                <div className="flex flex-col gap-3 p-4">
+                  <Button variant="outline" onClick={() => syncOfflineQueue(true)} disabled={!online || syncStatus === "syncing"}><RefreshCw data-icon="inline-start" /> Sync</Button>
+                  <PWAInstallButton variant="outline" size="sm" label="Install" />
+                  <Link to="/transactions"><Button variant="outline" className="w-full"><ClipboardList data-icon="inline-start" /> Transaction log</Button></Link>
+                  <Link to="/sync"><Button variant="outline" className="w-full">Sync queue</Button></Link>
+                  <Link to="/shift"><Button variant="outline" className="w-full"><LockIcon data-icon="inline-start" /> Shift close</Button></Link>
+                  <Link to="/refunds"><Button variant="outline" className="w-full"><Undo2 data-icon="inline-start" /> Refunds</Button></Link>
+                  {showManual && <Button variant="outline" onClick={() => setManualOpen(true)}><BookOpen data-icon="inline-start" /> Manual</Button>}
+                  <SignOutButton variant="outline" />
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </header>
 
@@ -930,6 +915,18 @@ export function CashierManualContent() {
           If the connection drops, keep serving customers. Sales are stored securely on this device,
           a pending badge shows what is waiting, and sync runs automatically when the device comes
           back online. You can also press Sync while online.
+        </p>
+      </section>
+      <section>
+        <h3 className="font-semibold text-base">6b. Refunds and voids</h3>
+        <p className="text-muted-foreground">
+          Tap Refunds in the top bar to open your refunds page. A refund gives money back to a
+          customer; a void cancels a sale entered by mistake. Both can return the items to stock and
+          both remove the sale from the day&apos;s takings, so sales and refunds always balance. You
+          can only complete one yourself when the manager has switched on{" "}
+          <span className="font-medium">auto-approve refunds</span> - otherwise the page tells you
+          to ask the manager. Refunds need a connection; if you are offline, wait until the device
+          is back online.
         </p>
       </section>
       <section>

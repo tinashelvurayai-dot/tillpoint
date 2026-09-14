@@ -133,6 +133,17 @@ function ManagerSettingsPage() {
 
   useEffect(() => setForm(readSettings()), []);
 
+  // Keep the manager name in step with the saved staff profile.
+  useEffect(() => {
+    if (!profile?.full_name) return;
+    setForm((current) =>
+      current.managerName === profile.full_name
+        ? current
+        : { ...current, managerName: profile.full_name },
+    );
+  }, [profile?.full_name]);
+
+
   function update<K extends keyof SettingsForm>(key: K, value: SettingsForm[K]) {
     setForm((current) => ({ ...current, [key]: value }));
   }
@@ -150,13 +161,16 @@ function ManagerSettingsPage() {
       window.dispatchEvent(
         new StorageEvent("storage", { key: SETTINGS_KEY, newValue: JSON.stringify(form) }),
       );
-      if (profile?.id) {
-        await supabase
+      if (profile?.id && form.managerName.trim()) {
+        const { error } = await supabase
           .from("profiles")
-          .update({ full_name: profile.full_name })
+          .update({ full_name: form.managerName.trim() })
           .eq("id", profile.id);
+        if (error) throw error;
+        qc.invalidateQueries();
       }
-      toast.success("Manager settings saved on this device.");
+      toast.success("Settings saved.");
+
     } catch {
       toast.error("Could not save settings.");
     } finally {

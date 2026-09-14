@@ -452,86 +452,77 @@ function ProductsPage() {
           </p>
         </Card>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
           {filteredProducts.map((p) => (
-            <Card key={p.id} className="overflow-hidden">
-              <div className="flex flex-col sm:flex-row items-start gap-4 p-4 sm:p-5">
-                {!hideImages && (
-                  <div className="grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-lg bg-accent">
-                    {p.image_url ? (
-                      <img src={p.image_url} alt={p.name} className="h-full w-full object-cover" />
-                    ) : (
-                      <PackageIcon className="h-6 w-6 text-muted-foreground" />
-                    )}
-                  </div>
+            <Card key={p.id} className="flex flex-col overflow-hidden">
+              {!hideImages && (
+                <div className="grid aspect-[4/3] w-full place-items-center overflow-hidden bg-accent">
+                  {p.image_url ? (
+                    <img src={p.image_url} alt={p.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <PackageIcon className="h-8 w-8 text-muted-foreground" />
+                  )}
+                </div>
+              )}
+              <div className="flex flex-1 flex-col p-5">
+                <h3 className="font-semibold leading-tight">{p.name}</h3>
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                  {p.category && <Badge variant="secondary">{p.category}</Badge>}
+                  <span>
+                    {p.variants.length} variant{p.variants.length === 1 ? "" : "s"}
+                  </span>
+                </div>
+                {p.description && (
+                  <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{p.description}</p>
                 )}
-                <div className="flex-1 min-w-0 w-full">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h3 className="font-semibold">{p.name}</h3>
-                      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                        {p.category && <Badge variant="secondary">{p.category}</Badge>}
-                        <span>
-                          {p.variants.length} variant{p.variants.length === 1 ? "" : "s"}
-                        </span>
-                      </div>
-                      {p.description && (
-                        <p className="mt-2 text-sm text-muted-foreground">{p.description}</p>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" onClick={() => openEdit(p)}>
-                        <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
-                      </Button>
-                      <Button size="sm" variant="outline" onClick={() => setVariantFor(p)}>
-                        <Plus className="mr-1 h-3.5 w-3.5" /> Variant
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => confirm(`Delete ${p.name}?`) && deleteProduct.mutate(p.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
 
-                  {p.variants.length > 0 && (
-                    <div className="mt-4 grid gap-2 md:grid-cols-2 lg:grid-cols-3">
-                      {p.variants.map((v) => (
-                        <div
-                          key={v.id}
-                          className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-3 py-2 text-sm"
-                        >
-                          <div className="min-w-0">
-                            <div className="truncate font-medium">{v.variant_name}</div>
-                            <div className="truncate text-xs text-muted-foreground">
-                              {[v.size, v.flavour].filter(Boolean).join(" - ") || "-"}
-                              {" - "}stock: {v.stock?.quantity ?? 0}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 shrink-0">
-                            <span className="font-semibold">{formatCurrency(v.price)}</span>
-                            <button
-                              title="Edit price"
-                              onClick={() =>
-                                setEditingVariant({ id: v.id, price: Number(v.price) })
-                              }
-                            >
-                              <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-blue-600" />
-                            </button>
-                            <button
-                              onClick={() =>
-                                confirm("Remove variant?") && deleteVariant.mutate(v.id)
-                              }
-                            >
-                              <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                            </button>
+                {p.variants.length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    {p.variants.map((v) => (
+                      <div
+                        key={v.id}
+                        className="flex items-center justify-between rounded-lg border border-border bg-background/60 px-3 py-2 text-sm"
+                      >
+                        <div className="min-w-0">
+                          <div className="truncate font-medium">{v.variant_name}</div>
+                          <div className="truncate text-xs text-muted-foreground">
+                            {[v.size, v.flavour].filter(Boolean).join(" - ") || "-"}
+                            {" - "}stock: {v.stock?.quantity ?? 0}
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                        <div className="flex shrink-0 items-center gap-2">
+                          <span className="font-semibold">{formatCurrency(v.price)}</span>
+                          <button
+                            title="Edit price"
+                            onClick={() => setEditingVariant({ id: v.id, price: Number(v.price) })}
+                          >
+                            <Pencil className="h-3.5 w-3.5 text-muted-foreground hover:text-blue-600" />
+                          </button>
+                          <button
+                            onClick={() => confirm("Remove variant?") && deleteVariant.mutate(v.id)}
+                          >
+                            <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-5 flex flex-wrap gap-2 border-t border-border pt-4">
+                  <Button size="sm" variant="outline" onClick={() => openEdit(p)}>
+                    <Pencil className="mr-1 h-3.5 w-3.5" /> Edit
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => setVariantFor(p)}>
+                    <Plus className="mr-1 h-3.5 w-3.5" /> Variant
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => confirm(`Delete ${p.name}?`) && deleteProduct.mutate(p.id)}
+                  >
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
                 </div>
               </div>
             </Card>

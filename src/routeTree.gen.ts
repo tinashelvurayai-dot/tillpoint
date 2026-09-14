@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTransactionsRouteImport } from './routes/_authenticated/transactions'
 import { Route as AuthenticatedSyncRouteImport } from './routes/_authenticated/sync'
 import { Route as AuthenticatedShiftRouteImport } from './routes/_authenticated/shift'
+import { Route as AuthenticatedRefundsRouteImport } from './routes/_authenticated/refunds'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedManagerRouteImport } from './routes/_authenticated/manager'
 import { Route as AuthenticatedCashierRouteImport } from './routes/_authenticated/cashier'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedManagerProductsRouteImport } from './routes/_auth
 import { Route as AuthenticatedManagerManualsRouteImport } from './routes/_authenticated/manager.manuals'
 import { Route as AuthenticatedManagerLogsRouteImport } from './routes/_authenticated/manager.logs'
 import { Route as AuthenticatedManagerExpensesRouteImport } from './routes/_authenticated/manager.expenses'
+import { Route as AuthenticatedManagerColoursRouteImport } from './routes/_authenticated/manager.colours'
 import { Route as AuthenticatedManagerCashiersRouteImport } from './routes/_authenticated/manager.cashiers'
 import { Route as AuthenticatedManagerCashRouteImport } from './routes/_authenticated/manager.cash'
 import { Route as AuthenticatedManagerAlertsRouteImport } from './routes/_authenticated/manager.alerts'
@@ -64,6 +66,11 @@ const AuthenticatedSyncRoute = AuthenticatedSyncRouteImport.update({
 const AuthenticatedShiftRoute = AuthenticatedShiftRouteImport.update({
   id: '/shift',
   path: '/shift',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRefundsRoute = AuthenticatedRefundsRouteImport.update({
+  id: '/refunds',
+  path: '/refunds',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
@@ -159,6 +166,12 @@ const AuthenticatedManagerExpensesRoute =
     path: '/expenses',
     getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
+const AuthenticatedManagerColoursRoute =
+  AuthenticatedManagerColoursRouteImport.update({
+    id: '/colours',
+    path: '/colours',
+    getParentRoute: () => AuthenticatedManagerRoute,
+  } as any)
 const AuthenticatedManagerCashiersRoute =
   AuthenticatedManagerCashiersRouteImport.update({
     id: '/cashiers',
@@ -190,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/cashier': typeof AuthenticatedCashierRoute
   '/manager': typeof AuthenticatedManagerRouteWithChildren
   '/orders': typeof AuthenticatedOrdersRoute
+  '/refunds': typeof AuthenticatedRefundsRoute
   '/shift': typeof AuthenticatedShiftRoute
   '/sync': typeof AuthenticatedSyncRoute
   '/transactions': typeof AuthenticatedTransactionsRoute
@@ -197,6 +211,7 @@ export interface FileRoutesByFullPath {
   '/manager/alerts': typeof AuthenticatedManagerAlertsRoute
   '/manager/cash': typeof AuthenticatedManagerCashRoute
   '/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
+  '/manager/colours': typeof AuthenticatedManagerColoursRoute
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
@@ -216,6 +231,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/cashier': typeof AuthenticatedCashierRoute
   '/orders': typeof AuthenticatedOrdersRoute
+  '/refunds': typeof AuthenticatedRefundsRoute
   '/shift': typeof AuthenticatedShiftRoute
   '/sync': typeof AuthenticatedSyncRoute
   '/transactions': typeof AuthenticatedTransactionsRoute
@@ -223,6 +239,7 @@ export interface FileRoutesByTo {
   '/manager/alerts': typeof AuthenticatedManagerAlertsRoute
   '/manager/cash': typeof AuthenticatedManagerCashRoute
   '/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
+  '/manager/colours': typeof AuthenticatedManagerColoursRoute
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
@@ -245,6 +262,7 @@ export interface FileRoutesById {
   '/_authenticated/cashier': typeof AuthenticatedCashierRoute
   '/_authenticated/manager': typeof AuthenticatedManagerRouteWithChildren
   '/_authenticated/orders': typeof AuthenticatedOrdersRoute
+  '/_authenticated/refunds': typeof AuthenticatedRefundsRoute
   '/_authenticated/shift': typeof AuthenticatedShiftRoute
   '/_authenticated/sync': typeof AuthenticatedSyncRoute
   '/_authenticated/transactions': typeof AuthenticatedTransactionsRoute
@@ -252,6 +270,7 @@ export interface FileRoutesById {
   '/_authenticated/manager/alerts': typeof AuthenticatedManagerAlertsRoute
   '/_authenticated/manager/cash': typeof AuthenticatedManagerCashRoute
   '/_authenticated/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
+  '/_authenticated/manager/colours': typeof AuthenticatedManagerColoursRoute
   '/_authenticated/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/_authenticated/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/_authenticated/manager/manuals': typeof AuthenticatedManagerManualsRoute
@@ -274,6 +293,7 @@ export interface FileRouteTypes {
     | '/cashier'
     | '/manager'
     | '/orders'
+    | '/refunds'
     | '/shift'
     | '/sync'
     | '/transactions'
@@ -281,6 +301,7 @@ export interface FileRouteTypes {
     | '/manager/alerts'
     | '/manager/cash'
     | '/manager/cashiers'
+    | '/manager/colours'
     | '/manager/expenses'
     | '/manager/logs'
     | '/manager/manuals'
@@ -300,6 +321,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/cashier'
     | '/orders'
+    | '/refunds'
     | '/shift'
     | '/sync'
     | '/transactions'
@@ -307,6 +329,7 @@ export interface FileRouteTypes {
     | '/manager/alerts'
     | '/manager/cash'
     | '/manager/cashiers'
+    | '/manager/colours'
     | '/manager/expenses'
     | '/manager/logs'
     | '/manager/manuals'
@@ -328,6 +351,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cashier'
     | '/_authenticated/manager'
     | '/_authenticated/orders'
+    | '/_authenticated/refunds'
     | '/_authenticated/shift'
     | '/_authenticated/sync'
     | '/_authenticated/transactions'
@@ -335,6 +359,7 @@ export interface FileRouteTypes {
     | '/_authenticated/manager/alerts'
     | '/_authenticated/manager/cash'
     | '/_authenticated/manager/cashiers'
+    | '/_authenticated/manager/colours'
     | '/_authenticated/manager/expenses'
     | '/_authenticated/manager/logs'
     | '/_authenticated/manager/manuals'
@@ -398,6 +423,13 @@ declare module '@tanstack/react-router' {
       path: '/shift'
       fullPath: '/shift'
       preLoaderRoute: typeof AuthenticatedShiftRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/refunds': {
+      id: '/_authenticated/refunds'
+      path: '/refunds'
+      fullPath: '/refunds'
+      preLoaderRoute: typeof AuthenticatedRefundsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/orders': {
@@ -512,6 +544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManagerExpensesRouteImport
       parentRoute: typeof AuthenticatedManagerRoute
     }
+    '/_authenticated/manager/colours': {
+      id: '/_authenticated/manager/colours'
+      path: '/colours'
+      fullPath: '/manager/colours'
+      preLoaderRoute: typeof AuthenticatedManagerColoursRouteImport
+      parentRoute: typeof AuthenticatedManagerRoute
+    }
     '/_authenticated/manager/cashiers': {
       id: '/_authenticated/manager/cashiers'
       path: '/cashiers'
@@ -548,6 +587,7 @@ interface AuthenticatedManagerRouteChildren {
   AuthenticatedManagerAlertsRoute: typeof AuthenticatedManagerAlertsRoute
   AuthenticatedManagerCashRoute: typeof AuthenticatedManagerCashRoute
   AuthenticatedManagerCashiersRoute: typeof AuthenticatedManagerCashiersRoute
+  AuthenticatedManagerColoursRoute: typeof AuthenticatedManagerColoursRoute
   AuthenticatedManagerExpensesRoute: typeof AuthenticatedManagerExpensesRoute
   AuthenticatedManagerLogsRoute: typeof AuthenticatedManagerLogsRoute
   AuthenticatedManagerManualsRoute: typeof AuthenticatedManagerManualsRoute
@@ -568,6 +608,7 @@ const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
   AuthenticatedManagerAlertsRoute: AuthenticatedManagerAlertsRoute,
   AuthenticatedManagerCashRoute: AuthenticatedManagerCashRoute,
   AuthenticatedManagerCashiersRoute: AuthenticatedManagerCashiersRoute,
+  AuthenticatedManagerColoursRoute: AuthenticatedManagerColoursRoute,
   AuthenticatedManagerExpensesRoute: AuthenticatedManagerExpensesRoute,
   AuthenticatedManagerLogsRoute: AuthenticatedManagerLogsRoute,
   AuthenticatedManagerManualsRoute: AuthenticatedManagerManualsRoute,
@@ -590,6 +631,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCashierRoute: typeof AuthenticatedCashierRoute
   AuthenticatedManagerRoute: typeof AuthenticatedManagerRouteWithChildren
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
+  AuthenticatedRefundsRoute: typeof AuthenticatedRefundsRoute
   AuthenticatedShiftRoute: typeof AuthenticatedShiftRoute
   AuthenticatedSyncRoute: typeof AuthenticatedSyncRoute
   AuthenticatedTransactionsRoute: typeof AuthenticatedTransactionsRoute
@@ -599,6 +641,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCashierRoute: AuthenticatedCashierRoute,
   AuthenticatedManagerRoute: AuthenticatedManagerRouteWithChildren,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
+  AuthenticatedRefundsRoute: AuthenticatedRefundsRoute,
   AuthenticatedShiftRoute: AuthenticatedShiftRoute,
   AuthenticatedSyncRoute: AuthenticatedSyncRoute,
   AuthenticatedTransactionsRoute: AuthenticatedTransactionsRoute,

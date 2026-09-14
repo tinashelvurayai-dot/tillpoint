@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
+
 import { supabase } from "@/integrations/supabase/client";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { DollarSign, ShoppingBag, Package, AlertTriangle, BadgePercent } from "lucide-react";
+import { DollarSign, ShoppingBag, Package, AlertTriangle } from "lucide-react";
 import { SyncIndicator, useSyncState } from "@/components/sync-indicator";
 import { readLog, subscribeLog, type TxLogEntry } from "@/lib/transaction-log";
 import { getQueue, subscribeQueue, type QueuedSale } from "@/lib/offline-queue";
@@ -78,52 +78,6 @@ export const Route = createFileRoute("/_authenticated/manager/")({
   component: ManagerDashboard,
 });
 
-function SystemPriceBanner() {
-  const navigate = useNavigate();
-  const [taps, setTaps] = useState(0);
-  const original = 370;
-  const current = 170;
-  const savings = original - current;
-  const pct = Math.round((savings / original) * 100);
-  return (
-    <section className="mb-8 overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-blue-600 via-indigo-600 to-fuchsia-600 p-6 text-white shadow-[var(--shadow-elev-2)] md:p-8">
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold md:text-3xl">System Price</h2>
-
-          <p className="mt-1 max-w-xl text-sm text-white/80">
-            Full TillPoint Retail OS - variant inventory, dual-role dashboards, offline till, live
-            analytics, AI forecasting and more. One-time price.
-          </p>
-        </div>
-        <div className="flex flex-col items-start gap-2 md:items-end">
-          <div className="flex items-baseline gap-3">
-            <span className="text-lg font-medium text-white/60 line-through">${original}</span>
-            <button
-              type="button"
-              className="text-5xl font-extrabold tracking-tight"
-              onClick={() => {
-                const next = taps + 1;
-                setTaps(next);
-                if (next >= 10) {
-                  setTaps(0);
-                  void navigate({ to: "/manager/agreement" });
-                }
-              }}
-              aria-label="Open handover agreement"
-            >
-              ${current}
-            </button>
-            <span className="text-sm font-semibold text-white/80">USD</span>
-          </div>
-          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/90 px-3 py-1 text-xs font-bold uppercase text-emerald-950">
-            <BadgePercent className="h-3.5 w-3.5" /> Save ${savings} · {pct}% off
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
 
 function ManagerDashboard() {
   const [shopName, setShopName] = useState("Green Shop");
@@ -148,8 +102,14 @@ function ManagerDashboard() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const [salesToday, allSales, products, lowStock, recentSales] = await Promise.all([
-        supabase.from("sales").select("total_amount").gte("created_at", today.toISOString()),
-        supabase.from("sales").select("total_amount"),
+        // Refunded / voided sales are excluded so revenue always balances
+        // against the reversals recorded on the Refunds & Voids page.
+        supabase
+          .from("sales")
+          .select("total_amount, cashier_name")
+          .not("status", "in", "(refunded,voided)")
+          .gte("created_at", today.toISOString()),
+        supabase.from("sales").select("total_amount").not("status", "in", "(refunded,voided)"),
         supabase.from("products").select("id", { count: "exact", head: true }),
         supabase
           .from("stock")
@@ -168,8 +128,18 @@ function ManagerDashboard() {
       const todayTotal = (salesToday.data ?? []).reduce((s, r) => s + Number(r.total_amount), 0);
       const total = (allSales.data ?? []).reduce((s, r) => s + Number(r.total_amount), 0);
       const low = (lowStock.data ?? []).filter((s) => s.quantity <= s.low_stock_alert_level);
+      const byCashierMap = new Map<string, { name: string; total: number; count: number }>();
+      for (const r of salesToday.data ?? []) {
+        const name = (r as { cashier_name: string | null }).cashier_name ?? "Unknown";
+        const cur = byCashierMap.get(name) ?? { name, total: 0, count: 0 };
+        cur.total += Number(r.total_amount);
+        cur.count += 1;
+        byCashierMap.set(name, cur);
+      }
+      const byCashier = [...byCashierMap.values()].sort((a, b) => b.total - a.total);
       return {
         todayTotal,
+        byCashier,
         todayCount: salesToday.data?.length ?? 0,
         total,
         productsCount: products.count ?? 0,
@@ -215,8 +185,6 @@ function ManagerDashboard() {
 
       <PendingSyncNotice />
 
-      <SystemPriceBanner />
-
       <SyncOverview />
 
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -230,6 +198,27 @@ function ManagerDashboard() {
           </Card>
         ))}
       </section>
+
+      <Card className="mt-8 p-5">
+        <h2 className="mb-4 font-semibold">Today by cashier</h2>
+        <ul className="divide-y divide-border">
+          {stats.data?.byCashier.length ? (
+            stats.data.byCashier.map((c) => (
+              <li key={c.name} className="flex items-center justify-between py-3">
+                <div>
+                  <div className="text-sm font-medium">{c.name}</div>
+                  <div className="text-xs text-muted-foreground">
+                    {c.count} sale{c.count === 1 ? "" : "s"} today
+                  </div>
+                </div>
+                <div className="font-semibold">{formatCurrency(c.total)}</div>
+              </li>
+            ))
+          ) : (
+            <li className="py-6 text-center text-sm text-muted-foreground">No sales today yet.</li>
+          )}
+        </ul>
+      </Card>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-2">
         <Card className="p-5">

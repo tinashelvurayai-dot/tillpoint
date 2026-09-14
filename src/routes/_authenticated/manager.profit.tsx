@@ -97,7 +97,7 @@ function ProfitPage() {
       revenue += Number(l.subtotal);
       cogs += lineCost;
       const key = l.variant_id;
-      const name = `${l.variant?.product?.name ?? "Product"} — ${l.variant?.variant_name ?? ""}`;
+      const name = `${l.variant?.product?.name ?? "Product"} - ${l.variant?.variant_name ?? ""}`;
       const r = (rows[key] ??= { name, qty: 0, revenue: 0, cogs: 0 });
       r.qty += l.quantity;
       r.revenue += Number(l.subtotal);
@@ -105,7 +105,14 @@ function ProfitPage() {
     }
     const expenseTotal = (expenses.data ?? []).reduce((t, e) => t + Number(e.amount), 0);
     const list = Object.values(rows).sort((a, b) => b.revenue - a.revenue - (a.cogs - b.cogs));
-    return { revenue, cogs, expenseTotal, gross: revenue - cogs, net: revenue - cogs - expenseTotal, list };
+    return {
+      revenue,
+      cogs,
+      expenseTotal,
+      gross: revenue - cogs,
+      net: revenue - cogs - expenseTotal,
+      list,
+    };
   }, [lines.data, costs.data, expenses.data]);
 
   const margin = view.revenue > 0 ? (view.gross / view.revenue) * 100 : 0;
@@ -198,8 +205,8 @@ function ProfitPage() {
           </table>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
-          Products with no Stock-In buying price recorded are counted at zero cost, so record
-          buying prices on the Stock-In Records page to keep this accurate.
+          Products with no Stock-In buying price recorded are counted at zero cost, so record buying
+          prices on the Stock-In Records page to keep this accurate.
         </p>
       </Card>
     </div>
