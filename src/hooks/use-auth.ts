@@ -45,7 +45,9 @@ export function useAuth(): AuthState {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<AuthProfile | null>(cached.profile);
   const [role, setRole] = useState<AppRole | null>(cached.role);
-  const [loading, setLoading] = useState(false);
+  // Starts true so route guards wait for the real session instead of
+  // bouncing a freshly signed-in user back to the sign-in page.
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;

@@ -169,15 +169,9 @@ export function isRetryable(s: QueuedSale): boolean {
 }
 
 async function ensureSession(): Promise<string | null> {
-  let { data } = await supabase.auth.getSession();
-  if (!data.session) {
-    try {
-      await supabase.auth.signInAnonymously({ options: { data: { full_name: "Guest Cashier" } } });
-      ({ data } = await supabase.auth.getSession());
-    } catch {
-      return null;
-    }
-  }
+  // Sales only upload while a real cashier or manager is signed in; queued
+  // sales simply wait until someone signs in again.
+  const { data } = await supabase.auth.getSession();
   return data.session?.user.id ?? null;
 }
 

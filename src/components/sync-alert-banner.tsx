@@ -19,7 +19,7 @@ export function SyncAlertBanner() {
     <div className="flex flex-wrap items-center gap-3 border-b border-amber-300 bg-amber-50 px-4 py-2 text-sm text-amber-900">
       <AlertTriangle className="h-4 w-4 shrink-0" />
       <span className="flex-1">
-        {count} sale{count === 1 ? "" : "s"} still waiting to reach the backend. Nothing is lost —
+        {count} sale{count === 1 ? "" : "s"} still waiting to reach the backend. Nothing is lost -
         they stay on this device until they sync.
       </span>
       <Button

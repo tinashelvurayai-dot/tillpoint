@@ -41,7 +41,7 @@ export function zReportHtml(r: ShiftReport, extra: ZReportExtras = {}): string {
   .sig div{flex:1;border-top:1px solid #94a3b8;padding-top:6px;font-size:11px;color:#64748b}
   @media print{body{padding:0}.wrap{border:none}}
 </style></head><body><div class="wrap">
-  <h1>${shop} — Z-Report (End of day)</h1>
+  <h1>${shop} - Z-Report (End of day)</h1>
   <div class="sub">
     Closed ${new Date(r.closed_at).toLocaleString()} &middot; Opened ${new Date(r.opened_at).toLocaleString()}<br/>
     Operator: ${r.cashier_name} &middot; Sales: ${r.sale_count}

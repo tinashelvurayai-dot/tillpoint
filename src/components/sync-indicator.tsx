@@ -17,12 +17,15 @@ export function SyncIndicator({ className = "" }: { className?: string }) {
   return (
     <div className={`flex flex-wrap items-center gap-2 ${className}`}>
       {online ? (
-        <Badge variant="outline" className="gap-1 border-emerald-300 bg-emerald-50 text-emerald-700">
-          <Wifi className="h-3 w-3" /> 🟢 Online
+        <Badge
+          variant="outline"
+          className="gap-1 border-emerald-300 bg-emerald-50 text-emerald-700"
+        >
+          <Wifi className="h-3 w-3" /> Online
         </Badge>
       ) : (
         <Badge variant="destructive" className="gap-1">
-          <WifiOff className="h-3 w-3" /> 🔴 Offline
+          <WifiOff className="h-3 w-3" /> Offline
         </Badge>
       )}
       <span className="text-xs text-muted-foreground">
@@ -35,10 +38,16 @@ export function SyncIndicator({ className = "" }: { className?: string }) {
       {pending > 0 && (
         <button
           type="button"
-          onClick={() => { void runSync(); }}
+          onClick={() => {
+            void runSync();
+          }}
           className="inline-flex items-center gap-1 rounded-full bg-blue-600 px-2.5 py-1 text-xs font-medium text-white"
         >
-          {syncing ? <RefreshCw className="h-3 w-3 animate-spin" /> : <CloudUpload className="h-3 w-3" />}
+          {syncing ? (
+            <RefreshCw className="h-3 w-3 animate-spin" />
+          ) : (
+            <CloudUpload className="h-3 w-3" />
+          )}
           {pending} pending sync
         </button>
       )}

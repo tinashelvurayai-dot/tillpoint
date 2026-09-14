@@ -1,27 +1,33 @@
+const ignitedLogo = "https://i.postimg.cc/yd4Z6X1y/Whats-App-Image-2026-09-07-at-9-29-12-AM.jpg";
+
 interface BrandLogoProps {
   className?: string;
   showWordmark?: boolean;
   variant?: "default" | "light";
 }
 
-export function BrandLogo({ className = "", showWordmark = true, variant = "default" }: BrandLogoProps) {
+export function BrandLogo({
+  className = "",
+  showWordmark = true,
+  variant = "default",
+}: BrandLogoProps) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-center gap-3 ${className}`}>
       <img
-        src="/icons/icon-192.png"
-        alt="TillPoint"
-        width={40}
-        height={40}
-        className="h-9 w-9 shrink-0 object-contain"
-        loading="lazy"
+        src={ignitedLogo}
+        alt="Ignited BrandZ"
+        width={160}
+        height={72}
+        className="h-14 w-auto shrink-0 object-contain sm:h-16"
       />
       {showWordmark && (
         <div className="leading-tight">
-          <div className={`text-base font-bold tracking-tight ${variant === "light" ? "text-white" : "text-foreground"}`}>
-            TillPoint
-          </div>
-          <div className={`text-[10px] font-medium uppercase tracking-[0.14em] ${variant === "light" ? "text-white/70" : "text-muted-foreground"}`}>
-            Retail OS
+          <div
+            className={`text-[10px] font-semibold uppercase tracking-[0.24em] ${
+              variant === "light" ? "text-white/75" : "text-muted-foreground"
+            }`}
+          >
+            Skincare Till
           </div>
         </div>
       )}
