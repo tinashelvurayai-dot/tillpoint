@@ -67,11 +67,13 @@ function StockInRecordsPage() {
   const [editing, setEditing] = useState<RecordRow | null>(null);
   const [search, setSearch] = useState("");
   const [variantOpen, setVariantOpen] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [supplierFilter, setSupplierFilter] = useState("all");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
 
   useEffect(() => {
+    setShowForm(new URLSearchParams(window.location.search).get("record") === "1");
     const channel = supabase
       .channel("stock-in-live")
       .on("postgres_changes", { event: "*", schema: "public", table: "stock_in_records" }, () => {
@@ -209,141 +211,152 @@ function StockInRecordsPage() {
             A complete, searchable register of deliveries, buying costs, suppliers, and inventory
             movement.
           </p>
+          <Button className="mt-4" onClick={() => setShowForm(true)}>
+            <Plus data-icon="inline-start" /> Record stock-in
+          </Button>
         </div>
       </header>
-      <div className="grid gap-6 lg:grid-cols-[380px_1fr]">
-        <Card className="h-fit p-5">
-          <h2 className="mb-4 flex items-center gap-2 font-semibold">
-            <Plus className="h-4 w-4" />
-            {editing ? "Edit stock-in record" : "Record delivery"}
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <Label>Product / variant</Label>
-              <Popover open={variantOpen} onOpenChange={setVariantOpen}>
-                <PopoverTrigger asChild>
+      <div className={cn("grid gap-6", showForm ? "lg:grid-cols-[380px_1fr]" : "grid-cols-1")}>
+        {showForm && (
+          <Card className="h-fit p-5">
+            <h2 className="mb-4 flex items-center gap-2 font-semibold">
+              <Plus className="h-4 w-4" />
+              {editing ? "Edit stock-in record" : "Record delivery"}
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <Label>Product / variant</Label>
+                <Popover open={variantOpen} onOpenChange={setVariantOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={variantOpen}
+                      disabled={!!editing}
+                      className="w-full justify-between font-normal"
+                    >
+                      <span className="truncate">
+                        {selectedVariant
+                          ? `${selectedVariant.product?.name} \u00b7 ${selectedVariant.variant_name}`
+                          : "Search product or variant"}
+                      </span>
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                    <Command
+                      filter={(value, search) =>
+                        value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0
+                      }
+                    >
+                      <CommandInput placeholder="Type a product, variant or category..." />
+                      <CommandList className="max-h-72 overflow-y-auto overscroll-contain">
+                        <CommandEmpty>No matching product.</CommandEmpty>
+                        <CommandGroup>
+                          {(variants.data ?? []).map((v) => (
+                            <CommandItem
+                              key={v.id}
+                              value={`${v.product?.name ?? ""} ${v.variant_name} ${v.product?.category ?? ""}`}
+                              onSelect={() => {
+                                setForm({ ...form, variantId: v.id });
+                                setVariantOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  form.variantId === v.id ? "opacity-100" : "opacity-0",
+                                )}
+                              />
+                              <span className="truncate">
+                                {v.product?.name} &middot; {v.variant_name}
+                              </span>
+                              <span className="ml-auto pl-2 text-xs text-muted-foreground">
+                                {v.stock?.[0]?.quantity ?? 0} in stock
+                              </span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div>
+                <Label>Supplier</Label>
+                <Select
+                  value={form.supplierId}
+                  onValueChange={(value) => setForm({ ...form, supplierId: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select supplier" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No supplier</SelectItem>
+                    {(suppliers.data ?? []).map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label>Quantity</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={form.quantity}
+                    onChange={(e) => setForm({ ...form, quantity: e.target.value })}
+                  />
+                </div>
+                <div>
+                  <Label>Unit buying price</Label>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form.price}
+                    onChange={(e) => setForm({ ...form, price: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div>
+                <Label>Date and time received</Label>
+                <Input
+                  type="datetime-local"
+                  value={form.receivedAt}
+                  onChange={(e) => setForm({ ...form, receivedAt: e.target.value })}
+                />
+              </div>
+              <div>
+                <Label>Notes</Label>
+                <Textarea
+                  value={form.notes}
+                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
+                  placeholder="Invoice, batch, delivery notes..."
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button onClick={() => save.mutate()} disabled={save.isPending}>
+                  {save.isPending ? "Saving..." : editing ? "Save changes" : "Record stock-in"}
+                </Button>
+                {(editing || showForm) && (
                   <Button
                     variant="outline"
-                    role="combobox"
-                    aria-expanded={variantOpen}
-                    disabled={!!editing}
-                    className="w-full justify-between font-normal"
+                    onClick={() => {
+                      resetForm();
+                      setShowForm(false);
+                    }}
                   >
-                    <span className="truncate">
-                      {selectedVariant
-                        ? `${selectedVariant.product?.name} \u00b7 ${selectedVariant.variant_name}`
-                        : "Search product or variant"}
-                    </span>
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    Cancel
                   </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
-                  <Command
-                    filter={(value, search) =>
-                      value.toLowerCase().includes(search.toLowerCase()) ? 1 : 0
-                    }
-                  >
-                    <CommandInput placeholder="Type a product, variant or category..." />
-                    <CommandList className="max-h-72 overflow-y-auto overscroll-contain">
-                      <CommandEmpty>No matching product.</CommandEmpty>
-                      <CommandGroup>
-                        {(variants.data ?? []).map((v) => (
-                          <CommandItem
-                            key={v.id}
-                            value={`${v.product?.name ?? ""} ${v.variant_name} ${v.product?.category ?? ""}`}
-                            onSelect={() => {
-                              setForm({ ...form, variantId: v.id });
-                              setVariantOpen(false);
-                            }}
-                          >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                form.variantId === v.id ? "opacity-100" : "opacity-0",
-                              )}
-                            />
-                            <span className="truncate">
-                              {v.product?.name} &middot; {v.variant_name}
-                            </span>
-                            <span className="ml-auto pl-2 text-xs text-muted-foreground">
-                              {v.stock?.[0]?.quantity ?? 0} in stock
-                            </span>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div>
-              <Label>Supplier</Label>
-              <Select
-                value={form.supplierId}
-                onValueChange={(value) => setForm({ ...form, supplierId: value })}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No supplier</SelectItem>
-                  {(suppliers.data ?? []).map((s) => (
-                    <SelectItem key={s.id} value={s.id}>
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Quantity</Label>
-                <Input
-                  type="number"
-                  min="1"
-                  value={form.quantity}
-                  onChange={(e) => setForm({ ...form, quantity: e.target.value })}
-                />
-              </div>
-              <div>
-                <Label>Unit buying price</Label>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={form.price}
-                  onChange={(e) => setForm({ ...form, price: e.target.value })}
-                />
+                )}
               </div>
             </div>
-            <div>
-              <Label>Date and time received</Label>
-              <Input
-                type="datetime-local"
-                value={form.receivedAt}
-                onChange={(e) => setForm({ ...form, receivedAt: e.target.value })}
-              />
-            </div>
-            <div>
-              <Label>Notes</Label>
-              <Textarea
-                value={form.notes}
-                onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                placeholder="Invoice, batch, delivery notes..."
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button onClick={() => save.mutate()} disabled={save.isPending}>
-                {save.isPending ? "Saving..." : editing ? "Save changes" : "Record stock-in"}
-              </Button>
-              {editing && (
-                <Button variant="outline" onClick={resetForm}>
-                  Cancel
-                </Button>
-              )}
-            </div>
-          </div>
-        </Card>
+          </Card>
+        )}
         <Card className="p-5">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
