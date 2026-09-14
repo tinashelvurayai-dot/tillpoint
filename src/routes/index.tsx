@@ -275,6 +275,10 @@ function Landing() {
               <img
                 src={creamHeroImage}
                 alt="EXO moisture intensive creams and oils"
+                width={1200}
+                height={900}
+                fetchPriority="high"
+                decoding="async"
                 onError={(event) => {
                   event.currentTarget.src = "/packs.png";
                 }}
