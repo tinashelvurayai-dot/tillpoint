@@ -1,7 +1,7 @@
 {
-  "name": "TillPoint - Retail OS",
-  "short_name": "TillPoint",
-  "description": "Point of sale for modern retail.",
+  "name": "EXO Skincare Till",
+  "short_name": "EXO Till",
+  "description": "Till and stock control for EXO skincare.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
