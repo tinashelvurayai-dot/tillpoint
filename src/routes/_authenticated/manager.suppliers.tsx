@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { Truck, Plus, Trash2, PackageCheck, Pencil } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/manager/suppliers")({
@@ -69,6 +69,22 @@ function SuppliersPage() {
     },
   });
 
+  const lowStock = useQuery({
+    queryKey: ["supplier-low-stock"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("stock")
+        .select(
+          "quantity, low_stock_alert_level, variant:product_variants(variant_name, product:products(name))",
+        )
+        .order("quantity");
+      if (error) throw error;
+      return (data ?? []).filter(
+        (row: any) => Number(row.quantity) <= Number(row.low_stock_alert_level),
+      );
+    },
+  });
+
   const pos = useQuery({
     queryKey: ["purchase-orders"],
     queryFn: async () => {
@@ -81,6 +97,48 @@ function SuppliersPage() {
       return data ?? [];
     },
   });
+
+  useEffect(() => {
+    if (!suppliers.data?.length || !lowStock.data || !pos.data) return;
+    const flagged = lowStock.data as any[];
+    const existingNames = new Set(
+      (pos.data as any[]).flatMap((order) =>
+        (Array.isArray(order.items) ? order.items : []).map((item: POItem) => item.name),
+      ),
+    );
+    const supplierList = suppliers.data as any[];
+    const createOrders = flagged
+      .map((row) => {
+        const name = `${row.variant?.product?.name ?? "Product"} · ${row.variant?.variant_name ?? "Variant"}`;
+        if (existingNames.has(name)) return null;
+        const supplier =
+          supplierList.find((candidate) =>
+            `${candidate.name} ${candidate.notes ?? ""}`
+              .toLowerCase()
+              .includes((row.variant?.product?.name ?? "").toLowerCase()),
+          ) ?? supplierList[0];
+        return {
+          supplier_id: supplier.id,
+          items: [{ name, quantity: 40, unit_cost: 0 }],
+          total: 0,
+          auto_reorder: true,
+          notes: "Automatically generated from a low-stock alert.",
+        };
+      })
+      .filter(Boolean);
+    if (!createOrders.length) return;
+    void supabase
+      .from("purchase_orders")
+      .insert(createOrders)
+      .then(({ error }) => {
+        if (!error) {
+          toast.success(
+            `${createOrders.length} automatic purchase order${createOrders.length === 1 ? "" : "s"} created`,
+          );
+          void qc.invalidateQueries({ queryKey: ["purchase-orders"] });
+        }
+      });
+  }, [lowStock.data, pos.data, qc, suppliers.data]);
 
   const addSupplier = useMutation({
     mutationFn: async () => {
@@ -446,7 +504,7 @@ function SuppliersPage() {
                     />
                     <Input
                       type="number"
-                      placeholder="Qty"
+                      placeholder="# of Units"
                       value={it.quantity}
                       onChange={(e) => {
                         const items = [...poForm.items];
@@ -457,7 +515,7 @@ function SuppliersPage() {
                     <Input
                       type="number"
                       step="0.01"
-                      placeholder="Unit cost"
+                      placeholder="Price"
                       value={it.unit_cost}
                       onChange={(e) => {
                         const items = [...poForm.items];
