@@ -16,21 +16,18 @@ export type Database = {
     Tables: {
       app_settings: {
         Row: {
-          auto_approve_refunds: boolean
           id: boolean
           show_cashier_manual: boolean
           updated_at: string
           updated_by: string | null
         }
         Insert: {
-          auto_approve_refunds?: boolean
           id?: boolean
           show_cashier_manual?: boolean
           updated_at?: string
           updated_by?: string | null
         }
         Update: {
-          auto_approve_refunds?: boolean
           id?: boolean
           show_cashier_manual?: boolean
           updated_at?: string
@@ -58,42 +55,6 @@ export type Database = {
           created_at?: string
           details?: Json | null
           id?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
-      cashier_accounts: {
-        Row: {
-          active: boolean
-          code1: string
-          code2: string
-          created_at: string
-          id: string
-          name: string
-          sale_permission: boolean
-          updated_at: string
-          user_id: string | null
-        }
-        Insert: {
-          active?: boolean
-          code1: string
-          code2: string
-          created_at?: string
-          id?: string
-          name: string
-          sale_permission?: boolean
-          updated_at?: string
-          user_id?: string | null
-        }
-        Update: {
-          active?: boolean
-          code1?: string
-          code2?: string
-          created_at?: string
-          id?: string
-          name?: string
-          sale_permission?: boolean
-          updated_at?: string
           user_id?: string | null
         }
         Relationships: []
@@ -323,61 +284,6 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      refund_items: {
-        Row: {
-          amount: number
-          created_at: string
-          id: string
-          quantity: number
-          refund_id: string
-          sale_item_id: string
-          unit_price: number
-          variant_id: string
-        }
-        Insert: {
-          amount?: number
-          created_at?: string
-          id?: string
-          quantity: number
-          refund_id: string
-          sale_item_id: string
-          unit_price?: number
-          variant_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          quantity?: number
-          refund_id?: string
-          sale_item_id?: string
-          unit_price?: number
-          variant_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "refund_items_refund_id_fkey"
-            columns: ["refund_id"]
-            isOneToOne: false
-            referencedRelation: "refunds"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "refund_items_sale_item_id_fkey"
-            columns: ["sale_item_id"]
-            isOneToOne: false
-            referencedRelation: "sale_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "refund_items_variant_id_fkey"
-            columns: ["variant_id"]
-            isOneToOne: false
-            referencedRelation: "product_variants"
             referencedColumns: ["id"]
           },
         ]
@@ -740,16 +646,6 @@ export type Database = {
       }
       refund_sale: {
         Args: {
-          p_kind?: string
-          p_reason?: string
-          p_restock?: boolean
-          p_sale_id: string
-        }
-        Returns: string
-      }
-      refund_sale_items: {
-        Args: {
-          p_items?: Json
           p_kind?: string
           p_reason?: string
           p_restock?: boolean
