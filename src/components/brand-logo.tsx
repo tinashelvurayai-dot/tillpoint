@@ -1,4 +1,4 @@
-const ignitedLogo = "https://i.postimg.cc/yd4Z6X1y/Whats-App-Image-2026-09-07-at-9-29-12-AM.jpg";
+const ignitedLogo = "https://i.postimg.cc/52qQgmRh/6cm-IBZ-Logo.png";
 
 interface BrandLogoProps {
   className?: string;
@@ -27,7 +27,7 @@ export function BrandLogo({
               variant === "light" ? "text-white/75" : "text-muted-foreground"
             }`}
           >
-            Skincare Till
+            Discover your complete skincare solution
           </div>
         </div>
       )}
