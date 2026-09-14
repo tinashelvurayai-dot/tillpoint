@@ -14,15 +14,6 @@ import { Droplets, Leaf, ShieldCheck, Sun, ArrowRight } from "lucide-react";
 import { setMode } from "@/lib/session-mode";
 import { useShowInstallButton } from "@/hooks/use-app-prefs";
 import { cashierSignIn } from "@/lib/cashier-auth.functions";
-import oilColors from "@/assets/oil-colors.jpg.asset.json";
-import creamColors from "@/assets/cream-colors.jpg.asset.json";
-import rosehip from "@/assets/Rosehip-125ml-Box-Mock-up.png.asset.json";
-import q10 from "@/assets/q10-125ml-Box-Mock-up.png.asset.json";
-import tissueOil from "@/assets/Tissue-Oil-125ml-Box-Mock-up.png.asset.json";
-import camphor from "@/assets/exo-camphor.png.asset.json";
-import creamMen from "@/assets/exo-cream-men.png.asset.json";
-import glycerine from "@/assets/exo-glycerine.png.asset.json";
-import tissueCream from "@/assets/exo-tissue-cream.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -45,48 +36,67 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const creamHeroImage = "/packs.png";
+const creamHeroImage =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-09-14%20at%208.41.50%20AM-JsEVEvZANZ37QXaQ1WUzw4ecfeI2hk.jpeg";
 const productImages = {
-  scar: rosehip.url,
-  firming: q10.url,
-  tissue: tissueOil.url,
+  oilColors: "https://i.postimg.cc/HLC8SD6Y/Chat-GPT-Image-Sep-14-2026-09-00-32-AM.png",
+  creamColors: "https://i.postimg.cc/m2fcZGGt/Chat-GPT-Image-Sep-14-2026-08-48-36-AM.png",
+  tissueOil: "https://i.postimg.cc/yNGfkTBH/Whats-App-Image-2026-09-07-at-9-24-42-AM.jpg",
+  firmingOil: "https://i.postimg.cc/mgRKsV2b/Whats-App-Image-2026-09-07-at-9-24-43-AM.jpg",
+  scarOil: "https://i.postimg.cc/BvpY4G7J/Whats-App-Image-2026-09-07-at-9-24-43-AM-(1).jpg",
+  tripleGlycerine: "https://i.postimg.cc/vZbRwnWf/a.png",
+  tissueOilCream: "https://i.postimg.cc/HkQNSkRh/e.png",
+  camphorCream: "https://i.postimg.cc/rwrTqTbx/f.png",
+  q10Cream: "https://i.postimg.cc/YCGrjYvT/d.png",
+  maxMoisture: "https://i.postimg.cc/FzpRgvvM/c.png",
+  menTissueOilCream: "https://i.postimg.cc/Kv5LJXQY/50ml-Exo-Tissue-oil-Men-768x802.png",
 };
 
 const products = [
   {
-    img: tissueCream.url,
-    name: "Tissue Oil Cream",
-    body: "Triple glycerine with tissue oil and essential oils. Dermatologist tested for 72 hour moisturisation.",
+    img: productImages.tissueOilCream,
+    name: "EXO Moisture Intensive Tissue Oil Cream",
+    body: "Unveil a radiant you with EXO’s luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin’s thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
   },
   {
-    img: glycerine.url,
-    name: "Triple Glycerine Cream",
-    body: "Three times the glycerine, non-greasy, dermatologically tested for 48 hour moisturisation.",
+    img: productImages.tripleGlycerine,
+    name: "EXO Moisture Intensive Triple Glycerine Cream",
+    body: "Say goodbye to dryness with a powerful triple dose of glycerin, a natural humectant that attracts and retains moisture. It deeply hydrates rough, flaky skin for a soft, smooth and radiant glow.",
   },
   {
-    img: camphor.url,
-    name: "Triple Intensive Camphor",
-    body: "Camphor cream with triple glycerine and essential oils to restore, rejuvenate and repair.",
+    img: productImages.camphorCream,
+    name: "EXO Triple Intensive Camphor Cream",
+    body: "EXO’s Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
   },
   {
-    img: creamMen.url,
-    name: "Tissue Oil Cream 450ml - Men",
-    body: "A richer tin for men. Tissue oil and essential oils with 72 hour moisturisation.",
+    img: productImages.q10Cream,
+    name: "EXO Q10 Firming Triple Glycerine Cream",
+    body: "Triple hydration and rejuvenation combine with Coenzyme Q10 in this luxurious cream, giving your skin essential care and a refreshed, revitalized feel.",
   },
   {
-    img: productImages.tissue,
-    name: "Tissue Oil 125ml",
-    body: "A high potency, non-greasy oil concentrate for scars, stretch marks, dehydrated and ageing skin.",
+    img: productImages.maxMoisture,
+    name: "EXO Max Moisture Triple Glycerine Cream",
+    body: "A rich moisturizer designed for men’s skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
   },
   {
-    img: productImages.scar,
-    name: "Scar & Stretch Mark Oil",
-    body: "Rosehip and jojoba tissue oil that softens the look of scars, stretch marks and dry skin.",
+    img: productImages.menTissueOilCream,
+    name: "Tissue Oil Cream 450ml (Men)",
+    body: "Blended with tissue oil and essential oils, dermatologist tested for 72-hour moisturization and enriched with triple glycerine and nourishing oils for deeply hydrated, healthy-looking skin.",
   },
   {
-    img: productImages.firming,
-    name: "Skin Firming & Toning Oil",
-    body: "Q10 tissue oil for fine lines, uneven tone, elasticity and everyday vitality.",
+    img: productImages.tissueOil,
+    name: "EXO Tissue Oil (125ml)",
+    body: "A high-potency, non-greasy oil concentrate specially blended to reduce the appearance of scars, stretch marks and dehydrated or aging skin. Easily absorbed for deep penetration and visible results.",
+  },
+  {
+    img: productImages.firmingOil,
+    name: "Skin Firming & Toning Oil (125ml)",
+    body: "Infused with Coenzyme Q10 and antioxidant-rich, age-defying properties, this non-greasy formula targets fine lines, stretch marks and uneven tone while supporting skin elasticity and vitality.",
+  },
+  {
+    img: productImages.scarOil,
+    name: "Scar & Stretch Mark Oil (125ml)",
+    body: "Rosehip and jojoba combine in this lightweight, fast-absorbing oil to improve the appearance of scars, stretch marks and dry or aging skin while delivering deep nourishment and antioxidant protection.",
   },
 ];
 
@@ -161,7 +171,11 @@ function Landing() {
   if (session && role === "cashier") return <Navigate to="/cashier" />;
 
   const trustItems: Array<{ icon: typeof ShieldCheck; title: string; body: string }> = [
-    { icon: ShieldCheck, title: "DERMATOLOGIST TESTED", body: "Gentle & safe for everyday use" },
+    {
+      icon: ShieldCheck,
+      title: "DISCOVER YOUR COMPLETE SKINCARE SOLUTION",
+      body: "INTENSIVE HYDRATION & REJUVENATION FOR ALL SKIN TYPES",
+    },
     { icon: Leaf, title: "QUALITY INGREDIENTS", body: "Rosehip, jojoba & Q10 oils" },
     { icon: ArrowRight, title: "HONEST PRICING", body: "Premium care that’s affordable" },
     { icon: Droplets, title: "FOR THE WHOLE FAMILY", body: "Care for every skin type" },
@@ -208,13 +222,13 @@ function Landing() {
               Ignited BrandZ
             </span>
             <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-slate-950 md:text-7xl">
-              Healthy skin,
+              Affordable Skincare Products
               <br />
               <span
                 className="bg-clip-text text-transparent"
                 style={{ backgroundImage: "var(--gradient-brand)" }}
               >
-                honestly priced.
+                Healthy Skin.
               </span>
             </h1>
             <p className="mt-6 max-w-xl text-lg text-muted-foreground">
@@ -259,13 +273,11 @@ function Landing() {
                 aria-hidden="true"
               />
               <img
-                src="/exo-logo.png"
-                alt="EXO logo"
-                className="relative mx-auto w-full max-w-[34rem] object-contain drop-shadow-2xl"
-              />
-              <img
                 src={creamHeroImage}
-                alt="Ignited BrandZ cream collection"
+                alt="EXO moisture intensive creams and oils"
+                onError={(event) => {
+                  event.currentTarget.src = "/packs.png";
+                }}
                 className="relative mt-2 w-full object-contain"
               />
             </div>
@@ -366,7 +378,6 @@ function Landing() {
         <section className="mt-6 grid gap-4 rounded-3xl border border-white/70 bg-white/75 p-5 shadow-[var(--shadow-elev-1)] backdrop-blur sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
           {trustItems.map(({ icon: TrustIcon, title, body }, index) => {
             return (
-
               <div
                 key={title}
                 className={`flex items-center gap-3 px-4 py-2 ${index > 0 ? "lg:border-l lg:border-primary/15" : ""}`}
@@ -399,6 +410,9 @@ function Landing() {
                     src={p.img}
                     alt={p.name}
                     loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.src = "/packs.png";
+                    }}
                     className="h-full w-full object-contain transition group-hover:scale-[1.03]"
                   />
                 </div>
@@ -422,19 +436,25 @@ function Landing() {
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <figure className="overflow-hidden rounded-2xl border border-border bg-card p-4">
               <img
-                src={oilColors.url}
+                src={productImages.oilColors}
                 alt="Ignited BrandZ oil colour chart showing each oil variant"
                 loading="lazy"
                 className="w-full rounded-lg object-contain"
+                onError={(event) => {
+                  event.currentTarget.src = "/packs.png";
+                }}
               />
               <figcaption className="mt-3 text-sm font-medium">Oil colours</figcaption>
             </figure>
             <figure className="overflow-hidden rounded-2xl border border-border bg-card p-4">
               <img
-                src={creamColors.url}
+                src={productImages.creamColors}
                 alt="Ignited BrandZ cream colour chart showing each cream variant"
                 loading="lazy"
                 className="w-full rounded-lg object-contain"
+                onError={(event) => {
+                  event.currentTarget.src = "/packs.png";
+                }}
               />
               <figcaption className="mt-3 text-sm font-medium">Cream colours</figcaption>
             </figure>
@@ -448,3 +468,4 @@ function Landing() {
     </div>
   );
 }
+
