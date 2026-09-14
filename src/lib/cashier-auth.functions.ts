@@ -2,12 +2,12 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /** Shape returned to the sign-in screen. Never contains a password. */
-type SignInResult =
-  | { ok: true; tokenHash: string; name: string }
-  | { ok: false; error: string };
+type SignInResult = { ok: true; tokenHash: string; name: string } | { ok: false; error: string };
 
 function normaliseCode(value: unknown): string {
-  return String(value ?? "").trim().toUpperCase();
+  return String(value ?? "")
+    .trim()
+    .toUpperCase();
 }
 
 function emailFor(code1: string): string {
@@ -44,7 +44,6 @@ export const cashierSignIn = createServerFn({ method: "POST" })
       return { ok: false, error: "Those access codes are not recognised." };
     }
     if (!row.active) return { ok: false, error: "This cashier account has been switched off." };
-    if (!row.sale_permission) return { ok: false, error: "Sale Permission is disabled. Ask the manager to enable it." };
     if (!row.user_id) return { ok: false, error: "This cashier account is not set up yet." };
 
     const { data: userRes } = await supabaseAdmin.auth.admin.getUserById(row.user_id);
@@ -119,6 +118,7 @@ export const createCashier = createServerFn({ method: "POST" })
       code1: data.code1,
       code2: data.code2,
       active: true,
+      sale_permission: true,
     });
     if (error) throw new Error(error.message);
 
@@ -138,21 +138,23 @@ export const createCashier = createServerFn({ method: "POST" })
 
 export const updateCashier = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: {
-    id: string;
-    name: string;
-    code1: string;
-    code2: string;
-    active: boolean;
-    sale_permission?: boolean;
-  }) => ({
-    id: String(input.id),
-    name: String(input.name ?? "").trim(),
-    code1: normaliseCode(input.code1),
-    code2: normaliseCode(input.code2),
-    active: Boolean(input.active),
-    sale_permission: Boolean(input.sale_permission),
-  }))
+  .inputValidator(
+    (input: {
+      id: string;
+      name: string;
+      code1: string;
+      code2: string;
+      active: boolean;
+      sale_permission?: boolean;
+    }) => ({
+      id: String(input.id),
+      name: String(input.name ?? "").trim(),
+      code1: normaliseCode(input.code1),
+      code2: normaliseCode(input.code2),
+      active: Boolean(input.active),
+      sale_permission: Boolean(input.sale_permission),
+    }),
+  )
   .handler(async ({ data, context }) => {
     await assertManager(context as never);
     if (!data.name || data.code1.length < 4 || data.code2.length < 4) {
