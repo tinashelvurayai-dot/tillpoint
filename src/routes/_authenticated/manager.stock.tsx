@@ -111,21 +111,6 @@ function StockPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  const markAvailable = useMutation({
-    mutationFn: async (variant_id: string) => {
-      const { error } = await supabase.rpc(
-        "mark_variant_available" as any,
-        { _variant_id: variant_id } as any,
-      );
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Marked as available");
-      qc.invalidateQueries({ queryKey: ["stock"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
   const rows = stock.data ?? [];
 
   const stats = useMemo(() => {
@@ -303,9 +288,7 @@ function StockPage() {
                       window.location.href = "/manager/stock-in?record=1";
                     }}
                     onEditPrice={() => setEditPriceFor(r)}
-                    onMarkAvailable={() => r.variant && markAvailable.mutate(r.variant.id)}
                     pending={updateStock.isPending}
-                    markPending={markAvailable.isPending}
                   />
                 ))
               )}
@@ -387,17 +370,13 @@ function StockEditor({
   onSave,
   onAdd,
   onEditPrice,
-  onMarkAvailable,
   pending,
-  markPending,
 }: {
   row: StockRow;
   onSave: (l: number) => void;
   onAdd: () => void;
   onEditPrice: () => void;
-  onMarkAvailable: () => void;
   pending: boolean;
-  markPending: boolean;
 }) {
   const [l, setL] = useState(row.low_stock_alert_level);
   const dirty = l !== row.low_stock_alert_level;
@@ -459,18 +438,8 @@ function StockEditor({
           <Button size="sm" disabled={!dirty || pending} onClick={() => onSave(l)}>
             Save
           </Button>
-          <Button
-            size="sm"
-            variant={flaggedOut ? "default" : "outline"}
-            disabled={markPending}
-            onClick={onMarkAvailable}
-            className={flaggedOut ? "bg-emerald-600 hover:bg-emerald-700" : ""}
-          >
-            Stock Available
-          </Button>
         </div>
       </TableCell>
     </TableRow>
   );
 }
-
