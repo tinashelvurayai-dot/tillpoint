@@ -71,7 +71,6 @@ export type Database = {
           id: string
           name: string
           sale_permission: boolean
-          updated_at: string
           user_id: string | null
         }
         Insert: {
@@ -82,7 +81,6 @@ export type Database = {
           id?: string
           name: string
           sale_permission?: boolean
-          updated_at?: string
           user_id?: string | null
         }
         Update: {
@@ -93,7 +91,6 @@ export type Database = {
           id?: string
           name?: string
           sale_permission?: boolean
-          updated_at?: string
           user_id?: string | null
         }
         Relationships: []
@@ -329,34 +326,31 @@ export type Database = {
       }
       refund_items: {
         Row: {
-          amount: number
           created_at: string
           id: string
           quantity: number
           refund_id: string
           sale_item_id: string
           unit_price: number
-          variant_id: string
+          variant_id: string | null
         }
         Insert: {
-          amount?: number
           created_at?: string
           id?: string
           quantity: number
           refund_id: string
           sale_item_id: string
           unit_price?: number
-          variant_id: string
+          variant_id?: string | null
         }
         Update: {
-          amount?: number
           created_at?: string
           id?: string
           quantity?: number
           refund_id?: string
           sale_item_id?: string
           unit_price?: number
-          variant_id?: string
+          variant_id?: string | null
         }
         Relationships: [
           {
@@ -371,13 +365,6 @@ export type Database = {
             columns: ["sale_item_id"]
             isOneToOne: false
             referencedRelation: "sale_items"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "refund_items_variant_id_fkey"
-            columns: ["variant_id"]
-            isOneToOne: false
-            referencedRelation: "product_variants"
             referencedColumns: ["id"]
           },
         ]
