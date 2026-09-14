@@ -414,6 +414,7 @@ function Landing() {
                     src={p.img}
                     alt={p.name}
                     loading="lazy"
+                    decoding="async"
                     onError={(event) => {
                       event.currentTarget.src = "/packs.png";
                     }}
@@ -443,6 +444,7 @@ function Landing() {
                 src={productImages.oilColors}
                 alt="Ignited BrandZ oil colour chart showing each oil variant"
                 loading="lazy"
+                    decoding="async"
                 className="w-full rounded-lg object-contain"
                 onError={(event) => {
                   event.currentTarget.src = "/packs.png";
@@ -455,6 +457,7 @@ function Landing() {
                 src={productImages.creamColors}
                 alt="Ignited BrandZ cream colour chart showing each cream variant"
                 loading="lazy"
+                    decoding="async"
                 className="w-full rounded-lg object-contain"
                 onError={(event) => {
                   event.currentTarget.src = "/packs.png";
