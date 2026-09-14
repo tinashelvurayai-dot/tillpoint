@@ -49,7 +49,6 @@ function StockPage() {
   const qc = useQueryClient();
   const [filter, setFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "low" | "out" | "ok">("all");
-  const [addStockFor, setAddStockFor] = useState<StockRow | null>(null);
   const [editPriceFor, setEditPriceFor] = useState<StockRow | null>(null);
 
   const stockInHistory = useQuery({
@@ -80,10 +79,10 @@ function StockPage() {
   });
 
   const updateStock = useMutation({
-    mutationFn: async ({ id, quantity, low }: { id: string; quantity: number; low: number }) => {
+    mutationFn: async ({ id, low }: { id: string; low: number }) => {
       const { error } = await supabase
         .from("stock")
-        .update({ quantity, low_stock_alert_level: low })
+        .update({ low_stock_alert_level: low })
         .eq("id", id);
       if (error) throw error;
     },
@@ -91,43 +90,6 @@ function StockPage() {
       toast.success("Stock updated");
       qc.invalidateQueries({ queryKey: ["stock"] });
       qc.invalidateQueries({ queryKey: ["products"] });
-    },
-    onError: (e: Error) => toast.error(e.message),
-  });
-
-  const addStock = useMutation({
-    mutationFn: async ({
-      id,
-      current,
-      add,
-      buyingPrice,
-    }: {
-      id: string;
-      current: number;
-      add: number;
-      buyingPrice: number;
-    }) => {
-      const { error } = await supabase
-        .from("stock")
-        .update({ quantity: current + add })
-        .eq("id", id);
-      if (error) throw error;
-      await supabase.from("audit_logs").insert({
-        action: "stock_in",
-        details: {
-          stock_id: id,
-          quantity: add,
-          buying_price: buyingPrice,
-          product_name: "Stock received",
-          reason: "Manual stock-in",
-        },
-      });
-    },
-    onSuccess: () => {
-      toast.success("Stock added");
-      qc.invalidateQueries({ queryKey: ["stock"] });
-      setAddStockFor(null);
-      qc.invalidateQueries({ queryKey: ["stock-in-history"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -336,8 +298,10 @@ function StockPage() {
                   <StockEditor
                     key={r.id}
                     row={r}
-                    onSave={(q, l) => updateStock.mutate({ id: r.id, quantity: q, low: l })}
-                    onAdd={() => setAddStockFor(r)}
+                    onSave={(l) => updateStock.mutate({ id: r.id, low: l })}
+                    onAdd={() => {
+                      window.location.href = "/manager/stock-in?record=1";
+                    }}
                     onEditPrice={() => setEditPriceFor(r)}
                     onMarkAvailable={() => r.variant && markAvailable.mutate(r.variant.id)}
                     pending={updateStock.isPending}
@@ -349,57 +313,6 @@ function StockPage() {
           </Table>
         </div>
       </Card>
-
-      <Dialog open={!!addStockFor} onOpenChange={(o) => !o && setAddStockFor(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add stock - {addStockFor?.variant?.product?.name}</DialogTitle>
-          </DialogHeader>
-          {addStockFor && (
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                const fd = new FormData(e.currentTarget);
-                const add = parseInt(String(fd.get("add") ?? "0"), 10) || 0;
-                const buyingPrice = parseFloat(String(fd.get("buyingPrice") ?? "0")) || 0;
-                if (add > 0)
-                  addStock.mutate({
-                    id: addStockFor.id,
-                    current: addStockFor.quantity,
-                    add,
-                    buyingPrice,
-                  });
-              }}
-              className="space-y-4"
-            >
-              <div className="text-sm text-muted-foreground">
-                Current: <span className="font-medium text-foreground">{addStockFor.quantity}</span>{" "}
-                units
-              </div>
-              <div className="space-y-2">
-                <Label>Units brought in</Label>
-                <Input name="add" type="number" min="1" required autoFocus placeholder="e.g. 10" />
-              </div>
-              <div className="space-y-2">
-                <Label>Total buying price</Label>
-                <Input
-                  name="buyingPrice"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  required
-                  placeholder="e.g. 45.00"
-                />
-              </div>
-              <DialogFooter>
-                <Button type="submit" disabled={addStock.isPending}>
-                  Add to stock
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
 
       <Dialog open={!!editPriceFor} onOpenChange={(o) => !o && setEditPriceFor(null)}>
         <DialogContent>
@@ -479,19 +392,24 @@ function StockEditor({
   markPending,
 }: {
   row: StockRow;
-  onSave: (q: number, l: number) => void;
+  onSave: (l: number) => void;
   onAdd: () => void;
   onEditPrice: () => void;
   onMarkAvailable: () => void;
   pending: boolean;
   markPending: boolean;
 }) {
-  const [q, setQ] = useState(row.quantity);
   const [l, setL] = useState(row.low_stock_alert_level);
-  const dirty = q !== row.quantity || l !== row.low_stock_alert_level;
+  const dirty = l !== row.low_stock_alert_level;
   const flaggedOut = row.available === false;
-  const status = flaggedOut ? "flagged" : q === 0 ? "out" : q <= l ? "low" : "ok";
-  const value = q * Number(row.variant?.price ?? 0);
+  const status = flaggedOut
+    ? "flagged"
+    : row.quantity === 0
+      ? "out"
+      : row.quantity <= l
+        ? "low"
+        : "ok";
+  const value = row.quantity * Number(row.variant?.price ?? 0);
   return (
     <TableRow className={flaggedOut ? "bg-red-50/50" : undefined}>
       <TableCell className="font-medium">{row.variant?.product?.name}</TableCell>
@@ -508,13 +426,9 @@ function StockEditor({
         </button>
       </TableCell>
       <TableCell>
-        <Input
-          type="number"
-          min={0}
-          value={q}
-          onChange={(e) => setQ(Number(e.target.value) || 0)}
-          className="w-20"
-        />
+        <span className="inline-flex min-w-20 items-center rounded-md border bg-muted/40 px-3 py-2 text-sm font-semibold tabular-nums">
+          {row.quantity}
+        </span>
       </TableCell>
       <TableCell>
         <Input
@@ -540,9 +454,9 @@ function StockEditor({
       <TableCell>
         <div className="flex flex-wrap gap-1">
           <Button size="sm" variant="outline" onClick={onAdd}>
-            <Plus className="h-3.5 w-3.5" />
+            Stock-In
           </Button>
-          <Button size="sm" disabled={!dirty || pending} onClick={() => onSave(q, l)}>
+          <Button size="sm" disabled={!dirty || pending} onClick={() => onSave(l)}>
             Save
           </Button>
           <Button
@@ -559,3 +473,4 @@ function StockEditor({
     </TableRow>
   );
 }
+
