@@ -388,7 +388,7 @@ function ProductsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select name="category" defaultValue="Other">
+                  <Select name="category" defaultValue="Personal Care">
                     <SelectTrigger>
                       <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>

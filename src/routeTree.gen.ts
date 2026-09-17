@@ -32,7 +32,6 @@ import { Route as AuthenticatedManagerProductsRouteImport } from './routes/_auth
 import { Route as AuthenticatedManagerManualsRouteImport } from './routes/_authenticated/manager.manuals'
 import { Route as AuthenticatedManagerLogsRouteImport } from './routes/_authenticated/manager.logs'
 import { Route as AuthenticatedManagerExpensesRouteImport } from './routes/_authenticated/manager.expenses'
-import { Route as AuthenticatedManagerColoursRouteImport } from './routes/_authenticated/manager.colours'
 import { Route as AuthenticatedManagerCashiersRouteImport } from './routes/_authenticated/manager.cashiers'
 import { Route as AuthenticatedManagerCashRouteImport } from './routes/_authenticated/manager.cash'
 import { Route as AuthenticatedManagerAlertsRouteImport } from './routes/_authenticated/manager.alerts'
@@ -166,12 +165,6 @@ const AuthenticatedManagerExpensesRoute =
     path: '/expenses',
     getParentRoute: () => AuthenticatedManagerRoute,
   } as any)
-const AuthenticatedManagerColoursRoute =
-  AuthenticatedManagerColoursRouteImport.update({
-    id: '/colours',
-    path: '/colours',
-    getParentRoute: () => AuthenticatedManagerRoute,
-  } as any)
 const AuthenticatedManagerCashiersRoute =
   AuthenticatedManagerCashiersRouteImport.update({
     id: '/cashiers',
@@ -211,7 +204,6 @@ export interface FileRoutesByFullPath {
   '/manager/alerts': typeof AuthenticatedManagerAlertsRoute
   '/manager/cash': typeof AuthenticatedManagerCashRoute
   '/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
-  '/manager/colours': typeof AuthenticatedManagerColoursRoute
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
@@ -239,7 +231,6 @@ export interface FileRoutesByTo {
   '/manager/alerts': typeof AuthenticatedManagerAlertsRoute
   '/manager/cash': typeof AuthenticatedManagerCashRoute
   '/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
-  '/manager/colours': typeof AuthenticatedManagerColoursRoute
   '/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/manager/manuals': typeof AuthenticatedManagerManualsRoute
@@ -270,7 +261,6 @@ export interface FileRoutesById {
   '/_authenticated/manager/alerts': typeof AuthenticatedManagerAlertsRoute
   '/_authenticated/manager/cash': typeof AuthenticatedManagerCashRoute
   '/_authenticated/manager/cashiers': typeof AuthenticatedManagerCashiersRoute
-  '/_authenticated/manager/colours': typeof AuthenticatedManagerColoursRoute
   '/_authenticated/manager/expenses': typeof AuthenticatedManagerExpensesRoute
   '/_authenticated/manager/logs': typeof AuthenticatedManagerLogsRoute
   '/_authenticated/manager/manuals': typeof AuthenticatedManagerManualsRoute
@@ -301,7 +291,6 @@ export interface FileRouteTypes {
     | '/manager/alerts'
     | '/manager/cash'
     | '/manager/cashiers'
-    | '/manager/colours'
     | '/manager/expenses'
     | '/manager/logs'
     | '/manager/manuals'
@@ -329,7 +318,6 @@ export interface FileRouteTypes {
     | '/manager/alerts'
     | '/manager/cash'
     | '/manager/cashiers'
-    | '/manager/colours'
     | '/manager/expenses'
     | '/manager/logs'
     | '/manager/manuals'
@@ -359,7 +347,6 @@ export interface FileRouteTypes {
     | '/_authenticated/manager/alerts'
     | '/_authenticated/manager/cash'
     | '/_authenticated/manager/cashiers'
-    | '/_authenticated/manager/colours'
     | '/_authenticated/manager/expenses'
     | '/_authenticated/manager/logs'
     | '/_authenticated/manager/manuals'
@@ -544,13 +531,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManagerExpensesRouteImport
       parentRoute: typeof AuthenticatedManagerRoute
     }
-    '/_authenticated/manager/colours': {
-      id: '/_authenticated/manager/colours'
-      path: '/colours'
-      fullPath: '/manager/colours'
-      preLoaderRoute: typeof AuthenticatedManagerColoursRouteImport
-      parentRoute: typeof AuthenticatedManagerRoute
-    }
     '/_authenticated/manager/cashiers': {
       id: '/_authenticated/manager/cashiers'
       path: '/cashiers'
@@ -587,7 +567,6 @@ interface AuthenticatedManagerRouteChildren {
   AuthenticatedManagerAlertsRoute: typeof AuthenticatedManagerAlertsRoute
   AuthenticatedManagerCashRoute: typeof AuthenticatedManagerCashRoute
   AuthenticatedManagerCashiersRoute: typeof AuthenticatedManagerCashiersRoute
-  AuthenticatedManagerColoursRoute: typeof AuthenticatedManagerColoursRoute
   AuthenticatedManagerExpensesRoute: typeof AuthenticatedManagerExpensesRoute
   AuthenticatedManagerLogsRoute: typeof AuthenticatedManagerLogsRoute
   AuthenticatedManagerManualsRoute: typeof AuthenticatedManagerManualsRoute
@@ -608,7 +587,6 @@ const AuthenticatedManagerRouteChildren: AuthenticatedManagerRouteChildren = {
   AuthenticatedManagerAlertsRoute: AuthenticatedManagerAlertsRoute,
   AuthenticatedManagerCashRoute: AuthenticatedManagerCashRoute,
   AuthenticatedManagerCashiersRoute: AuthenticatedManagerCashiersRoute,
-  AuthenticatedManagerColoursRoute: AuthenticatedManagerColoursRoute,
   AuthenticatedManagerExpensesRoute: AuthenticatedManagerExpensesRoute,
   AuthenticatedManagerLogsRoute: AuthenticatedManagerLogsRoute,
   AuthenticatedManagerManualsRoute: AuthenticatedManagerManualsRoute,
