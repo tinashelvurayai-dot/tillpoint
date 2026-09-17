@@ -69,6 +69,8 @@ export type Database = {
           code2: string
           created_at: string
           id: string
+          login_email: string | null
+          login_password: string | null
           name: string
           sale_permission: boolean
           user_id: string | null
@@ -79,6 +81,8 @@ export type Database = {
           code2: string
           created_at?: string
           id?: string
+          login_email?: string | null
+          login_password?: string | null
           name: string
           sale_permission?: boolean
           user_id?: string | null
@@ -89,6 +93,8 @@ export type Database = {
           code2?: string
           created_at?: string
           id?: string
+          login_email?: string | null
+          login_password?: string | null
           name?: string
           sale_permission?: boolean
           user_id?: string | null
@@ -700,6 +706,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cashier_login: {
+        Args: { p_code1: string; p_code2: string }
+        Returns: Json
+      }
       flag_out_of_stock: { Args: { _variant_id: string }; Returns: undefined }
       has_role: {
         Args: {
