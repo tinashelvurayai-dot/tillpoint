@@ -661,11 +661,7 @@ function ProductsPage() {
               </div>
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Input
-                  name="category"
-                  maxLength={60}
-                  defaultValue={editingProduct.category ?? ""}
-                />
+                <Input name="category" readOnly value="Personal Care" />
               </div>
               <div className="space-y-2">
                 <Label>Base price (optional)</Label>
