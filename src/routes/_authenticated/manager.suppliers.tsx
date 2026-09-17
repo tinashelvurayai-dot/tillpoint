@@ -212,6 +212,15 @@ function SuppliersPage() {
       ),
   });
 
+  const orderTotal = (order: any) => {
+    const items: POItem[] = Array.isArray(order?.items) ? order.items : [];
+    const computed = items.reduce(
+      (sum, item) => sum + Number(item?.quantity || 0) * Number(item?.unit_cost || 0),
+      0,
+    );
+    return computed || Number(order?.total || 0);
+  };
+
   const poTotal = useMemo(
     () => poForm.items.reduce((s, i) => s + Number(i.quantity || 0) * Number(i.unit_cost || 0), 0),
     [poForm.items],
@@ -348,7 +357,7 @@ function SuppliersPage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">{formatCurrency(p.total)}</span>
+                    <span className="font-semibold">{formatCurrency(orderTotal(p))}</span>
                     <Select
                       value={p.status}
                       onValueChange={(v) => updateStatus.mutate({ id: p.id, status: v })}

@@ -55,7 +55,6 @@ const navItems: Array<{
   { to: "/shift", label: "Shift Close (Z)", icon: LockIcon },
 
   { to: "/manager/cashiers", label: "Cashiers", icon: Users },
-  { to: "/manager/colours", label: "Colour charts", icon: Package },
   { to: "/manager/storage", label: "Storage & Exports", icon: HardDrive },
   { to: "/manager/settings", label: "Settings", icon: Settings },
   { to: "/manager/logs", label: "Reset Logs", icon: ScrollText },

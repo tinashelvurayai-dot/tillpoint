@@ -124,9 +124,29 @@ function StockInRecordsPage() {
 
   const save = useMutation({
     mutationFn: async () => {
-      const variant = variants.data?.find((v) => v.id === form.variantId);
-      const stockId = editing?.stock_id ?? variant?.stock?.[0]?.id;
-      if (!stockId || !form.variantId) throw new Error("Choose a product variant");
+      if (!form.variantId && !editing) throw new Error("Choose a product variant");
+      const variantId = editing?.variant_id ?? form.variantId;
+      const variant = variants.data?.find((v) => v.id === variantId);
+      let stockId = editing?.stock_id ?? variant?.stock?.[0]?.id;
+      if (!stockId) {
+        // Fall back to looking the stock row up (or creating it) for this variant.
+        const { data: existing } = await supabase
+          .from("stock")
+          .select("id")
+          .eq("variant_id", variantId)
+          .maybeSingle();
+        if (existing?.id) {
+          stockId = existing.id;
+        } else {
+          const { data: created, error: createError } = await supabase
+            .from("stock")
+            .insert({ variant_id: variantId, quantity: 0 })
+            .select("id")
+            .single();
+          if (createError) throw createError;
+          stockId = created.id;
+        }
+      }
       const quantity = Number(form.quantity);
       const price = Number(form.price);
       if (!Number.isInteger(quantity) || quantity <= 0 || price < 0)

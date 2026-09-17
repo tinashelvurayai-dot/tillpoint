@@ -63,20 +63,7 @@ type Product = {
 };
 
 const SIZES = ["Small", "Medium", "Large", "XL", "One Size"] as const;
-const CATEGORIES = [
-  "Beverages",
-  "Bakery",
-  "Breakfast",
-  "Dairy",
-  "Groceries",
-  "Household",
-  "Personal Care",
-  "Snacks",
-  "Stationery",
-  "Sweets",
-  "Tobacco",
-  "Other",
-] as const;
+const CATEGORIES = ["Personal Care"] as const;
 
 function ProductImagePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -401,7 +388,7 @@ function ProductsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Category</Label>
-                  <Select name="category" defaultValue="Other">
+                  <Select name="category" defaultValue="Personal Care">
                     <SelectTrigger>
                       <SelectValue placeholder="Choose a category" />
                     </SelectTrigger>
@@ -674,11 +661,7 @@ function ProductsPage() {
               </div>
               <div className="space-y-2">
                 <Label>Category</Label>
-                <Input
-                  name="category"
-                  maxLength={60}
-                  defaultValue={editingProduct.category ?? ""}
-                />
+                <Input name="category" readOnly value="Personal Care" />
               </div>
               <div className="space-y-2">
                 <Label>Base price (optional)</Label>
