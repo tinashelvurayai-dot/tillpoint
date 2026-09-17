@@ -63,20 +63,7 @@ type Product = {
 };
 
 const SIZES = ["Small", "Medium", "Large", "XL", "One Size"] as const;
-const CATEGORIES = [
-  "Beverages",
-  "Bakery",
-  "Breakfast",
-  "Dairy",
-  "Groceries",
-  "Household",
-  "Personal Care",
-  "Snacks",
-  "Stationery",
-  "Sweets",
-  "Tobacco",
-  "Other",
-] as const;
+const CATEGORIES = ["Personal Care"] as const;
 
 function ProductImagePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
