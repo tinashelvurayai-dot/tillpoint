@@ -27,7 +27,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Ignited BrandZ - Till & Stock" },
       {
         property: "og:description",
-        content: "Sign in to the EXO till to sell creams and oils and follow daily takings.",
+        content:
+          "Sign in to the EXO till to sell creams and oils and follow daily takings.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -38,65 +39,81 @@ export const Route = createFileRoute("/")({
 
 const creamHeroImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-09-14%20at%208.41.50%20AM-JsEVEvZANZ37QXaQ1WUzw4ecfeI2hk.jpeg";
+
 const productImages = {
-  oilColors: "https://i.postimg.cc/HLC8SD6Y/Chat-GPT-Image-Sep-14-2026-09-00-32-AM.png",
-  creamColors: "https://i.postimg.cc/m2fcZGGt/Chat-GPT-Image-Sep-14-2026-08-48-36-AM.png",
-  tissueOil: "https://i.postimg.cc/yNGfkTBH/Whats-App-Image-2026-09-07-at-9-24-42-AM.jpg",
-  firmingOil: "https://i.postimg.cc/mgRKsV2b/Whats-App-Image-2026-09-07-at-9-24-43-AM.jpg",
-  scarOil: "https://i.postimg.cc/BvpY4G7J/Whats-App-Image-2026-09-07-at-9-24-43-AM-(1).jpg",
+  oilColors:
+    "https://i.postimg.cc/HLC8SD6Y/Chat-GPT-Image-Sep-14-2026-09-00-32-AM.png",
+  creamColors:
+    "https://i.postimg.cc/m2fcZGGt/Chat-GPT-Image-Sep-14-2026-08-48-36-AM.png",
+  tissueOil:
+    "https://i.postimg.cc/yNGfkTBH/Whats-App-Image-2026-09-07-at-9-24-42-AM.jpg",
+  firmingOil:
+    "https://i.postimg.cc/mgRKsV2b/Whats-App-Image-2026-09-07-at-9-24-43-AM.jpg",
+  scarOil:
+    "https://i.postimg.cc/BvpY4G7J/Whats-App-Image-2026-09-07-at-9-24-43-AM-(1).jpg",
   tripleGlycerine: "https://i.postimg.cc/vZbRwnWf/a.png",
   tissueOilCream: "https://i.postimg.cc/HkQNSkRh/e.png",
   camphorCream: "https://i.postimg.cc/rwrTqTbx/f.png",
   q10Cream: "https://i.postimg.cc/YCGrjYvT/d.png",
   maxMoisture: "https://i.postimg.cc/FzpRgvvM/c.png",
-  menTissueOilCream: "https://i.postimg.cc/Kv5LJXQY/50ml-Exo-Tissue-oil-Men-768x802.png",
+  menTissueOilCream:
+    "https://i.postimg.cc/Kv5LJXQY/50ml-Exo-Tissue-oil-Men-768x802.png",
 };
 
 const products = [
   {
     img: productImages.tissueOilCream,
     name: "EXO Moisture Intensive Tissue Oil Cream",
-    body: "Unveil a radiant you with EXO’s luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin’s thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
+    body:
+      "Unveil a radiant you with EXO’s luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin’s thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
   },
   {
     img: productImages.tripleGlycerine,
     name: "EXO Moisture Intensive Triple Glycerine Cream",
-    body: "Say goodbye to dryness with a powerful triple dose of glycerin, a natural humectant that attracts and retains moisture. It deeply hydrates rough, flaky skin for a soft, smooth and radiant glow.",
+    body:
+      "Say goodbye to dryness with a powerful triple dose of glycerin, a natural humectant that attracts and retains moisture. It deeply hydrates rough, flaky skin for a soft, smooth and radiant glow.",
   },
   {
     img: productImages.camphorCream,
     name: "EXO Triple Intensive Camphor Cream",
-    body: "EXO’s Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
+    body:
+      "EXO’s Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
   },
   {
     img: productImages.q10Cream,
     name: "EXO Q10 Firming Triple Glycerine Cream",
-    body: "Triple hydration and rejuvenation combine with Coenzyme Q10 in this luxurious cream, giving your skin essential care and a refreshed, revitalized feel.",
+    body:
+      "Triple hydration and rejuvenation combine with Coenzyme Q10 in this luxurious cream, giving your skin essential care and a refreshed, revitalized feel.",
   },
   {
     img: productImages.maxMoisture,
     name: "EXO Max Moisture Triple Glycerine Cream",
-    body: "A rich moisturizer designed for men’s skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
+    body:
+      "A rich moisturizer designed for men’s skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
   },
   {
     img: productImages.menTissueOilCream,
     name: "Tissue Oil Cream 450ml (Men)",
-    body: "Blended with tissue oil and essential oils, dermatologist tested for 72-hour moisturization and enriched with triple glycerine and nourishing oils for deeply hydrated, healthy-looking skin.",
+    body:
+      "Blended with tissue oil and essential oils, dermatologist tested for 72-hour moisturization and enriched with triple glycerine and nourishing oils for deeply hydrated, healthy-looking skin.",
   },
   {
     img: productImages.tissueOil,
     name: "EXO Tissue Oil (125ml)",
-    body: "A high-potency, non-greasy oil concentrate specially blended to reduce the appearance of scars, stretch marks and dehydrated or aging skin. Easily absorbed for deep penetration and visible results.",
+    body:
+      "A high-potency, non-greasy oil concentrate specially blended to reduce the appearance of scars, stretch marks and dehydrated or aging skin. Easily absorbed for deep penetration and visible results.",
   },
   {
     img: productImages.firmingOil,
     name: "Skin Firming & Toning Oil (125ml)",
-    body: "Infused with Coenzyme Q10 and antioxidant-rich, age-defying properties, this non-greasy formula targets fine lines, stretch marks and uneven tone while supporting skin elasticity and vitality.",
+    body:
+      "Infused with Coenzyme Q10 and antioxidant-rich, age-defying properties, this non-greasy formula targets fine lines, stretch marks and uneven tone while supporting skin elasticity and vitality.",
   },
   {
     img: productImages.scarOil,
     name: "Scar & Stretch Mark Oil (125ml)",
-    body: "Rosehip and jojoba combine in this lightweight, fast-absorbing oil to improve the appearance of scars, stretch marks and dry or aging skin while delivering deep nourishment and antioxidant protection.",
+    body:
+      "Rosehip and jojoba combine in this lightweight, fast-absorbing oil to improve the appearance of scars, stretch marks and dry or aging skin while delivering deep nourishment and antioxidant protection.",
   },
 ];
 
@@ -112,25 +129,36 @@ function Landing() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
+
   const signInWithCodes = useServerFn(cashierSignIn);
 
   async function handleCashier(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+
     try {
-      const res = await signInWithCodes({ data: { code1: c1, code2: c2 } });
+      const res = await signInWithCodes({
+        data: {
+          code1: c1,
+          code2: c2,
+        },
+      });
+
       if (!res.ok) {
         toast.error(res.error);
         return;
       }
+
       const { error } = await supabase.auth.verifyOtp({
         token_hash: res.tokenHash,
         type: "email",
       });
+
       if (error) {
         toast.error("Could not open the till. Please try again.");
         return;
       }
+
       setMode("cashier");
       toast.success(`Welcome, ${res.name}`);
       navigate({ to: "/cashier" });
@@ -144,15 +172,18 @@ function Landing() {
   async function handleManager(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
       });
+
       if (error) {
         toast.error("That email and password do not match.");
         return;
       }
+
       setMode("manager");
       navigate({ to: "/manager" });
     } finally {
@@ -167,18 +198,40 @@ function Landing() {
       </div>
     );
   }
-  if (session && role === "manager") return <Navigate to="/manager" />;
-  if (session && role === "cashier") return <Navigate to="/cashier" />;
 
-  const trustItems: Array<{ icon: typeof ShieldCheck; title: string; body: string }> = [
+  if (session && role === "manager") {
+    return <Navigate to="/manager" />;
+  }
+
+  if (session && role === "cashier") {
+    return <Navigate to="/cashier" />;
+  }
+
+  const trustItems: Array<{
+    icon: typeof ShieldCheck;
+    title: string;
+    body: string;
+  }> = [
     {
       icon: ShieldCheck,
       title: "DISCOVER YOUR COMPLETE SKINCARE SOLUTION",
       body: "INTENSIVE HYDRATION & REJUVENATION FOR ALL SKIN TYPES",
     },
-    { icon: Leaf, title: "QUALITY INGREDIENTS", body: "Rosehip, jojoba & Q10 oils" },
-    { icon: ArrowRight, title: "HONEST PRICING", body: "Premium care that’s affordable" },
-    { icon: Droplets, title: "FOR THE WHOLE FAMILY", body: "Care for every skin type" },
+    {
+      icon: Leaf,
+      title: "QUALITY INGREDIENTS",
+      body: "Rosehip, jojoba & Q10 oils",
+    },
+    {
+      icon: ArrowRight,
+      title: "HONEST PRICING",
+      body: "Premium care that’s affordable",
+    },
+    {
+      icon: Droplets,
+      title: "FOR THE WHOLE FAMILY",
+      body: "Care for every skin type",
+    },
   ];
 
   return (
@@ -188,6 +241,7 @@ function Landing() {
           className="absolute -right-40 -top-40 h-[560px] w-[560px] rounded-full opacity-20 blur-3xl"
           style={{ background: "var(--gradient-brand)" }}
         />
+
         <div
           className="absolute -bottom-40 -left-40 h-[520px] w-[520px] rounded-full opacity-10 blur-3xl"
           style={{ background: "var(--gradient-brand)" }}
@@ -197,13 +251,16 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-primary/10 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
           <BrandLogo />
+
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" className="hidden sm:inline-flex">
               <a href="#range">Our range</a>
             </Button>
+
             <Button asChild variant="ghost" className="hidden sm:inline-flex">
               <a href="#shades">Shades</a>
             </Button>
+
             {showInstall && (
               <PWAInstallButton
                 variant="outline"
@@ -221,6 +278,7 @@ function Landing() {
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Ignited BrandZ
             </span>
+
             <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-slate-950 md:text-7xl">
               Affordable Skincare Products
               <br />
@@ -231,9 +289,11 @@ function Landing() {
                 Healthy Skin.
               </span>
             </h1>
+
             <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-              Affordable creams and tissue oils made for real, everyday skin. Triple glycerine
-              moisture, rosehip & Q10 oilsas well as a till that keeps every jar and bottle counted.
+              Affordable creams and tissue oils made for real, everyday skin.
+              Triple glycerine moisture, rosehip & Q10 oilsas well as a till
+              that keeps every jar and bottle counted.
             </p>
 
             <Button
@@ -250,9 +310,21 @@ function Landing() {
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
               {[
-                { icon: Droplets, t: "72h moisture", b: "Dermatologist tested creams" },
-                { icon: Leaf, t: "Rosehip & jojoba", b: "High potency tissue oils" },
-                { icon: Sun, t: "Everyday care", b: "For the whole family" },
+                {
+                  icon: Droplets,
+                  t: "72h moisture",
+                  b: "Dermatologist tested creams",
+                },
+                {
+                  icon: Leaf,
+                  t: "Rosehip & jojoba",
+                  b: "High potency tissue oils",
+                },
+                {
+                  icon: Sun,
+                  t: "Everyday care",
+                  b: "For the whole family",
+                },
               ].map((f) => (
                 <div
                   key={f.t}
@@ -266,22 +338,28 @@ function Landing() {
             </div>
           </div>
 
-          <div className="relative w-full overflow-hidden rounded-3xl shadow-[var(--shadow-elev-2)]">
-  <img
-    src={creamHeroImage}
-    alt="EXO moisture intensive creams and oils"
-    width={1200}
-    height={900}
-    fetchPriority="high"
-    decoding="async"
-    onError={(event) => {
-      event.currentTarget.src = "/packs.png";
-    }}
-    className="block h-full w-full object-cover"
-  />
-</div>
+          <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 motion-safe:animate-in motion-safe:slide-in-from-right-4 duration-700">
+            <div className="relative w-full overflow-hidden rounded-3xl shadow-[var(--shadow-elev-2)]">
+              <img
+                src={creamHeroImage}
+                alt="EXO moisture intensive creams and oils"
+                width={1200}
+                height={900}
+                fetchPriority="high"
+                decoding="async"
+                onError={(event) => {
+                  event.currentTarget.src = "/packs.png";
+                }}
+                className="block h-full w-full object-cover"
+              />
+            </div>
+
             {!signInOpen ? (
-              <Button size="lg" className="group px-8" onClick={() => setSignInOpen(true)}>
+              <Button
+                size="lg"
+                className="group px-8"
+                onClick={() => setSignInOpen(true)}
+              >
                 Sign in{" "}
                 <ArrowRight
                   className="transition-transform group-hover:translate-x-1"
@@ -323,6 +401,7 @@ function Landing() {
                         autoComplete="off"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="code2">Access code 2</Label>
                       <Input
@@ -333,7 +412,12 @@ function Landing() {
                         autoComplete="off"
                       />
                     </div>
-                    <Button type="submit" className="w-full" disabled={busy}>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={busy}
+                    >
                       {busy ? "Opening the till..." : "Open the till"}
                     </Button>
                   </form>
@@ -349,6 +433,7 @@ function Landing() {
                         autoComplete="username"
                       />
                     </div>
+
                     <div className="space-y-2">
                       <Label htmlFor="password">Password</Label>
                       <Input
@@ -359,15 +444,20 @@ function Landing() {
                         autoComplete="current-password"
                       />
                     </div>
-                    <Button type="submit" className="w-full" disabled={busy}>
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={busy}
+                    >
                       {busy ? "Signing in..." : "Sign in"}
                     </Button>
                   </form>
                 )}
 
                 <div className="mt-5 flex items-center gap-2 text-xs text-muted-foreground">
-                  <ShieldCheck className="h-4 w-4 text-primary" /> Every sale is recorded against
-                  the person signed in.
+                  <ShieldCheck className="h-4 w-4 text-primary" />
+                  Every sale is recorded against the person signed in.
                 </div>
               </Card>
             )}
@@ -379,14 +469,21 @@ function Landing() {
             return (
               <div
                 key={title}
-                className={`flex items-center gap-3 px-4 py-2 ${index > 0 ? "lg:border-l lg:border-primary/15" : ""}`}
+                className={`flex items-center gap-3 px-4 py-2 ${
+                  index > 0 ? "lg:border-l lg:border-primary/15" : ""
+                }`}
               >
                 <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-blue-50 text-primary">
                   <TrustIcon className="h-5 w-5" />
                 </span>
+
                 <div>
-                  <div className="text-xs font-bold tracking-wide text-primary">{title}</div>
-                  <div className="mt-1 text-xs text-muted-foreground">{body}</div>
+                  <div className="text-xs font-bold tracking-wide text-primary">
+                    {title}
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground">
+                    {body}
+                  </div>
                 </div>
               </div>
             );
@@ -394,10 +491,14 @@ function Landing() {
         </section>
 
         <section id="range" className="mt-24">
-          <h2 className="text-3xl font-bold tracking-tight">The Ignited BrandZ range</h2>
+          <h2 className="text-3xl font-bold tracking-tight">
+            The Ignited BrandZ range
+          </h2>
+
           <p className="mt-2 max-w-2xl text-muted-foreground">
             Creams and oils that work together - moisture first, then repair.
           </p>
+
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((p) => (
               <article
@@ -416,12 +517,17 @@ function Landing() {
                     className="h-full w-full object-contain transition group-hover:scale-[1.03]"
                   />
                 </div>
+
                 <div className="p-5">
                   <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
                     EXO skincare
                   </div>
+
                   <h3 className="font-semibold">{p.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{p.body}</p>
+
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {p.body}
+                  </p>
                 </div>
               </article>
             ))}
@@ -429,43 +535,56 @@ function Landing() {
         </section>
 
         <section id="shades" className="mt-24">
-          <h2 className="text-3xl font-bold tracking-tight">Shades & variants</h2>
+          <h2 className="text-3xl font-bold tracking-tight">
+            Shades & variants
+          </h2>
+
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            The colour of each cap and lid tells you which oil or cream is in the bottle.
+            The colour of each cap and lid tells you which oil or cream is in
+            the bottle.
           </p>
+
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             <figure className="overflow-hidden rounded-2xl border border-border bg-card p-4">
               <img
                 src={productImages.oilColors}
                 alt="Ignited BrandZ oil colour chart showing each oil variant"
                 loading="lazy"
-                    decoding="async"
+                decoding="async"
                 className="w-full rounded-lg object-contain"
                 onError={(event) => {
                   event.currentTarget.src = "/packs.png";
                 }}
               />
-              <figcaption className="mt-3 text-sm font-medium">Oil colours</figcaption>
+
+              <figcaption className="mt-3 text-sm font-medium">
+                Oil colours
+              </figcaption>
             </figure>
+
             <figure className="overflow-hidden rounded-2xl border border-border bg-card p-4">
               <img
                 src={productImages.creamColors}
                 alt="Ignited BrandZ cream colour chart showing each cream variant"
                 loading="lazy"
-                    decoding="async"
+                decoding="async"
                 className="w-full rounded-lg object-contain"
                 onError={(event) => {
                   event.currentTarget.src = "/packs.png";
                 }}
               />
-              <figcaption className="mt-3 text-sm font-medium">Cream colours</figcaption>
+
+              <figcaption className="mt-3 text-sm font-medium">
+                Cream colours
+              </figcaption>
             </figure>
           </div>
         </section>
       </main>
 
       <footer className="border-t border-border/60 py-8 text-center text-sm text-muted-foreground">
-        {new Date().getFullYear()} Ignited BrandZ. Affordable skincare for healthy skin.
+        {new Date().getFullYear()} Ignited BrandZ. Affordable skincare for
+        healthy skin.
       </footer>
     </div>
   );
