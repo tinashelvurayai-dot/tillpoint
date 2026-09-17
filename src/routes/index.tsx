@@ -266,25 +266,20 @@ function Landing() {
             </div>
           </div>
 
-          <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 motion-safe:animate-in motion-safe:slide-in-from-right-4 duration-700">
-            <div className="relative w-full overflow-hidden rounded-3xl border border-primary/30 bg-gradient-to-br from-primary via-blue-700 to-slate-950 p-3 shadow-[var(--shadow-elev-2)]">
-              <div
-                className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.28),transparent_42%)]"
-                aria-hidden="true"
-              />
-              <img
-                src={creamHeroImage}
-                alt="EXO moisture intensive creams and oils"
-                width={1200}
-                height={900}
-                fetchPriority="high"
-                decoding="async"
-                onError={(event) => {
-                  event.currentTarget.src = "/packs.png";
-                }}
-                className="relative mt-2 w-full object-contain"
-              />
-            </div>
+          <div className="relative w-full overflow-hidden rounded-3xl shadow-[var(--shadow-elev-2)]">
+  <img
+    src={creamHeroImage}
+    alt="EXO moisture intensive creams and oils"
+    width={1200}
+    height={900}
+    fetchPriority="high"
+    decoding="async"
+    onError={(event) => {
+      event.currentTarget.src = "/packs.png";
+    }}
+    className="block h-full w-full object-cover"
+  />
+</div>
             {!signInOpen ? (
               <Button size="lg" className="group px-8" onClick={() => setSignInOpen(true)}>
                 Sign in{" "}
