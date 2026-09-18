@@ -48,6 +48,7 @@ function SuppliersPage() {
     products_offered: "",
   });
   const [poOpen, setPoOpen] = useState(false);
+  const [editingPO, setEditingPO] = useState<any | null>(null);
   const [poForm, setPoForm] = useState<{
     supplier_id: string;
     notes: string;
@@ -255,6 +256,53 @@ function SuppliersPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const savePO = useMutation({
+    mutationFn: async () => {
+      if (!editingPO) return;
+      const validItems = poForm.items.filter((i) => i.name.trim() && Number(i.quantity) > 0);
+      if (validItems.length === 0) throw new Error("Add at least one item");
+      const { error } = await supabase
+        .from("purchase_orders")
+        .update({
+          supplier_id: poForm.supplier_id || null,
+          items: validItems,
+          total: validItems.reduce((s, i) => s + Number(i.quantity) * Number(i.unit_cost), 0),
+          auto_reorder: poForm.auto_reorder,
+          notes: poForm.notes || null,
+        })
+        .eq("id", editingPO.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Purchase order updated");
+      setPoOpen(false);
+      setEditingPO(null);
+      setPoForm({
+        supplier_id: "",
+        notes: "",
+        auto_reorder: false,
+        items: [{ name: "", quantity: 1, unit_cost: 0 }],
+      });
+      qc.invalidateQueries({ queryKey: ["purchase-orders"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  function openPOEditor(order: any) {
+    setEditingPO(order);
+    setPoForm({
+      supplier_id: order.supplier_id ?? "",
+      notes: order.notes ?? "",
+      auto_reorder: Boolean(order.auto_reorder),
+      items: (Array.isArray(order.items) ? order.items : []).map((i: POItem) => ({
+        name: String(i?.name ?? ""),
+        quantity: Number(i?.quantity ?? 0),
+        unit_cost: Number(i?.unit_cost ?? 0),
+      })),
+    });
+    setPoOpen(true);
+  }
+
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase.from("purchase_orders").update({ status }).eq("id", id);
@@ -372,6 +420,9 @@ function SuppliersPage() {
                         <SelectItem value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Button size="sm" variant="outline" onClick={() => openPOEditor(p)}>
+                      Edit costs
+                    </Button>
                     {p.auto_reorder && (
                       <Badge variant="outline" className="border-blue-300 text-blue-700">
                         Auto
@@ -476,7 +527,7 @@ function SuppliersPage() {
       <Dialog open={poOpen} onOpenChange={setPoOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>New purchase order</DialogTitle>
+            <DialogTitle>{editingPO ? "Edit purchase order" : "New purchase order"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -514,7 +565,7 @@ function SuppliersPage() {
                     <Input
                       type="number"
                       placeholder="# of Units"
-                      value={it.quantity}
+                      value={it.quantity === 0 ? "" : it.quantity}
                       onChange={(e) => {
                         const items = [...poForm.items];
                         items[i] = { ...it, quantity: Number(e.target.value) };
@@ -525,7 +576,7 @@ function SuppliersPage() {
                       type="number"
                       step="0.01"
                       placeholder="Price"
-                      value={it.unit_cost}
+                      value={it.unit_cost === 0 ? "" : it.unit_cost}
                       onChange={(e) => {
                         const items = [...poForm.items];
                         items[i] = { ...it, unit_cost: Number(e.target.value) };
@@ -579,11 +630,20 @@ function SuppliersPage() {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPoOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setPoOpen(false);
+                setEditingPO(null);
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={() => addPO.mutate()} disabled={addPO.isPending}>
-              Create PO
+            <Button
+              onClick={() => (editingPO ? savePO.mutate() : addPO.mutate())}
+              disabled={addPO.isPending || savePO.isPending}
+            >
+              {editingPO ? "Save changes" : "Create PO"}
             </Button>
           </DialogFooter>
         </DialogContent>
