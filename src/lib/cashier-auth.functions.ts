@@ -1,9 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-/** Shape returned to the sign-in screen. Never contains a password. */
-type SignInResult = { ok: true; tokenHash: string; name: string } | { ok: false; error: string };
-
 function normaliseCode(value: unknown): string {
   return String(value ?? "")
     .trim()
@@ -19,46 +16,6 @@ function randomPassword(): string {
   crypto.getRandomValues(bytes);
   return `${btoa(String.fromCharCode(...bytes)).replace(/[^a-zA-Z0-9]/g, "")}xQ7!`;
 }
-
-/**
- * Cashier sign-in with the two access codes.
- * The codes are checked server-side; a one-time login token is returned so the
- * cashier's real account password never leaves the server.
- */
-export const cashierSignIn = createServerFn({ method: "POST" })
-  .inputValidator((input: { code1: string; code2: string }) => ({
-    code1: normaliseCode(input.code1),
-    code2: normaliseCode(input.code2),
-  }))
-  .handler(async ({ data }): Promise<SignInResult> => {
-    if (!data.code1 || !data.code2) return { ok: false, error: "Enter both access codes." };
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: row } = await supabaseAdmin
-      .from("cashier_accounts")
-      .select("id, user_id, name, code2, active, sale_permission")
-      .eq("code1", data.code1)
-      .maybeSingle();
-
-    if (!row || normaliseCode(row.code2) !== data.code2) {
-      return { ok: false, error: "Those access codes are not recognised." };
-    }
-    if (!row.active) return { ok: false, error: "This cashier account has been switched off." };
-    if (!row.user_id) return { ok: false, error: "This cashier account is not set up yet." };
-
-    const { data: userRes } = await supabaseAdmin.auth.admin.getUserById(row.user_id);
-    const email = userRes?.user?.email;
-    if (!email) return { ok: false, error: "This cashier account is not set up yet." };
-
-    const { data: link, error } = await supabaseAdmin.auth.admin.generateLink({
-      type: "magiclink",
-      email,
-    });
-    const tokenHash = link?.properties?.hashed_token;
-    if (error || !tokenHash) return { ok: false, error: "Could not start the session. Try again." };
-
-    return { ok: true, tokenHash, name: row.name };
-  });
 
 async function assertManager(context: { supabase: any; userId: string }) {
   const { data } = await context.supabase.rpc("has_role", {
@@ -102,9 +59,11 @@ export const createCashier = createServerFn({ method: "POST" })
       .maybeSingle();
     if (clash) throw new Error("That first access code is already used by another cashier.");
 
+    const loginEmail = emailFor(data.code1);
+    const loginPassword = randomPassword();
     const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
-      email: emailFor(data.code1),
-      password: randomPassword(),
+      email: loginEmail,
+      password: loginPassword,
       email_confirm: true,
       user_metadata: { full_name: data.name, cashier_id: data.code1 },
     });
@@ -119,6 +78,8 @@ export const createCashier = createServerFn({ method: "POST" })
       code2: data.code2,
       active: true,
       sale_permission: true,
+      login_email: loginEmail,
+      login_password: loginPassword,
     });
     if (error) throw new Error(error.message);
 
@@ -177,6 +138,7 @@ export const updateCashier = createServerFn({ method: "POST" })
         code2: data.code2,
         active: data.active,
         sale_permission: data.sale_permission,
+        login_email: emailFor(data.code1),
       })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
