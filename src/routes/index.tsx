@@ -511,7 +511,16 @@ function Landing() {
           })}
         </section>
 
-        <section id="range" className="mt-24">
+        <section id="range" className="relative mt-24 overflow-hidden rounded-[2rem] p-6 sm:p-8">
+          <img
+            src={sectionBackdropImage}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
+          />
+          <div className="relative">
           <h2 className="text-3xl font-bold tracking-tight">
             The Ignited BrandZ range
           </h2>
