@@ -318,7 +318,7 @@ function Landing() {
                 className="bg-clip-text text-transparent"
                 style={{
                   backgroundImage:
-                    "linear-gradient(90deg, #0b3b8f 0%, #1557b0 58%, #f15922 100%)",
+                    "linear-gradient(135deg, #0b3b8f 0%, #1557b0 42%, #f15922 100%)",
                 }}
               >
                 Healthy Skin.
@@ -384,7 +384,7 @@ function Landing() {
 
           {/* Hero image */}
           <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 motion-safe:animate-in motion-safe:slide-in-from-right-4 duration-700">
-            <div className="relative w-full overflow-hidden rounded-3xl shadow-[0_20px_50px_rgba(11,59,143,0.20)]">
+            <div className="relative w-full overflow-hidden rounded-3xl shadow-[0_0_0_1px_rgba(241,89,34,0.18),0_18px_38px_rgba(241,89,34,0.22),0_28px_70px_rgba(241,89,34,0.18)]">
               <img
                 src={creamHeroImage}
                 alt="EXO moisture intensive creams and oils"
