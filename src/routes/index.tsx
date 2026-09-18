@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import { Droplets, Leaf, ShieldCheck, Sun, ArrowRight } from "lucide-react";
 import { setMode } from "@/lib/session-mode";
 import { useShowInstallButton } from "@/hooks/use-app-prefs";
-import { cashierSignIn } from "@/lib/cashier-auth.functions";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -130,28 +129,38 @@ function Landing() {
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
 
-  const signInWithCodes = useServerFn(cashierSignIn);
 
   async function handleCashier(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
 
     try {
-      const res = await signInWithCodes({
-        data: {
-          code1: c1,
-          code2: c2,
-        },
+      // Access codes are verified in the database, so no server key is needed.
+      const { data, error: rpcError } = await supabase.rpc("cashier_login", {
+        p_code1: c1,
+        p_code2: c2,
       });
+      const res = (data ?? null) as {
+        ok?: boolean;
+        error?: string;
+        email?: string;
+        password?: string;
+        name?: string;
+      } | null;
 
-      if (!res.ok) {
-        toast.error(res.error);
+      if (rpcError || !res) {
+        toast.error("You need to be online to sign in.");
         return;
       }
 
-      const { error } = await supabase.auth.verifyOtp({
-        token_hash: res.tokenHash,
-        type: "email",
+      if (!res.ok || !res.email || !res.password) {
+        toast.error(res.error ?? "Those access codes are not recognised.");
+        return;
+      }
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: res.email,
+        password: res.password,
       });
 
       if (error) {
@@ -160,7 +169,7 @@ function Landing() {
       }
 
       setMode("cashier");
-      toast.success(`Welcome, ${res.name}`);
+      toast.success(`Welcome, ${res.name ?? "cashier"}`);
       navigate({ to: "/cashier" });
     } catch {
       toast.error("You need to be online to sign in.");
