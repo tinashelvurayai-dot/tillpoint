@@ -619,6 +619,7 @@ function Landing() {
               </figcaption>
             </figure>
           </div>
+          </div>
         </section>
       </main>
 
