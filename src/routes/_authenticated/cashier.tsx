@@ -482,14 +482,14 @@ function CashierScreen() {
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-right">
-              <div className="text-[10px] font-medium uppercase tracking-wider text-blue-700">
+            <div className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-right">
+              <div className="text-[10px] font-medium uppercase tracking-wider text-[#f15922]">
                 Sales today
               </div>
-              <div className="text-base font-bold tabular-nums text-blue-950">
+              <div className="text-base font-bold tabular-nums text-[#0b3b8f]">
                 {formatCurrency(today.total)}
               </div>
-              <div className="text-[10px] text-blue-700">
+              <div className="text-[10px] text-[#0b3b8f]">
                 {today.count} sale{today.count === 1 ? "" : "s"}
               </div>
             </div>
@@ -523,7 +523,7 @@ function CashierScreen() {
         <SyncAlertBanner />
 
         <div
-          className={`border-b px-4 py-3 text-xs sm:px-6 ${online ? "border-blue-100 bg-blue-50 text-blue-950" : "border-amber-200 bg-amber-50 text-amber-950"}`}
+          className={`border-b px-4 py-3 text-xs sm:px-6 ${online ? "border-orange-100 bg-orange-50 text-[#0b3b8f]" : "border-amber-200 bg-amber-50 text-amber-950"}`}
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -859,9 +859,9 @@ export function VoiceCommandHelp() {
         {commands.map(([command, description]) => (
           <div
             key={command}
-            className="grid gap-2 rounded-lg border border-blue-100 bg-blue-50/40 p-3 sm:grid-cols-[140px_1fr]"
+            className="grid gap-2 rounded-lg border border-orange-100 bg-orange-50/40 p-3 sm:grid-cols-[140px_1fr]"
           >
-            <code className="font-semibold text-blue-800">{command}</code>
+            <code className="font-semibold text-[#0b3b8f]">{command}</code>
             <span className="text-muted-foreground">{description}</span>
           </div>
         ))}
