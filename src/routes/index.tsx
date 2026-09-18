@@ -52,7 +52,7 @@ export const Route = createFileRoute("/")({
    ============================================================ */
 
 const heroGlassBackdrop =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Sep%2018%2C%202026%2C%2008_46_17%20PM-j6XNsDs576ZSFbRPA5bSpU7xv5HuTb.png";
+  "https://i.postimg.cc/QdxWbTM4/Chat-GPT-Image-Sep-18-2026-08-46-17-PM.png";
 
 /* ============================================================
    HERO PRODUCT IMAGE
