@@ -44,25 +44,20 @@
   --shadow-elev-1: 0 1px 2px oklch(0.15 0.02 250 / 0.06), 0 1px 3px oklch(0.15 0.02 250 / 0.04);
   --shadow-elev-2: 0 4px 12px oklch(0.15 0.02 250 / 0.08);
   --shadow-elev-3: 0 12px 32px oklch(0.15 0.02 250 / 0.12);
-  --gradient-brand: linear-gradient(
-    135deg,
-    oklch(0.52 0.2 255) 0%,
-    oklch(0.38 0.18 245) 52%,
-    oklch(0.24 0.12 250) 100%
-  );
+  --gradient-brand: linear-gradient(135deg, #f15922 0%, #1557b0 52%, #0b3b8f 100%);
   --gradient-surface: linear-gradient(180deg, oklch(0.99 0.005 240) 0%, oklch(0.97 0.012 240) 100%);
 }
 
 :root {
   --radius: 0.75rem;
-  /* Ignited BrandZ: cool neutrals with blue retail brand */
+  /* Ignited BrandZ: energetic orange and trusted blue retail brand */
   --background: oklch(0.985 0.005 240);
   --foreground: oklch(0.18 0.03 250);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.18 0.03 250);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.18 0.03 250);
-  --primary: oklch(0.42 0.18 255);
+  --primary: #f15922;
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.96 0.02 245);
   --secondary-foreground: oklch(0.24 0.05 250);
