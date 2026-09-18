@@ -95,8 +95,8 @@ function ManagerLayout() {
               className={cn(
                 "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                 active
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-700 hover:bg-slate-200/70 hover:text-blue-700",
+                  ? "bg-[#f15922] text-white shadow-sm shadow-orange-500/20"
+                  : "text-slate-700 hover:bg-orange-50 hover:text-[#f15922]",
               )}
             >
               <item.icon className="h-4 w-4" />
@@ -118,7 +118,7 @@ function ManagerLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop sidebar */}
-      <aside className="sticky top-0 hidden h-screen w-64 flex-col overflow-y-auto overscroll-contain border-r border-slate-300/60 bg-gradient-to-b from-slate-100 to-blue-50 md:flex">
+      <aside className="sticky top-0 hidden h-screen w-64 flex-col overflow-y-auto overscroll-contain border-r border-slate-300/60 bg-gradient-to-b from-orange-50 via-white to-blue-50 md:flex">
         {SidebarInner}
       </aside>
 
@@ -134,7 +134,7 @@ function ManagerLayout() {
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setMobileOpen(false)} />
-          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b from-slate-100 to-blue-50 shadow-xl">
+          <aside className="absolute left-0 top-0 flex h-full w-72 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b from-orange-50 via-white to-blue-50 shadow-xl">
             <div className="flex justify-end p-2">
               <Button variant="ghost" size="icon" onClick={() => setMobileOpen(false)}>
                 <X className="h-5 w-5" />
