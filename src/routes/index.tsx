@@ -38,6 +38,11 @@ export const Route = createFileRoute("/")({
 const creamHeroImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-09-14%20at%208.41.50%20AM-JsEVEvZANZ37QXaQ1WUzw4ecfeI2hk.jpeg";
 
+const sectionBackdropImage =
+  "https://i.postimg.cc/3RCtGGN2/Chat-GPT-Image-Sep-18-2026-07-57-56-PM.png";
+const glassFrameBackdropImage =
+  "https://i.postimg.cc/QdxWbTM4/Chat-GPT-Image-Sep-18-2026-08-46-17-PM.png";
+
 const productImages = {
   oilColors:
     "https://i.postimg.cc/HLC8SD6Y/Chat-GPT-Image-Sep-14-2026-09-00-32-AM.png",
@@ -281,8 +286,16 @@ function Landing() {
       </header>
 
       <main className="mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
-        <section className="grid items-center gap-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-white via-blue-50/80 to-blue-100/70 px-6 py-10 shadow-[var(--shadow-elev-2)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
-          <div className="motion-safe:animate-in motion-safe:slide-in-from-left-4 duration-700">
+        <section className="relative grid items-center gap-10 overflow-hidden rounded-[2rem] bg-gradient-to-br from-white via-blue-50/80 to-blue-100/70 px-6 py-10 shadow-[var(--shadow-elev-2)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
+          <img
+            src={glassFrameBackdropImage}
+            alt=""
+            aria-hidden
+            loading="eager"
+            decoding="async"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
+          />
+          <div className="relative motion-safe:animate-in motion-safe:slide-in-from-left-4 duration-700">
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
               Ignited BrandZ
             </span>
@@ -346,7 +359,7 @@ function Landing() {
             </div>
           </div>
 
-          <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 motion-safe:animate-in motion-safe:slide-in-from-right-4 duration-700">
+          <div className="relative flex min-h-[420px] flex-col items-center justify-center gap-6 motion-safe:animate-in motion-safe:slide-in-from-right-4 duration-700">
             <div className="relative w-full overflow-hidden rounded-3xl shadow-[var(--shadow-elev-2)]">
               <img
                 src={creamHeroImage}
@@ -498,7 +511,16 @@ function Landing() {
           })}
         </section>
 
-        <section id="range" className="mt-24">
+        <section id="range" className="relative mt-24 overflow-hidden rounded-[2rem] p-6 sm:p-8">
+          <img
+            src={sectionBackdropImage}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
+          />
+          <div className="relative">
           <h2 className="text-3xl font-bold tracking-tight">
             The Ignited BrandZ range
           </h2>
@@ -540,9 +562,19 @@ function Landing() {
               </article>
             ))}
           </div>
+          </div>
         </section>
 
-        <section id="shades" className="mt-24">
+        <section id="shades" className="relative mt-24 overflow-hidden rounded-[2rem] p-6 sm:p-8">
+          <img
+            src={sectionBackdropImage}
+            alt=""
+            aria-hidden
+            loading="lazy"
+            decoding="async"
+            className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30"
+          />
+          <div className="relative">
           <h2 className="text-3xl font-bold tracking-tight">
             Shades & variants
           </h2>
@@ -586,6 +618,7 @@ function Landing() {
                 Cream colours
               </figcaption>
             </figure>
+          </div>
           </div>
         </section>
       </main>
