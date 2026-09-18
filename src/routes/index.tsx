@@ -46,8 +46,8 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const creamHeroImage =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-09-14%20at%208.41.50%20AM-JsEVEvZANZ37QXaQ1WUzw4ecfeI2hk.jpeg";
+const heroGlassBackdrop =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Sep%2018%2C%202026%2C%2008_46_17%20PM-j6XNsDs576ZSFbRPA5bSpU7xv5HuTb.png";
 
 const productImages = {
   oilColors:
@@ -304,7 +304,16 @@ function Landing() {
 
       <main className="mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
         {/* Hero */}
-        <section className="grid items-center gap-10 overflow-hidden rounded-[2rem] border border-blue-100 bg-gradient-to-br from-white via-blue-50/80 to-blue-100/80 px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.10)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
+        <section
+          className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-[#eaf4ff] px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.16)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14"
+          style={{
+            backgroundImage: `url(${heroGlassBackdrop})`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+          }}
+        >
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-white/95 via-white/45 to-transparent" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-tr from-[#0b3b8f]/10 via-transparent to-[#f15922]/15" aria-hidden="true" />
           {/* Hero content */}
           <div className="motion-safe:animate-in motion-safe:slide-in-from-left-4 duration-700">
             <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922]">
@@ -384,19 +393,9 @@ function Landing() {
 
           {/* Hero image */}
           <div className="flex min-h-[420px] flex-col items-center justify-center gap-6 motion-safe:animate-in motion-safe:slide-in-from-right-4 duration-700">
-            <div className="relative w-full overflow-hidden rounded-3xl shadow-[0_0_0_1px_rgba(241,89,34,0.18),0_18px_38px_rgba(241,89,34,0.22),0_28px_70px_rgba(241,89,34,0.18)]">
-              <img
-                src={creamHeroImage}
-                alt="EXO moisture intensive creams and oils"
-                width={1200}
-                height={900}
-                fetchPriority="high"
-                decoding="async"
-                onError={(event) => {
-                  event.currentTarget.src = "/packs.png";
-                }}
-                className="block h-full w-full object-cover"
-              />
+            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-3xl border border-white/80 bg-white/10 shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)] backdrop-blur-[1px]">
+  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/35 via-transparent to-[#0b3b8f]/20" aria-hidden="true" />
+                          <div className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/60" aria-hidden="true" />
             </div>
 
             {!signInOpen ? (
@@ -573,8 +572,15 @@ function Landing() {
         </section>
 
         {/* Product range */}
-        <section id="range" className="mt-24">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <section id="range" className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Sep%2018%2C%202026%2C%2007_57_56%20PM-A7wND3dgaoeaT4n35ppQsa6I0kdtGy.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 size-full object-cover opacity-75"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-white/55" aria-hidden="true" />
+          <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
                 EXO skincare
@@ -593,7 +599,7 @@ function Landing() {
             <div className="hidden h-1 w-24 rounded-full bg-[#f15922] sm:block" />
           </div>
 
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="relative z-10 mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((p, index) => (
               <article
                 key={p.name}
@@ -639,7 +645,15 @@ function Landing() {
         </section>
 
         {/* Shades */}
-        <section id="shades" className="mt-24">
+        <section id="shades" className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8">
+          <img
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ChatGPT%20Image%20Sep%2018%2C%202026%2C%2007_57_56%20PM-A7wND3dgaoeaT4n35ppQsa6I0kdtGy.png"
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 size-full object-cover opacity-70"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-white/60" aria-hidden="true" />
+          <div className="relative z-10">
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
             Product identification
           </span>
@@ -653,7 +667,7 @@ function Landing() {
             the bottle.
           </p>
 
-          <div className="mt-8 grid gap-6 lg:grid-cols-2">
+          <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
             <figure className="overflow-hidden rounded-2xl border border-blue-100 bg-white p-4 shadow-[0_8px_25px_rgba(11,59,143,0.07)] transition duration-300 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.10)]">
               <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-slate-50">
                 <img
@@ -693,6 +707,7 @@ function Landing() {
                 Cream colours
               </figcaption>
             </figure>
+          </div>
           </div>
         </section>
       </main>
