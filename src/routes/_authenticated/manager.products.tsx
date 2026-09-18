@@ -65,6 +65,18 @@ type Product = {
 const SIZES = ["Small", "Medium", "Large", "XL", "One Size"] as const;
 const CATEGORIES = ["Personal Care"] as const;
 
+const homepageProductCatalog = [
+  ["EXO Moisture Intensive Tissue Oil Cream", "https://i.postimg.cc/HkQNSkRh/e.png"],
+  ["EXO Moisture Intensive Triple Glycerine Cream", "https://i.postimg.cc/vZbRwnWf/a.png"],
+  ["EXO Triple Intensive Camphor Cream", "https://i.postimg.cc/rwrTqTbx/f.png"],
+  ["EXO Q10 Firming Triple Glycerine Cream", "https://i.postimg.cc/YCGrjYvT/d.png"],
+  ["EXO Max Moisture Triple Glycerine Cream", "https://i.postimg.cc/FzpRgvvM/c.png"],
+  ["Tissue Oil Cream 450ml (Men)", "https://i.postimg.cc/Kv5LJXQY/50ml-Exo-Tissue-oil-Men-768x802.png"],
+  ["EXO Tissue Oil (125ml)", "https://i.postimg.cc/yNGfkTBH/Whats-App-Image-2026-09-07-at-9-24-42-AM.jpg"],
+  ["Skin Firming & Toning Oil (125ml)", "https://i.postimg.cc/mgRKsV2b/Whats-App-Image-2026-09-07-at-9-24-43-AM.jpg"],
+  ["Scar & Stretch Mark Oil (125ml)", "https://i.postimg.cc/BvpY4G7J/Whats-App-Image-2026-09-07-at-9-24-43-AM-(1).jpg"],
+] as const;
+
 function ProductImagePicker({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const fileRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -236,10 +248,23 @@ function ProductsPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const visibleProducts = products.data?.length
+    ? products.data
+    : homepageProductCatalog.map(([name, image_url], index) => ({
+        id: `homepage-${index}`,
+        name,
+        description: "Featured EXO skincare product from the home page catalog.",
+        category: "Personal Care",
+        image_url,
+        base_price: null,
+        active: true,
+        variants: [],
+      }));
+
   const filteredProducts = useMemo(() => {
     const needle = search.trim().toLowerCase();
-    if (!needle) return products.data ?? [];
-    return (products.data ?? []).filter((p) =>
+    if (!needle) return visibleProducts;
+    return visibleProducts.filter((p) =>
       [
         p.name,
         p.category ?? "",
@@ -250,7 +275,7 @@ function ProductsPage() {
         .toLowerCase()
         .includes(needle),
     );
-  }, [products.data, search]);
+  }, [visibleProducts, search]);
 
   function openEdit(p: Product) {
     setEditingProduct(p);
@@ -430,7 +455,7 @@ function ProductsPage() {
       </div>
       {products.isLoading ? (
         <div className="text-muted-foreground">Loading...</div>
-      ) : products.data?.length === 0 ? (
+      ) : visibleProducts.length === 0 ? (
         <Card className="p-12 text-center">
           <PackageIcon className="mx-auto h-10 w-10 text-muted-foreground" />
           <h3 className="mt-3 font-semibold">No products yet</h3>
