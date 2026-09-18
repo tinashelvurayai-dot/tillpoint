@@ -203,11 +203,9 @@ function CashierScreen() {
     },
   });
 
-  const hasSearch = search.trim().length > 0;
-
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    if (!q) return [] as Variant[];
+    if (!q) return list;
     return list.filter(
       (v) =>
         v.variant_name.toLowerCase().includes(q) ||
@@ -579,15 +577,7 @@ function CashierScreen() {
         </div>
 
         <div className="flex-1 overflow-auto p-4 sm:p-6">
-          {!hasSearch ? (
-            <div className="flex h-full flex-col items-center justify-center text-center">
-              <Search className="h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 text-sm font-medium">Search to find a product</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Products stay hidden until you type a name, variant or category.
-              </p>
-            </div>
-          ) : filtered.length === 0 ? (
+              {filtered.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
               <PackageIcon className="h-10 w-10 text-muted-foreground" />
               <p className="mt-3 text-sm text-muted-foreground">No products found.</p>
