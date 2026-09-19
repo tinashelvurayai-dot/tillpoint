@@ -73,7 +73,7 @@ const statusConfig: Record<
 };
 
 function statusBadge(s: QueuedSale["status"]) {
-  const cfg = statusConfig[s] ?? statusConfig.pending;
+  const cfg = statusConfig[s ?? "pending"] ?? statusConfig.pending;
   return (
     <Badge className={`border-0 bg-gradient-to-r ${cfg.gradient} text-white shadow-sm ${cfg.shadow}`}>
       <span className={`mr-1 h-1.5 w-1.5 rounded-full bg-white/90`} />
