@@ -31,7 +31,6 @@ import {
   DollarSign,
   Plus,
   History,
-  Sparkles,
   Package,
   PackageX,
   PackageCheck,
@@ -245,10 +244,7 @@ function StockPage() {
                 <TrendingDown className="h-5 w-5 text-white" />
               </div>
               <div className="text-sm text-orange-950">
-                <div className="flex items-center gap-1.5 font-bold">
-                  <Sparkles className="h-3.5 w-3.5 text-orange-600" />
-                  Smart alert
-                </div>
+                <div className="font-bold">Smart alert</div>
                 <div className="mt-0.5">
                   {stats.out > 0 && (
                     <>
