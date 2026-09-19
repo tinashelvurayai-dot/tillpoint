@@ -37,6 +37,9 @@ import {
   Undo2,
   Menu,
   Sparkles,
+  TrendingUp,
+  Wallet,
+  Receipt,
 } from "lucide-react";
 import { enqueueSale, flushQueue, getQueue } from "@/lib/offline-queue";
 import {
@@ -211,6 +214,7 @@ function CashierScreen() {
   }, [search, list]);
 
   const subtotal = cart.reduce((s, l) => s + Number(l.variant.price) * l.qty, 0);
+  const totalItems = cart.reduce((s, l) => s + l.qty, 0);
 
   const syncOfflineQueue = useCallback(
     async (showEmptyToast = false) => {
@@ -437,425 +441,500 @@ function CashierScreen() {
 
   if (loading)
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 text-muted-foreground">
-        Loading...
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative h-16 w-16">
+            <div className="absolute inset-0 animate-ping rounded-full bg-gradient-to-r from-orange-500 to-amber-400 opacity-20" />
+            <div className="relative grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/40">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+          </div>
+          <p className="text-sm font-medium text-slate-300">Loading till...</p>
+        </div>
       </div>
     );
 
   const showManual = settings.data?.show_cashier_manual !== false;
 
   return (
-    <div className="grid min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 lg:grid-cols-[1fr_420px]">
-      {/* Main product area */}
-      <div className="flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="relative flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 bg-white/80 px-4 py-3 shadow-sm backdrop-blur-lg sm:px-6 sm:py-4">
-          <div className="flex items-center gap-3">
-            <ManagerGateLogo />
-            <div className="hidden border-l border-slate-200 pl-3 sm:block">
-              <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Green Shop · Cashier
-              </div>
-              <div className="text-sm font-bold text-slate-800">
-                {roleIdentity.cashierName ?? profile?.full_name ?? "Cashier"}
-              </div>
-              <div className="text-xs text-slate-500">
-                {roleIdentity.cashierTitle ?? "Cashier"}
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {/* Sales today card */}
-            <div className="relative overflow-hidden rounded-xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-amber-50 px-4 py-2 text-right shadow-sm">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(241,89,34,0.08),transparent_60%)]" />
-              <div className="relative">
-                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f15922]">
-                  Sales today
-                </div>
-                <div className="text-lg font-black tabular-nums text-[#0b3b8f]">
-                  {formatCurrency(today.total)}
-                </div>
-                <div className="text-[10px] font-medium text-[#0b3b8f]/80">
-                  {today.count} sale{today.count === 1 ? "" : "s"}
-                </div>
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              <SyncIndicator />
-            </div>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  aria-label="Open cashier actions"
-                  className="border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                >
-                  <Menu data-icon="inline-start" /> Actions
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="border-l-slate-200 bg-white/95 backdrop-blur-lg">
-                <SheetHeader>
-                  <SheetTitle className="text-slate-800">Cashier actions</SheetTitle>
-                  <SheetDescription>Operational tools and account controls.</SheetDescription>
-                </SheetHeader>
-                <div className="flex flex-col gap-3 p-4">
-                  <Button
-                    variant="outline"
-                    onClick={() => syncOfflineQueue(true)}
-                    disabled={!online || syncStatus === "syncing"}
-                    className="border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                  >
-                    <RefreshCw data-icon="inline-start" /> Sync
-                  </Button>
-                  <PWAInstallButton variant="outline" size="sm" label="Install" />
-                  <Link to="/transactions">
-                    <Button
-                      variant="outline"
-                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                    >
-                      <ClipboardList data-icon="inline-start" /> Transaction log
-                    </Button>
-                  </Link>
-                  <Link to="/sync">
-                    <Button
-                      variant="outline"
-                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                    >
-                      Sync queue
-                    </Button>
-                  </Link>
-                  <Link to="/shift">
-                    <Button
-                      variant="outline"
-                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                    >
-                      <LockIcon data-icon="inline-start" /> Shift close
-                    </Button>
-                  </Link>
-                  <Link to="/refunds">
-                    <Button
-                      variant="outline"
-                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                    >
-                      <Undo2 data-icon="inline-start" /> Refunds
-                    </Button>
-                  </Link>
-                  {showManual && (
-                    <Button
-                      variant="outline"
-                      onClick={() => setManualOpen(true)}
-                      className="border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
-                    >
-                      <BookOpen data-icon="inline-start" /> Manual
-                    </Button>
-                  )}
-                  <SignOutButton variant="outline" />
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </header>
-
-        <SyncAlertBanner />
-
-        {/* Status bar */}
-        <div
-          className={`border-b px-4 py-2.5 text-xs sm:px-6 ${
-            online
-              ? "border-orange-100/80 bg-gradient-to-r from-orange-50/80 to-amber-50/60 text-[#0b3b8f]"
-              : "border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-950"
-          }`}
-        >
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2">
-              {syncStatus === "syncing" ? (
-                <RefreshCw className="h-4 w-4 animate-spin text-[#f15922]" />
-              ) : online ? (
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-              ) : (
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-              )}
-              <span className="font-semibold">
-                {!online
-                  ? "Offline mode active — sales are saved on this device."
-                  : syncStatus === "syncing"
-                    ? "Syncing offline sales now..."
-                    : queuedCount > 0
-                      ? `${queuedCount} offline sale${queuedCount === 1 ? "" : "s"} waiting to sync.`
-                      : "Online and synced."}
-              </span>
-            </div>
-            <span className="text-slate-500">
-              {lastSync
-                ? `Last sync: ${new Date(lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-                : "Catalog is available after it loads once."}
-            </span>
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="border-b border-slate-200/80 bg-white/70 px-4 py-3 backdrop-blur-sm sm:px-6">
-          <div className="relative max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-            <Input
-              id="cashier-search"
-              placeholder="Search products..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border-slate-200 bg-white/80 pl-9 pr-10 shadow-sm transition-all placeholder:text-slate-400 focus:border-[#f15922]/50 focus:ring-[#f15922]/20"
-            />
-            {search.length > 0 && (
-              <button
-                type="button"
-                aria-label="Clear search"
-                onClick={() => {
-                  setSearch("");
-                  document.getElementById("cashier-search")?.focus();
-                }}
-                className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-        </div>
-
-        {/* Product grid */}
-        <div className="flex-1 overflow-auto p-4 sm:p-6">
-          {filtered.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center text-center">
-              <div className="grid h-16 w-16 place-items-center rounded-2xl bg-slate-100">
-                <PackageIcon className="h-8 w-8 text-slate-400" />
-              </div>
-              <p className="mt-4 text-sm font-medium text-slate-500">No products found.</p>
-              <p className="mt-1 text-xs text-slate-400">Try a different search term.</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
-              {filtered.map((v) => {
-                const image = v.image_url || v.product?.image_url;
-                return (
-                  <div key={v.id} className="relative group">
-                    <button
-                      onClick={() => addToCart(v)}
-                      className="w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-200/80 hover:shadow-lg hover:shadow-orange-100/40"
-                    >
-                      {!hideImages && (
-                        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
-                          {image ? (
-                            <img
-                              src={image}
-                              alt={v.product?.name}
-                              className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
-                            />
-                          ) : (
-                            <div className="grid h-full w-full place-items-center">
-                              <PackageIcon className="h-8 w-8 text-slate-300" />
-                            </div>
-                          )}
-                          {/* Subtle overlay gradient */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
-                        </div>
-                      )}
-                      <div className="p-3.5">
-                        <div className="truncate text-sm font-bold text-slate-800">
-                          {v.product?.name}
-                        </div>
-                        <div className="mt-0.5 truncate text-xs text-slate-500">
-                          {v.variant_name}
-                          {v.size ? ` · ${v.size}` : ""}
-                        </div>
-                        <div className="mt-2.5 flex items-center justify-between">
-                          <span className="text-base font-black text-[#0b3b8f]">
-                            {formatCurrency(v.price)}
-                          </span>
-                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
-                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                            In stock
-                          </span>
-                        </div>
-                      </div>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/40 to-orange-50/30">
+      {/* Ambient gradient orbs */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 h-96 w-96 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-3xl" />
+        <div className="absolute top-1/3 -right-32 h-96 w-96 rounded-full bg-gradient-to-br from-orange-400/15 to-amber-400/15 blur-3xl" />
+        <div className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-gradient-to-br from-blue-400/15 to-indigo-400/15 blur-3xl" />
       </div>
 
-      {/* Cart sidebar */}
-      <aside className="flex flex-col border-t border-slate-200/80 bg-white/80 backdrop-blur-lg lg:border-l lg:border-t-0">
-        <div className="border-b border-slate-200/80 px-4 py-3 sm:px-6 sm:py-4">
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="h-4 w-4 text-[#f15922]" />
-            <h2 className="text-lg font-bold text-slate-800">Current sale</h2>
-          </div>
-          <p className="mt-0.5 text-xs text-slate-500">
-            {cart.length} line{cart.length === 1 ? "" : "s"} · {cart.reduce((s, l) => s + l.qty, 0)}{" "}
-            item{cart.reduce((s, l) => s + l.qty, 0) === 1 ? "" : "s"}
-          </p>
-        </div>
-
-        <div className="flex-1 overflow-auto px-4 py-3">
-          {cart.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center py-10 text-center">
-              <div className="grid h-16 w-16 place-items-center rounded-2xl bg-slate-100">
-                <ShoppingCart className="h-8 w-8 text-slate-300" />
-              </div>
-              <p className="mt-4 text-sm font-medium text-slate-500">Your cart is empty</p>
-              <p className="mt-1 text-xs text-slate-400">Tap a product to start a sale.</p>
-            </div>
-          ) : (
-            <div className="relative rounded-2xl border border-dashed border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-4 font-mono text-[13px] shadow-sm">
-              <button
-                type="button"
-                aria-label="Cancel sale"
-                title="Cancel this sale"
-                onClick={cancelSale}
-                className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg border border-slate-200 bg-white text-slate-400 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500"
-              >
-                <X className="h-4 w-4" />
-              </button>
-
-              <div className="text-center">
-                <div className="flex items-center justify-center gap-1.5 text-sm font-black tracking-[0.18em] uppercase text-slate-700">
-                  <Sparkles className="h-3.5 w-3.5 text-[#f15922]" />
-                  Receipt
+      <div className="relative grid min-h-screen lg:grid-cols-[1fr_420px]">
+        {/* Main product area */}
+        <div className="flex flex-col overflow-hidden">
+          {/* Header */}
+          <header className="sticky top-0 z-30 border-b border-white/20 bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 py-3 sm:px-6 sm:py-4">
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 opacity-30 blur-md" />
+                  <div className="relative"><ManagerGateLogo /></div>
                 </div>
-                <div className="mt-0.5 text-[11px] text-slate-400">
-                  {new Date().toLocaleString()}
+                <div className="hidden border-l border-slate-200 pl-3 sm:block">
+                  <div className="flex items-center gap-1.5">
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
+                    <div className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-[10px] font-bold uppercase tracking-wider text-transparent">
+                      Green Shop · Cashier
+                    </div>
+                  </div>
+                  <div className="text-sm font-bold text-slate-900">
+                    {roleIdentity.cashierName ?? profile?.full_name ?? "Cashier"}
+                  </div>
+                  <div className="text-xs text-slate-500">
+                    {roleIdentity.cashierTitle ?? "Cashier"}
+                  </div>
                 </div>
               </div>
 
-              <div className="my-3 border-t border-dashed border-slate-200" />
-
-              <ul className="space-y-3">
-                {cart.map((l) => (
-                  <li key={l.variant.id}>
-                    <div className="flex items-baseline justify-between gap-2">
-                      <span className="min-w-0 truncate font-bold text-slate-800">
-                        {l.variant.product?.name}
-                      </span>
-                      <span className="tabular-nums font-bold text-slate-800">
-                        {formatCurrency(Number(l.variant.price) * l.qty)}
-                      </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Sales today card */}
+                <div className="relative overflow-hidden rounded-xl border border-orange-200/60 bg-gradient-to-br from-orange-50 via-amber-50 to-orange-50 px-3 py-1.5 shadow-sm">
+                  <div className="absolute -right-2 -top-2 h-8 w-8 rounded-full bg-gradient-to-br from-orange-400/20 to-amber-400/20" />
+                  <div className="relative text-right">
+                    <div className="flex items-center justify-end gap-1 text-[10px] font-bold uppercase tracking-wider text-orange-600">
+                      <TrendingUp className="h-3 w-3" />
+                      Sales today
                     </div>
-                    <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-500">
-                      <span className="min-w-0 truncate">
-                        {l.variant.variant_name}
-                        {l.variant.size ? ` · ${l.variant.size}` : ""} · {l.qty} ×{" "}
-                        {formatCurrency(l.variant.price)}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <button
-                          aria-label="Decrease"
-                          onClick={() => changeQty(l.variant.id, -1)}
-                          className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50"
-                        >
-                          <Minus className="h-3 w-3" />
-                        </button>
-                        <button
-                          aria-label="Increase"
-                          onClick={() => changeQty(l.variant.id, 1)}
-                          className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50"
-                        >
-                          <Plus className="h-3 w-3" />
-                        </button>
-                        <button
-                          aria-label="Remove"
-                          onClick={() => removeLine(l.variant.id)}
-                          className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500"
-                        >
-                          <Trash2 className="h-3 w-3" />
-                        </button>
-                      </span>
+                    <div className="bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-base font-extrabold tabular-nums text-transparent">
+                      {formatCurrency(today.total)}
                     </div>
-                  </li>
-                ))}
-              </ul>
+                    <div className="text-[10px] font-medium text-orange-700/70">
+                      {today.count} sale{today.count === 1 ? "" : "s"}
+                    </div>
+                  </div>
+                </div>
 
-              <div className="my-3 border-t border-dashed border-slate-200" />
+                <div className="hidden sm:block"><SyncIndicator /></div>
 
-              <div className="flex items-baseline justify-between text-base font-black">
-                <span className="text-slate-700">TOTAL</span>
-                <span className="tabular-nums text-[#0b3b8f]">{formatCurrency(subtotal)}</span>
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      aria-label="Open cashier actions"
+                      className="border-indigo-200 bg-white/80 backdrop-blur-sm hover:border-indigo-300 hover:bg-indigo-50"
+                    >
+                      <Menu data-icon="inline-start" /> Actions
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent className="border-l border-indigo-100 bg-gradient-to-b from-white to-indigo-50/50">
+                    <SheetHeader>
+                      <SheetTitle className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                        Cashier actions
+                      </SheetTitle>
+                      <SheetDescription>Operational tools and account controls.</SheetDescription>
+                    </SheetHeader>
+                    <div className="flex flex-col gap-3 p-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => syncOfflineQueue(true)}
+                        disabled={!online || syncStatus === "syncing"}
+                        className="border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50"
+                      >
+                        <RefreshCw data-icon="inline-start" /> Sync
+                      </Button>
+                      <PWAInstallButton variant="outline" size="sm" label="Install" />
+                      <Link to="/transactions">
+                        <Button variant="outline" className="w-full border-indigo-200 hover:bg-indigo-50">
+                          <ClipboardList data-icon="inline-start" /> Transaction log
+                        </Button>
+                      </Link>
+                      <Link to="/sync">
+                        <Button variant="outline" className="w-full border-indigo-200 hover:bg-indigo-50">
+                          Sync queue
+                        </Button>
+                      </Link>
+                      <Link to="/shift">
+                        <Button variant="outline" className="w-full border-indigo-200 hover:bg-indigo-50">
+                          <LockIcon data-icon="inline-start" /> Shift close
+                        </Button>
+                      </Link>
+                      <Link to="/refunds">
+                        <Button variant="outline" className="w-full border-indigo-200 hover:bg-indigo-50">
+                          <Undo2 data-icon="inline-start" /> Refunds
+                        </Button>
+                      </Link>
+                      {showManual && (
+                        <Button
+                          variant="outline"
+                          onClick={() => setManualOpen(true)}
+                          className="border-indigo-200 hover:bg-indigo-50"
+                        >
+                          <BookOpen data-icon="inline-start" /> Manual
+                        </Button>
+                      )}
+                      <SignOutButton variant="outline" />
+                    </div>
+                  </SheetContent>
+                </Sheet>
               </div>
             </div>
-          )}
-        </div>
+          </header>
 
-        {/* Payment & checkout */}
-        <div className="space-y-3 border-t border-slate-200/80 bg-white/60 p-4">
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Payment method
-            </label>
-            <Select value={payment} onValueChange={(v) => setPayment(v as typeof payment)}>
-              <SelectTrigger className="border-slate-200 bg-white shadow-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="cash">Cash</SelectItem>
-                <SelectItem value="mobile">EcoCash / Mobile</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <SyncAlertBanner />
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
-              Amount paid <span className="font-normal normal-case text-slate-400">(optional)</span>
-            </label>
-            <Input
-              inputMode="decimal"
-              placeholder={formatCurrency(subtotal)}
-              value={amountPaid}
-              onChange={(e) => setAmountPaid(e.target.value)}
-              className="border-slate-200 bg-white shadow-sm"
-            />
-            {Number(amountPaid) > subtotal && (
-              <p className="text-xs font-bold text-emerald-600">
-                Change: {formatCurrency(Number(amountPaid) - subtotal)}
-              </p>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-gradient-to-r from-slate-50 to-white px-4 py-3 shadow-sm">
-            <span className="text-sm font-bold text-slate-700">Total</span>
-            <span className="text-xl font-black text-[#0b3b8f]">{formatCurrency(subtotal)}</span>
-          </div>
-
-          <Button
-            className="w-full bg-gradient-to-r from-[#f15922] to-[#e04a15] text-white shadow-md shadow-orange-200/50 transition-all hover:shadow-lg hover:shadow-orange-300/50 hover:brightness-105 disabled:opacity-50 disabled:shadow-none"
-            size="lg"
-            disabled={cart.length === 0 || checkingOut}
-            onClick={() => checkout.mutate()}
+          {/* Status bar */}
+          <div
+            className={`border-b px-4 py-3 text-xs sm:px-6 ${
+              online
+                ? "border-indigo-100/60 bg-gradient-to-r from-indigo-50/80 via-blue-50/60 to-purple-50/80"
+                : "border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50"
+            }`}
           >
-            {checkingOut ? (
-              <>
-                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
-                Saving on device...
-              </>
-            ) : online ? (
-              "Complete sale"
-            ) : (
-              "Save sale offline"
-            )}
-          </Button>
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                {syncStatus === "syncing" ? (
+                  <RefreshCw className="h-4 w-4 animate-spin text-indigo-600" />
+                ) : online ? (
+                  <div className="grid h-5 w-5 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-500">
+                    <CheckCircle2 className="h-3 w-3 text-white" />
+                  </div>
+                ) : (
+                  <div className="grid h-5 w-5 place-items-center rounded-full bg-gradient-to-br from-amber-500 to-orange-500">
+                    <AlertTriangle className="h-3 w-3 text-white" />
+                  </div>
+                )}
+                <span className={`font-semibold ${online ? "text-indigo-900" : "text-amber-950"}`}>
+                  {!online
+                    ? "Offline mode active — sales are saved on this device."
+                    : syncStatus === "syncing"
+                      ? "Syncing offline sales now..."
+                      : queuedCount > 0
+                        ? `${queuedCount} offline sale${queuedCount === 1 ? "" : "s"} waiting to sync.`
+                        : "Online and synced."}
+                </span>
+              </div>
+              <span className="text-slate-500">
+                {lastSync
+                  ? `Last sync: ${new Date(lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  : "Catalog is available after it loads once."}
+              </span>
+            </div>
+          </div>
 
-          <p className="text-center text-[11px] leading-relaxed text-slate-400">
-            Sales are saved on this device first, then uploaded automatically.
-          </p>
+          {/* Search */}
+          <div className="border-b border-slate-200/60 bg-white/60 px-4 py-3 backdrop-blur-sm sm:px-6">
+            <div className="relative max-w-md">
+              <div className="pointer-events-none absolute inset-0 rounded-lg bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 transition-opacity peer-focus-within:opacity-100" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-indigo-500" />
+              <Input
+                id="cashier-search"
+                placeholder="Search products..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border-slate-200 bg-white/90 pl-9 pr-10 shadow-sm transition-all focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+              />
+              {search.length > 0 && (
+                <button
+                  type="button"
+                  aria-label="Clear search"
+                  onClick={() => {
+                    setSearch("");
+                    document.getElementById("cashier-search")?.focus();
+                  }}
+                  className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Product grid */}
+          <div className="flex-1 overflow-auto p-4 sm:p-6">
+            {filtered.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center text-center">
+                <div className="grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100">
+                  <PackageIcon className="h-10 w-10 text-indigo-400" />
+                </div>
+                <p className="mt-4 text-sm font-medium text-slate-500">No products found.</p>
+              </div>
+            ) : (
+              <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+                {filtered.map((v, index) => {
+                  const image = v.image_url || v.product?.image_url;
+                  const gradients = [
+                    "from-indigo-500 to-blue-500",
+                    "from-purple-500 to-indigo-500",
+                    "from-orange-500 to-amber-500",
+                    "from-blue-500 to-cyan-500",
+                    "from-violet-500 to-purple-500",
+                    "from-rose-500 to-orange-500",
+                  ];
+                  const gradient = gradients[index % gradients.length];
+                  return (
+                    <div key={v.id} className="group relative">
+                      <button
+                        onClick={() => addToCart(v)}
+                        className="w-full overflow-hidden rounded-2xl border border-white/60 bg-white/80 text-left shadow-[0_2px_8px_-2px_rgba(79,70,229,0.08)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-indigo-200 hover:shadow-[0_12px_32px_-8px_rgba(79,70,229,0.25)]"
+                      >
+                        {/* Gradient accent bar */}
+                        <div className={`h-1 w-full bg-gradient-to-r ${gradient}`} />
+
+                        {!hideImages && (
+                          <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-50 to-indigo-50/50">
+                            {image ? (
+                              <img
+                                src={image}
+                                alt={v.product?.name}
+                                className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
+                              />
+                            ) : (
+                              <div className="grid h-full w-full place-items-center">
+                                <PackageIcon className="h-10 w-10 text-indigo-300" />
+                              </div>
+                            )}
+                            {/* Hover overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/0 via-indigo-900/0 to-indigo-900/0 transition-all duration-300 group-hover:from-indigo-900/20" />
+                            {/* Price badge */}
+                            <div className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-bold text-indigo-700 shadow-sm backdrop-blur-sm">
+                              {formatCurrency(v.price)}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="p-3">
+                          <div className="truncate text-sm font-bold text-slate-800 group-hover:text-indigo-700">
+                            {v.product?.name}
+                          </div>
+                          <div className="mt-0.5 truncate text-xs text-slate-500">
+                            {v.variant_name}
+                            {v.size ? ` · ${v.size}` : ""}
+                          </div>
+                          <div className="mt-2.5 flex items-center justify-between">
+                            <span className={`bg-gradient-to-r ${gradient} bg-clip-text text-base font-extrabold text-transparent`}>
+                              {formatCurrency(v.price)}
+                            </span>
+                            <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+                              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                              In stock
+                            </span>
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
-      </aside>
+
+        {/* Cart sidebar */}
+        <aside className="relative flex flex-col border-t border-slate-200/60 bg-white/70 backdrop-blur-xl lg:border-l lg:border-t-0">
+          {/* Sidebar gradient accent */}
+          <div className="absolute inset-y-0 left-0 w-px bg-gradient-to-b from-indigo-500/40 via-purple-500/40 to-orange-500/40" />
+
+          <div className="border-b border-slate-200/60 bg-gradient-to-r from-indigo-50/60 to-purple-50/40 px-4 py-3 sm:px-6 sm:py-4">
+            <div className="flex items-center gap-2">
+              <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 shadow-md shadow-indigo-500/30">
+                <ShoppingCart className="h-4 w-4 text-white" />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">Current sale</h2>
+                <p className="text-xs text-slate-500">
+                  {cart.length} line{cart.length === 1 ? "" : "s"} · {totalItems} item
+                  {totalItems === 1 ? "" : "s"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-auto px-4 py-3">
+            {cart.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center py-10 text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-2xl" />
+                  <div className="relative grid h-20 w-20 place-items-center rounded-2xl bg-gradient-to-br from-indigo-100 via-purple-100 to-orange-100">
+                    <ShoppingCart className="h-10 w-10 text-indigo-500" />
+                  </div>
+                </div>
+                <p className="mt-4 text-sm font-medium text-slate-500">Tap a product to start.</p>
+                <p className="mt-1 text-xs text-slate-400">Items will appear here</p>
+              </div>
+            ) : (
+              <div className="relative rounded-xl border border-dashed border-indigo-200 bg-gradient-to-b from-white to-indigo-50/30 p-4 font-mono text-[13px] shadow-sm">
+                {/* Receipt zigzag top */}
+                <div className="absolute -top-px left-0 right-0 h-2 bg-[linear-gradient(45deg,transparent_33.333%,#fff_33.333%,#fff_66.667%,transparent_66.667%),linear-gradient(-45deg,transparent_33.333%,#fff_33.333%,#fff_66.667%,transparent_66.667%)] bg-[length:8px_8px] bg-repeat-x" />
+
+                <button
+                  type="button"
+                  aria-label="Cancel sale"
+                  title="Cancel this sale"
+                  onClick={cancelSale}
+                  className="absolute right-2 top-3 grid h-7 w-7 place-items-center rounded-md border border-slate-200 text-slate-400 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <Receipt className="h-3.5 w-3.5 text-indigo-500" />
+                    <div className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-sm font-bold uppercase tracking-[0.18em] text-transparent">
+                      Receipt
+                    </div>
+                  </div>
+                  <div className="mt-0.5 text-[11px] text-slate-400">
+                    {new Date().toLocaleString()}
+                  </div>
+                </div>
+
+                <div className="my-3 border-t border-dashed border-indigo-200" />
+
+                <ul className="space-y-3">
+                  {cart.map((l) => (
+                    <li key={l.variant.id} className="group">
+                      <div className="flex items-baseline justify-between gap-2">
+                        <span className="min-w-0 truncate font-bold text-slate-800">
+                          {l.variant.product?.name}
+                        </span>
+                        <span className="tabular-nums font-bold text-indigo-700">
+                          {formatCurrency(Number(l.variant.price) * l.qty)}
+                        </span>
+                      </div>
+                      <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-500">
+                        <span className="min-w-0 truncate">
+                          {l.variant.variant_name}
+                          {l.variant.size ? ` · ${l.variant.size}` : ""} · {l.qty} ×{" "}
+                          {formatCurrency(l.variant.price)}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <button
+                            aria-label="Decrease"
+                            onClick={() => changeQty(l.variant.id, -1)}
+                            className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <button
+                            aria-label="Increase"
+                            onClick={() => changeQty(l.variant.id, 1)}
+                            className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-600 transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                          <button
+                            aria-label="Remove"
+                            onClick={() => removeLine(l.variant.id)}
+                            className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-600 transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="my-3 border-t border-dashed border-indigo-200" />
+                <div className="flex items-baseline justify-between text-sm font-bold">
+                  <span className="text-slate-700">TOTAL</span>
+                  <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-lg font-extrabold tabular-nums text-transparent">
+                    {formatCurrency(subtotal)}
+                  </span>
+                </div>
+
+                {/* Receipt zigzag bottom */}
+                <div className="absolute -bottom-px left-0 right-0 h-2 rotate-180 bg-[linear-gradient(45deg,transparent_33.333%,#fff_33.333%,#fff_66.667%,transparent_66.667%),linear-gradient(-45deg,transparent_33.333%,#fff_33.333%,#fff_66.667%,transparent_66.667%)] bg-[length:8px_8px] bg-repeat-x" />
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-3 border-t border-slate-200/60 bg-gradient-to-b from-white to-indigo-50/30 p-4">
+            <div className="space-y-1.5">
+              <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                <Wallet className="h-3.5 w-3.5 text-indigo-500" />
+                Payment method
+              </label>
+              <Select value={payment} onValueChange={(v) => setPayment(v as typeof payment)}>
+                <SelectTrigger className="border-slate-200 bg-white shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cash">💵 Cash</SelectItem>
+                  <SelectItem value="mobile">📱 EcoCash / Mobile</SelectItem>
+                  <SelectItem value="other">🔄 Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-600">
+                Amount paid (optional)
+              </label>
+              <Input
+                inputMode="decimal"
+                placeholder={formatCurrency(subtotal)}
+                value={amountPaid}
+                onChange={(e) => setAmountPaid(e.target.value)}
+                className="border-slate-200 bg-white shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
+              />
+              {Number(amountPaid) > subtotal && (
+                <p className="flex items-center gap-1 text-xs font-semibold text-emerald-600">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Change: {formatCurrency(Number(amountPaid) - subtotal)}
+                </p>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 px-3 py-2.5">
+              <span className="text-sm font-bold text-slate-700">Total</span>
+              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-xl font-extrabold text-transparent">
+                {formatCurrency(subtotal)}
+              </span>
+            </div>
+
+            <Button
+              className="group relative w-full overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 bg-[length:200%_100%] shadow-lg shadow-indigo-500/30 transition-all duration-300 hover:bg-[position:100%_0] hover:shadow-xl hover:shadow-purple-500/40"
+              size="lg"
+              disabled={cart.length === 0 || checkingOut}
+              onClick={() => checkout.mutate()}
+            >
+              <span className="relative flex items-center justify-center gap-2 font-bold">
+                {checkingOut ? (
+                  <>
+                    <RefreshCw className="h-5 w-5 animate-spin" />
+                    Saving on device...
+                  </>
+                ) : online ? (
+                  <>
+                    <CheckCircle2 className="h-5 w-5" />
+                    Complete sale
+                  </>
+                ) : (
+                  <>
+                    <AlertTriangle className="h-5 w-5" />
+                    Save sale offline
+                  </>
+                )}
+              </span>
+            </Button>
+
+            <p className="text-center text-[11px] text-slate-400">
+              Sales are saved on this device first, then uploaded automatically.
+            </p>
+          </div>
+        </aside>
+      </div>
 
       {/* Manual dialog */}
       <Dialog open={manualOpen} onOpenChange={setManualOpen}>
-        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto border-indigo-100 bg-gradient-to-b from-white to-indigo-50/30">
           <DialogHeader>
-            <DialogTitle className="text-slate-800">Cashier User Manual</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600">
+                <BookOpen className="h-4 w-4 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                Cashier User Manual
+              </span>
+            </DialogTitle>
           </DialogHeader>
           <CashierManualContent />
         </DialogContent>
@@ -868,13 +947,20 @@ function CashierScreen() {
           if (!o) setReceipt(null);
         }}
       >
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md border-indigo-100 bg-gradient-to-b from-white to-indigo-50/30">
           <DialogHeader>
-            <DialogTitle className="text-slate-800">Sale completed</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500">
+                <CheckCircle2 className="h-4 w-4 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-emerald-700 to-teal-700 bg-clip-text text-transparent">
+                Sale completed
+              </span>
+            </DialogTitle>
           </DialogHeader>
           {receipt && (
             <div className="space-y-3">
-              <div className="rounded-xl border border-dashed border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-4 text-xs shadow-sm">
+              <div className="rounded-lg border border-dashed border-indigo-200 bg-gradient-to-b from-white to-indigo-50/50 p-3 text-xs">
                 <pre className="whitespace-pre-wrap font-mono leading-relaxed text-slate-700">
                   {receiptText(receipt.entry, {
                     amountPaid: receipt.amountPaid,
@@ -888,7 +974,7 @@ function CashierScreen() {
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  className="flex-1 bg-gradient-to-r from-[#f15922] to-[#e04a15] text-white shadow-sm transition-all hover:shadow-md hover:brightness-105"
+                  className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-purple-500/40"
                   onClick={() =>
                     printReceipt(receipt.entry, {
                       amountPaid: receipt.amountPaid,
@@ -900,7 +986,7 @@ function CashierScreen() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1 border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                  className="flex-1 border-indigo-200 hover:bg-indigo-50"
                   onClick={() =>
                     downloadReceipt(receipt.entry, {
                       amountPaid: receipt.amountPaid,
@@ -910,11 +996,7 @@ function CashierScreen() {
                 >
                   Download
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="text-slate-500 transition-colors hover:text-slate-700"
-                  onClick={() => setReceipt(null)}
-                >
+                <Button variant="ghost" onClick={() => setReceipt(null)} className="hover:bg-indigo-50">
                   Next sale
                 </Button>
               </div>
@@ -939,17 +1021,17 @@ export function VoiceCommandHelp() {
   ];
   return (
     <div className="space-y-3 text-sm">
-      <p className="text-slate-500">
+      <p className="text-muted-foreground">
         Tap Voice, speak one command clearly, then wait for the action to complete.
       </p>
       <div className="grid gap-2">
         {commands.map(([command, description]) => (
           <div
             key={command}
-            className="grid gap-2 rounded-xl border border-orange-100 bg-gradient-to-r from-orange-50/40 to-amber-50/30 p-3 sm:grid-cols-[140px_1fr]"
+            className="grid gap-2 rounded-lg border border-indigo-100 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 p-3 sm:grid-cols-[140px_1fr]"
           >
-            <code className="font-bold text-[#0b3b8f]">{command}</code>
-            <span className="text-slate-500">{description}</span>
+            <code className="font-semibold text-indigo-700">{command}</code>
+            <span className="text-muted-foreground">{description}</span>
           </div>
         ))}
       </div>
@@ -961,78 +1043,78 @@ export function CashierManualContent() {
   return (
     <div className="space-y-4 text-sm leading-relaxed">
       <section>
-        <h3 className="text-base font-bold text-slate-800">1. Opening cashier mode</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">1. Opening cashier mode</h3>
+        <p className="text-muted-foreground">
           From the welcome or auth page, tap Enter Cashier Mode. The till opens without a password
           for fast counter access. Named cashier accounts can still sign in when the manager wants
           staff-specific tracking.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">2. Finding a product</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">2. Finding a product</h3>
+        <p className="text-muted-foreground">
           Use the search bar at the top of the product grid. You can search by product name,
           variant, or category.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">3. Adding items to the cart</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">3. Adding items to the cart</h3>
+        <p className="text-muted-foreground">
           Tap any product card. It appears in the current sale panel. Use plus and minus to change
           quantity. Tap the trash icon to remove a line.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">4. Taking payment</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">4. Taking payment</h3>
+        <p className="text-muted-foreground">
           Choose the payment method, confirm the total with the customer, and tap Complete sale.
           Stock updates automatically.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">5. Voice commands</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">5. Voice commands</h3>
+        <p className="text-muted-foreground">
           Tap Voice and say commands such as add Coke, add 3 Coke, remove Coke, search sugar, new,
           cash, ecocash, or checkout. Use Voice help in the cashier top bar for the full list.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">6. Working offline and syncing</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">6. Working offline and syncing</h3>
+        <p className="text-muted-foreground">
           If the connection drops, keep serving customers. Sales are stored securely on this device,
           a pending badge shows what is waiting, and sync runs automatically when the device comes
           back online. You can also press Sync while online.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">6b. Refunds and voids</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">6b. Refunds and voids</h3>
+        <p className="text-muted-foreground">
           Tap Refunds in the top bar to open your refunds page. A refund gives money back to a
           customer; a void cancels a sale entered by mistake. Both can return the items to stock and
           both remove the sale from the day&apos;s takings, so sales and refunds always balance. You
           can only complete one yourself when the manager has switched on{" "}
-          <span className="font-medium text-slate-700">auto-approve refunds</span> — otherwise the
-          page tells you to ask the manager. Refunds need a connection; if you are offline, wait
-          until the device is back online.
+          <span className="font-medium">auto-approve refunds</span> - otherwise the page tells you
+          to ask the manager. Refunds need a connection; if you are offline, wait until the device
+          is back online.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">7. Stock warnings</h3>
-        <p className="text-slate-500">
-          Out means the item cannot be sold. Low means only a few units remain — let the manager
+        <h3 className="font-semibold text-base">7. Stock warnings</h3>
+        <p className="text-muted-foreground">
+          Out means the item cannot be sold. Low means only a few units remain - let the manager
           know.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">8. Installing on a device</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">8. Installing on a device</h3>
+        <p className="text-muted-foreground">
           Tap Install in Chrome or Edge on the published site. The app appears with the other apps
           on the device and keeps the cashier dashboard available after it has loaded once.
         </p>
       </section>
       <section>
-        <h3 className="text-base font-bold text-slate-800">9. Signing out</h3>
-        <p className="text-slate-500">
+        <h3 className="font-semibold text-base">9. Signing out</h3>
+        <p className="text-muted-foreground">
           Tap Sign out at the end of your shift when using a named account. Shared cashier mode can
           be opened again from the auth page.
         </p>
