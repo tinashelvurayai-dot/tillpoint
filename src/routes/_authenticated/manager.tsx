@@ -63,6 +63,7 @@ const navItems: Array<{
 ];
 
 const LOGO_URL = "https://i.postimg.cc/5td7tzMx/6cm-IBZ-Logo.png";
+const INTRO_DURATION_MS = 5000;
 
 function LegendaryLoader() {
   return (
@@ -84,23 +85,23 @@ function LegendaryLoader() {
         style={{
           background:
             "conic-gradient(from 180deg at 50% 50%, transparent 0deg, rgba(99,102,241,0.25) 45deg, transparent 90deg, rgba(249,89,34,0.2) 180deg, transparent 270deg)",
-          animation: "beamRotate 3s linear infinite",
+          animation: "beamRotate 7s linear infinite",
         }}
       />
 
       {/* Rotating orbit rings */}
-      <div className="absolute h-[520px] w-[520px]" style={{ animation: "spin 3s linear infinite" }}>
+      <div className="absolute h-[520px] w-[520px]" style={{ animation: "spin 7s linear infinite" }}>
         <div className="absolute inset-0 rounded-full border border-indigo-500/20" />
         <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 shadow-[0_0_24px_6px_rgba(129,140,248,0.7)]" />
       </div>
       <div
         className="absolute h-[400px] w-[400px]"
-        style={{ animation: "spin 2.2s linear infinite reverse" }}
+        style={{ animation: "spin 4.5s linear infinite reverse" }}
       >
         <div className="absolute inset-0 rounded-full border border-orange-500/20" />
         <div className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-orange-400 to-amber-400 shadow-[0_0_24px_6px_rgba(249,89,34,0.7)]" />
       </div>
-      <div className="absolute h-[300px] w-[300px]" style={{ animation: "spin 1.6s linear infinite" }}>
+      <div className="absolute h-[300px] w-[300px]" style={{ animation: "spin 3s linear infinite" }}>
         <div className="absolute inset-0 rounded-full border border-purple-500/20" />
         <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-purple-400 to-fuchsia-400 shadow-[0_0_20px_5px_rgba(168,85,247,0.7)]" />
       </div>
@@ -108,7 +109,7 @@ function LegendaryLoader() {
       {/* Pulsing halo behind logo */}
       <div
         className="absolute h-[360px] w-[360px] rounded-full bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-orange-500/20 blur-3xl"
-        style={{ animation: "haloPulse 2s ease-in-out infinite" }}
+        style={{ animation: "haloPulse 2.4s ease-in-out infinite" }}
       />
 
       {/* Corner brackets */}
@@ -122,7 +123,7 @@ function LegendaryLoader() {
           <div
             key={i}
             className={`absolute h-10 w-10 sm:h-14 sm:w-14 ${pos} rounded-sm border-indigo-400/50`}
-            style={{ animation: `cornerPulse 3s ease-in-out ${i * 0.15}s infinite` }}
+            style={{ animation: `cornerPulse 3s ease-in-out ${i * 0.2}s infinite` }}
           />
         ))}
       </div>
@@ -131,19 +132,19 @@ function LegendaryLoader() {
       <div className="relative flex flex-col items-center gap-8">
         <div
           className="relative"
-          style={{ animation: "logoReveal 3s cubic-bezier(0.16, 1, 0.3, 1) forwards" }}
+          style={{ animation: "logoReveal 7s cubic-bezier(0.16, 1, 0.3, 1) forwards" }}
         >
           {/* Glow ring behind logo */}
           <div
             className="absolute -inset-6 rounded-full bg-gradient-to-br from-indigo-500/40 via-purple-500/30 to-orange-500/40 blur-2xl"
-            style={{ animation: "haloPulse 2s ease-in-out infinite" }}
+            style={{ animation: "haloPulse 2.4s ease-in-out infinite" }}
           />
 
           {/* Logo with gradient border frame */}
           <div className="relative">
             <div
               className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-orange-500 opacity-90 blur-[2px]"
-              style={{ animation: "borderSpin 3s linear infinite" }}
+              style={{ animation: "borderSpin 7s linear infinite" }}
             />
             <div className="relative overflow-hidden rounded-3xl bg-slate-950 p-1">
               <img
@@ -151,7 +152,7 @@ function LegendaryLoader() {
                 alt="Logo"
                 className="h-40 w-40 rounded-2xl object-contain sm:h-52 sm:w-52"
                 style={{
-                  animation: "logoFloat 3s ease-in-out infinite",
+                  animation: "logoFloat 3.5s ease-in-out infinite",
                   filter: "drop-shadow(0 8px 24px rgba(99,102,241,0.5))",
                 }}
               />
@@ -162,7 +163,7 @@ function LegendaryLoader() {
                   background:
                     "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)",
                   backgroundSize: "250% 100%",
-                  animation: "shimmer 1.8s ease-in-out infinite",
+                  animation: "shimmer 2.4s ease-in-out infinite",
                 }}
               />
             </div>
@@ -172,7 +173,7 @@ function LegendaryLoader() {
         {/* Brand text */}
         <div
           className="flex flex-col items-center gap-2"
-          style={{ animation: "fadeUp 3s ease-out 0.4s both" }}
+          style={{ animation: "fadeUp 7s ease-out 0.9s both" }}
         >
           <div className="bg-gradient-to-r from-indigo-300 via-purple-300 to-orange-300 bg-clip-text text-2xl font-black uppercase tracking-[0.3em] text-transparent sm:text-3xl">
             Manager
@@ -186,11 +187,11 @@ function LegendaryLoader() {
         <div className="relative h-1 w-64 overflow-hidden rounded-full bg-white/10 sm:w-80">
           <div
             className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-orange-500"
-            style={{ animation: "progressFill 3s cubic-bezier(0.65, 0, 0.35, 1) forwards" }}
+            style={{ animation: "progressFill 7s cubic-bezier(0.65, 0, 0.35, 1) forwards" }}
           />
           <div
             className="absolute inset-y-0 left-0 w-24 rounded-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
-            style={{ animation: "progressShine 1.4s ease-in-out infinite" }}
+            style={{ animation: "progressShine 1.6s ease-in-out infinite" }}
           />
         </div>
 
@@ -200,7 +201,7 @@ function LegendaryLoader() {
             <span
               key={i}
               className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400"
-              style={{ animation: `dotBounce 1.2s ease-in-out ${i * 0.15}s infinite` }}
+              style={{ animation: `dotBounce 1.4s ease-in-out ${i * 0.18}s infinite` }}
             />
           ))}
         </div>
@@ -210,9 +211,11 @@ function LegendaryLoader() {
       <style>{`
         @keyframes logoReveal {
           0% { opacity: 0; transform: scale(0.4) rotate(-12deg); filter: blur(20px); }
-          40% { opacity: 1; transform: scale(1.12) rotate(3deg); filter: blur(0); }
-          65% { transform: scale(0.96) rotate(-1deg); }
-          85% { transform: scale(1.03) rotate(0.5deg); }
+          15% { opacity: 1; transform: scale(1.12) rotate(3deg); filter: blur(0); }
+          30% { transform: scale(0.96) rotate(-1deg); }
+          45% { transform: scale(1.03) rotate(0.5deg); }
+          60% { transform: scale(1) rotate(0deg); }
+          80% { transform: scale(1.01) rotate(0deg); }
           100% { opacity: 1; transform: scale(1) rotate(0deg); }
         }
         @keyframes logoFloat {
@@ -245,6 +248,7 @@ function LegendaryLoader() {
         }
         @keyframes fadeUp {
           0% { opacity: 0; transform: translateY(16px); }
+          30% { opacity: 1; transform: translateY(0); }
           100% { opacity: 1; transform: translateY(0); }
         }
         @keyframes progressFill {
@@ -275,7 +279,7 @@ function ManagerLayout() {
   const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowIntro(false), 3000);
+    const timer = setTimeout(() => setShowIntro(false), INTRO_DURATION_MS);
     return () => clearTimeout(timer);
   }, []);
 
