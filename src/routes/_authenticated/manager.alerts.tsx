@@ -28,7 +28,6 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import { SyncAlertBanner } from "@/components/sync-alert-banner";
 
 export const Route = createFileRoute("/_authenticated/manager")({
@@ -55,7 +54,6 @@ const navItems: Array<{
   { to: "/transactions", label: "Transaction Log", icon: ClipboardList },
   { to: "/sync", label: "Sync Queue", icon: RefreshCw },
   { to: "/shift", label: "Shift Close (Z)", icon: LockIcon },
-
   { to: "/manager/cashiers", label: "Cashiers", icon: Users },
   { to: "/manager/storage", label: "Storage & Exports", icon: HardDrive },
   { to: "/manager/settings", label: "Settings", icon: Settings },
@@ -63,33 +61,26 @@ const navItems: Array<{
   { to: "/manager/manuals", label: "Manuals", icon: BookOpen },
 ];
 
-function ManagerLayout() {
-  const { role, profile, loading } = useAuth();
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  if (loading)
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative h-16 w-16">
-            <div className="absolute inset-0 animate-ping rounded-full bg-gradient-to-r from-orange-500 to-amber-400 opacity-20" />
-            <div className="relative grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/40">
-              <Sparkles className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <p className="text-sm font-medium text-slate-300">Loading console...</p>
-        </div>
-      </div>
-    );
-  if (role !== "manager") return <Navigate to="/cashier" />;
-
-  const SidebarInner = (
+/**
+ * Single source of truth for sidebar contents.
+ * Rendered once inside the desktop <aside> and once inside the mobile drawer.
+ * Not both at the same time on the same breakpoint, so no duplication.
+ */
+function SidebarContent({
+  pathname,
+  profile,
+  onNavigate,
+}: {
+  pathname: string;
+  profile: { full_name?: string } | null;
+  onNavigate?: () => void;
+}) {
+  return (
     <>
       {/* Brand header */}
       <div className="relative overflow-hidden px-6 py-5">
-        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-2xl" />
-        <div className="absolute -left-4 bottom-0 h-16 w-16 rounded-full bg-gradient-to-br from-orange-400/20 to-amber-400/20 blur-2xl" />
+        <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-2xl" />
+        <div className="pointer-events-none absolute -left-4 bottom-0 h-16 w-16 rounded-full bg-gradient-to-br from-orange-400/20 to-amber-400/20 blur-2xl" />
         <div className="relative">
           <BrandLogo />
           <div className="mt-1 pl-[46px]">
@@ -103,12 +94,11 @@ function ManagerLayout() {
         </div>
       </div>
 
-      {/* Divider with gradient */}
       <div className="mx-4 h-px bg-gradient-to-r from-transparent via-indigo-200/60 to-transparent" />
 
       {/* Navigation */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {navItems.map((item, index) => {
+        {navItems.map((item) => {
           const active = item.exact
             ? pathname === item.to
             : pathname === item.to || pathname.startsWith(`${item.to}/`);
@@ -116,7 +106,7 @@ function ManagerLayout() {
             <Link
               key={item.to}
               to={item.to as "/manager"}
-              onClick={() => setMobileOpen(false)}
+              onClick={onNavigate}
               className={cn(
                 "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                 active
@@ -124,12 +114,9 @@ function ManagerLayout() {
                   : "text-slate-600 hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 hover:text-indigo-700",
               )}
             >
-              {/* Active indicator bar */}
               {active && (
                 <span className="absolute -left-3 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-gradient-to-b from-orange-400 to-amber-500 shadow-sm shadow-orange-500/50" />
               )}
-
-              {/* Icon container */}
               <span
                 className={cn(
                   "grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-all duration-200",
@@ -140,10 +127,7 @@ function ManagerLayout() {
               >
                 <item.icon className="h-3.5 w-3.5" />
               </span>
-
               <span className="flex-1 truncate">{item.label}</span>
-
-              {/* Chevron on hover/active */}
               <ChevronRight
                 className={cn(
                   "h-3.5 w-3.5 shrink-0 transition-all duration-200",
@@ -159,7 +143,7 @@ function ManagerLayout() {
 
       {/* User footer */}
       <div className="relative overflow-hidden border-t border-slate-200/60 p-4">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-50/50 via-transparent to-orange-50/50" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-indigo-50/50 via-transparent to-orange-50/50" />
         <div className="relative">
           <div className="mb-3 flex items-center gap-3">
             <div className="relative">
@@ -184,27 +168,49 @@ function ManagerLayout() {
       </div>
     </>
   );
+}
+
+function ManagerLayout() {
+  const { role, profile, loading } = useAuth();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  if (loading)
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative h-16 w-16">
+            <div className="absolute inset-0 animate-ping rounded-full bg-gradient-to-r from-orange-500 to-amber-400 opacity-20" />
+            <div className="relative grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/40">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+          </div>
+          <p className="text-sm font-medium text-slate-300">Loading console...</p>
+        </div>
+      </div>
+    );
+
+  if (role !== "manager") return <Navigate to="/cashier" />;
 
   return (
     <div className="relative flex min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-orange-50/20">
-      {/* Ambient gradient orbs */}
+      {/* Ambient gradient orbs (page background) */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-32 left-1/4 h-96 w-96 rounded-full bg-gradient-to-br from-indigo-400/10 to-purple-400/10 blur-3xl" />
         <div className="absolute bottom-1/4 -right-32 h-96 w-96 rounded-full bg-gradient-to-br from-orange-400/10 to-amber-400/10 blur-3xl" />
       </div>
 
-      {/* Desktop sidebar */}
+      {/* Desktop sidebar — single instance, hidden on mobile */}
       <aside className="sticky top-0 z-20 hidden h-screen w-72 flex-col overflow-hidden border-r border-white/40 bg-white/70 shadow-[4px_0_24px_-8px_rgba(79,70,229,0.08)] backdrop-blur-xl md:flex">
-        {/* Sidebar gradient accent line */}
-        <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-indigo-500/30 via-purple-500/30 to-orange-500/30" />
-        {SidebarInner}
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-indigo-500/30 via-purple-500/30 to-orange-500/30" />
+        <div className="relative flex h-full flex-col">
+          <SidebarContent pathname={pathname} profile={profile} />
+        </div>
       </aside>
 
       {/* Mobile top bar */}
       <div className="fixed inset-x-0 top-0 z-30 flex items-center justify-between border-b border-white/40 bg-white/80 px-4 py-3 shadow-sm backdrop-blur-xl md:hidden">
-        <div className="flex items-center gap-2">
-          <BrandLogo />
-        </div>
+        <BrandLogo />
         <Button
           variant="ghost"
           size="icon"
@@ -215,7 +221,7 @@ function ManagerLayout() {
         </Button>
       </div>
 
-      {/* Mobile drawer */}
+      {/* Mobile drawer — only mounted when open */}
       {mobileOpen && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div
@@ -223,9 +229,8 @@ function ManagerLayout() {
             onClick={() => setMobileOpen(false)}
           />
           <aside className="absolute left-0 top-0 flex h-full w-72 flex-col overflow-hidden bg-white/95 shadow-2xl backdrop-blur-xl">
-            {/* Drawer gradient accent */}
-            <div className="absolute inset-y-0 right-0 w-px bg-gradient-to-b from-indigo-500/40 via-purple-500/40 to-orange-500/40" />
-            <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-px bg-gradient-to-b from-indigo-500/40 via-purple-500/40 to-orange-500/40" />
+            <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-3xl" />
 
             <div className="relative flex justify-end p-2">
               <Button
@@ -237,7 +242,13 @@ function ManagerLayout() {
                 <X className="h-5 w-5" />
               </Button>
             </div>
-            <div className="relative flex flex-1 flex-col overflow-hidden">{SidebarInner}</div>
+            <div className="relative flex flex-1 flex-col overflow-hidden">
+              <SidebarContent
+                pathname={pathname}
+                profile={profile}
+                onNavigate={() => setMobileOpen(false)}
+              />
+            </div>
           </aside>
         </div>
       )}
