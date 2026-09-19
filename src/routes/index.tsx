@@ -9,7 +9,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { PWAInstallButton } from "@/components/pwa-install-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Droplets, Leaf, ShieldCheck, Sun, ArrowRight, Sparkles } from "lucide-react";
+import { Droplets, Leaf, ShieldCheck, Sun, ArrowRight } from "lucide-react";
 import { setMode } from "@/lib/session-mode";
 import { useShowInstallButton } from "@/hooks/use-app-prefs";
 
@@ -72,7 +72,7 @@ const products = [
     img: productImages.tissueOilCream,
     name: "EXO Moisture Intensive Tissue Oil Cream",
     body:
-      "Unveil a radiant you with EXO’s luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin’s thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
+      "Unveil a radiant you with EXO's luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin's thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
   },
   {
     img: productImages.tripleGlycerine,
@@ -84,7 +84,7 @@ const products = [
     img: productImages.camphorCream,
     name: "EXO Triple Intensive Camphor Cream",
     body:
-      "EXO’s Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
+      "EXO's Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
   },
   {
     img: productImages.q10Cream,
@@ -96,7 +96,7 @@ const products = [
     img: productImages.maxMoisture,
     name: "EXO Max Moisture Triple Glycerine Cream",
     body:
-      "A rich moisturizer designed for men’s skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
+      "A rich moisturizer designed for men's skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
   },
   {
     img: productImages.menTissueOilCream,
@@ -208,7 +208,6 @@ function Landing() {
     }
   }
 
-  // Redirects only — no loading state rendered.
   if (session && role === "manager") {
     return <Navigate to="/manager" />;
   }
@@ -235,7 +234,7 @@ function Landing() {
     {
       icon: ArrowRight,
       title: "HONEST PRICING",
-      body: "Premium care that’s affordable",
+      body: "Premium care that's affordable",
     },
     {
       icon: Droplets,
@@ -246,41 +245,49 @@ function Landing() {
 
   return (
     <div
-      className="relative min-h-screen"
+      className="relative min-h-screen overflow-hidden text-slate-100"
       style={{
         background:
-          "linear-gradient(135deg, #0a1834 0%, #0b3b8f 28%, #7a2d10 65%, #c4410f 100%)",
+          "linear-gradient(135deg, #1a0e05 0%, #3b1a08 18%, #0f1f3d 48%, #0a1730 72%, #050b18 100%)",
       }}
     >
       {/* Ambient gradient orbs */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
         <div
-          className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-30 blur-3xl"
+          className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-40 blur-3xl"
           style={{
             background:
-              "linear-gradient(135deg, #f15922 0%, #f15922 35%, #0b3b8f 100%)",
+              "radial-gradient(circle at 30% 30%, #f15922 0%, #d94816 40%, transparent 70%)",
           }}
         />
         <div
-          className="absolute -bottom-48 -left-48 h-[560px] w-[560px] rounded-full opacity-25 blur-3xl"
+          className="absolute -bottom-48 -left-48 h-[560px] w-[560px] rounded-full opacity-35 blur-3xl"
           style={{
             background:
-              "linear-gradient(135deg, #0b3b8f 0%, #1557b0 60%, #f15922 100%)",
+              "radial-gradient(circle at 60% 40%, #1557b0 0%, #0b3b8f 45%, transparent 75%)",
           }}
         />
         <div
-          className="absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-15 blur-3xl"
+          className="absolute left-1/2 top-1/3 h-[420px] w-[420px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
           style={{
             background:
-              "radial-gradient(circle, #f15922 0%, #0b3b8f 70%, transparent 100%)",
+              "radial-gradient(circle at 50% 50%, #6b7280 0%, #374151 50%, transparent 80%)",
+          }}
+        />
+        {/* Subtle diagonal stripe texture */}
+        <div
+          className="absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(135deg, #ffffff 0px, #ffffff 1px, transparent 1px, transparent 24px)",
           }}
         />
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0a1834]/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/40 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
-          <div className="rounded-xl bg-white/95 px-2 py-1 shadow-lg shadow-black/20">
+          <div className="rounded-2xl bg-white/95 px-3 py-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.25)] backdrop-blur">
             <BrandLogo />
           </div>
 
@@ -288,7 +295,7 @@ function Landing() {
             <Button
               asChild
               variant="ghost"
-              className="hidden font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#ff8a5c] sm:inline-flex"
+              className="hidden font-semibold text-slate-100 transition-colors hover:bg-white/10 hover:text-orange-300 sm:inline-flex"
             >
               <a href="#range">Our range</a>
             </Button>
@@ -296,7 +303,7 @@ function Landing() {
             <Button
               asChild
               variant="ghost"
-              className="hidden font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-[#ff8a5c] sm:inline-flex"
+              className="hidden font-semibold text-slate-100 transition-colors hover:bg-white/10 hover:text-orange-300 sm:inline-flex"
             >
               <a href="#shades">Shades</a>
             </Button>
@@ -305,41 +312,38 @@ function Landing() {
               <PWAInstallButton
                 variant="outline"
                 size="sm"
-                className="hidden rounded-full border-white/20 bg-white/10 px-5 font-semibold text-white shadow-sm backdrop-blur-sm transition-all hover:border-[#ff8a5c]/40 hover:bg-white/20 sm:inline-flex"
+                className="hidden rounded-full border-white/20 bg-white/5 px-5 font-semibold text-slate-100 shadow-sm backdrop-blur transition-all hover:border-orange-300/40 hover:bg-white/10 hover:text-orange-200 sm:inline-flex"
               />
             )}
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
+      <main className="relative mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
         {/* Hero */}
-        <section
-          className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/15 bg-white/5 px-6 py-10 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-sm sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14"
-        >
+        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-950/40 px-6 py-10 shadow-[0_20px_80px_rgba(0,0,0,0.5)] backdrop-blur-md sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
           <img
             src={glassFrameBackdropImage}
             alt=""
             aria-hidden="true"
             loading="eager"
             decoding="async"
-            className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
+            className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-30 mix-blend-luminosity"
           />
 
+          {/* Dark orange → blue gradient wash */}
           <div
-            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-[#0a1834]/95 via-[#0b3b8f]/70 to-transparent"
+            className="pointer-events-none absolute inset-0 -z-10"
             aria-hidden="true"
-          />
-
-          <div
-            className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-tr from-[#f15922]/20 via-transparent to-[#0b3b8f]/25"
-            aria-hidden="true"
+            style={{
+              background:
+                "linear-gradient(120deg, rgba(241,89,34,0.20) 0%, rgba(10,23,48,0.75) 45%, rgba(11,59,143,0.28) 100%)",
+            }}
           />
 
           {/* Hero content */}
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#ff8a5c]/40 bg-[#f15922]/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#ffb08a] backdrop-blur-sm">
-              <Sparkles className="h-3 w-3" />
+          <div className="relative">
+            <span className="inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-500/15 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-orange-300 backdrop-blur">
               Ignited BrandZ
             </span>
 
@@ -350,22 +354,22 @@ function Landing() {
                 className="bg-clip-text text-transparent"
                 style={{
                   backgroundImage:
-                    "linear-gradient(135deg, #ff8a5c 0%, #ffb08a 45%, #ffffff 100%)",
+                    "linear-gradient(135deg, #ffb27a 0%, #f15922 40%, #7ea6ff 80%, #b8c9ff 100%)",
                 }}
               >
                 Healthy Skin.
               </span>
             </h1>
 
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300">
               Affordable creams and tissue oils made for real, everyday skin.
-              Triple glycerine moisture, rosehip &amp; Q10 oils as well as a
-              till that keeps every jar and bottle counted.
+              Triple glycerine moisture, rosehip & Q10 oils as well as a till
+              that keeps every jar and bottle counted.
             </p>
 
             <Button
               size="lg"
-              className="group mt-8 rounded-full bg-[#f15922] px-8 font-bold text-white shadow-lg shadow-orange-500/40 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#ff6a2e] hover:shadow-xl hover:shadow-orange-500/50"
+              className="group mt-8 rounded-full bg-gradient-to-r from-[#f15922] to-[#d94816] px-8 font-bold text-white shadow-lg shadow-orange-900/50 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-orange-800/60"
               onClick={() => setSignInOpen(true)}
             >
               Sign in{" "}
@@ -396,11 +400,11 @@ function Landing() {
               ].map((f, index) => (
                 <div
                   key={f.t}
-                  className="group rounded-2xl border border-white/15 bg-white/10 p-5 shadow-[0_8px_25px_rgba(0,0,0,0.25)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-[#ff8a5c]/40 hover:bg-white/15"
+                  className="group rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_8px_25px_rgba(0,0,0,0.25)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-orange-400/30 hover:bg-white/10"
                 >
                   <f.icon
                     className={`h-5 w-5 ${
-                      index === 1 ? "text-[#ff8a5c]" : "text-[#8ab4ff]"
+                      index === 1 ? "text-orange-300" : "text-blue-300"
                     }`}
                   />
 
@@ -408,7 +412,7 @@ function Landing() {
                     {f.t}
                   </div>
 
-                  <div className="text-xs text-white/70">{f.b}</div>
+                  <div className="text-xs text-slate-400">{f.b}</div>
                 </div>
               ))}
             </div>
@@ -416,7 +420,7 @@ function Landing() {
 
           {/* Hero image and sign in */}
           <div className="relative flex min-h-[420px] flex-col items-center justify-center gap-6">
-            <div className="relative w-full overflow-hidden rounded-3xl border border-white/20 bg-white/5 shadow-[0_0_0_1px_rgba(241,89,34,0.3),0_18px_38px_rgba(0,0,0,0.5),0_28px_70px_rgba(11,59,143,0.4)] backdrop-blur-[1px]">
+            <div className="relative w-full overflow-hidden rounded-3xl border border-white/15 bg-slate-950/40 shadow-[0_0_0_1px_rgba(241,89,34,0.25),0_18px_38px_rgba(241,89,34,0.28),0_28px_80px_rgba(0,0,0,0.55)] backdrop-blur-[1px]">
               <img
                 src={creamHeroImage}
                 alt="EXO moisture intensive creams and oils"
@@ -431,12 +435,12 @@ function Landing() {
               />
 
               <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-[#0b3b8f]/30"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-orange-500/10 via-transparent to-blue-900/25"
                 aria-hidden="true"
               />
 
               <div
-                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/30"
+                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/20"
                 aria-hidden="true"
               />
             </div>
@@ -444,7 +448,7 @@ function Landing() {
             {!signInOpen ? (
               <Button
                 size="lg"
-                className="group rounded-full bg-[#0b3b8f] px-8 font-bold text-white shadow-lg shadow-blue-900/50 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#1557b0] hover:shadow-xl hover:shadow-blue-900/60"
+                className="group rounded-full bg-gradient-to-r from-[#0b3b8f] to-[#082d6d] px-8 font-bold text-white shadow-lg shadow-blue-950/60 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-900/70"
                 onClick={() => setSignInOpen(true)}
               >
                 Sign in{" "}
@@ -454,18 +458,18 @@ function Landing() {
                 />
               </Button>
             ) : (
-              <Card className="w-full border-white/20 bg-white/95 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+              <Card className="w-full border border-white/10 bg-slate-950/70 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.5)] backdrop-blur-xl">
                 <div className="mb-5">
-                  <h2 className="text-xl font-bold text-[#07152f]">
+                  <h2 className="text-xl font-bold text-white">
                     Sign in
                   </h2>
 
-                  <p className="mt-1 text-sm text-slate-500">
+                  <p className="mt-1 text-sm text-slate-400">
                     Staff access only. Accounts are created by the manager.
                   </p>
                 </div>
 
-                <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-blue-50 p-1">
+                <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-gradient-to-r from-orange-500/15 to-blue-500/15 p-1">
                   {(["cashier", "manager"] as const).map((t) => (
                     <button
                       key={t}
@@ -473,8 +477,8 @@ function Landing() {
                       onClick={() => setTab(t)}
                       className={`rounded-md px-3 py-2 text-sm font-bold capitalize transition ${
                         tab === t
-                          ? "bg-white text-[#0b3b8f] shadow-sm"
-                          : "text-slate-500 hover:text-[#f15922]"
+                          ? "bg-slate-950 text-white shadow-sm ring-1 ring-white/10"
+                          : "text-slate-400 hover:text-orange-300"
                       }`}
                     >
                       {t}
@@ -487,7 +491,7 @@ function Landing() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="code1"
-                        className="font-semibold text-[#0b3b8f]"
+                        className="font-semibold text-blue-200"
                       >
                         Access code 1
                       </Label>
@@ -497,14 +501,14 @@ function Landing() {
                         value={c1}
                         onChange={(e) => setC1(e.target.value)}
                         autoComplete="off"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-white/15 bg-slate-900/60 text-white placeholder:text-slate-500 focus-visible:border-orange-400 focus-visible:ring-orange-400/40"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label
                         htmlFor="code2"
-                        className="font-semibold text-[#0b3b8f]"
+                        className="font-semibold text-blue-200"
                       >
                         Access code 2
                       </Label>
@@ -515,13 +519,13 @@ function Landing() {
                         value={c2}
                         onChange={(e) => setC2(e.target.value)}
                         autoComplete="off"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-white/15 bg-slate-900/60 text-white placeholder:text-slate-500 focus-visible:border-orange-400 focus-visible:ring-orange-400/40"
                       />
                     </div>
 
                     <Button
                       type="submit"
-                      className="w-full bg-[#f15922] font-bold text-white hover:bg-[#d94816]"
+                      className="w-full bg-gradient-to-r from-[#f15922] to-[#d94816] font-bold text-white shadow-lg shadow-orange-900/40 hover:shadow-xl hover:shadow-orange-800/50"
                       disabled={busy}
                     >
                       {busy ? "Opening the till..." : "Open the till"}
@@ -532,7 +536,7 @@ function Landing() {
                     <div className="space-y-2">
                       <Label
                         htmlFor="email"
-                        className="font-semibold text-[#0b3b8f]"
+                        className="font-semibold text-blue-200"
                       >
                         Email
                       </Label>
@@ -543,14 +547,14 @@ function Landing() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="username"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-white/15 bg-slate-900/60 text-white placeholder:text-slate-500 focus-visible:border-blue-400 focus-visible:ring-blue-400/40"
                       />
                     </div>
 
                     <div className="space-y-2">
                       <Label
                         htmlFor="password"
-                        className="font-semibold text-[#0b3b8f]"
+                        className="font-semibold text-blue-200"
                       >
                         Password
                       </Label>
@@ -561,13 +565,13 @@ function Landing() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="current-password"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-white/15 bg-slate-900/60 text-white placeholder:text-slate-500 focus-visible:border-blue-400 focus-visible:ring-blue-400/40"
                       />
                     </div>
 
                     <Button
                       type="submit"
-                      className="w-full bg-[#0b3b8f] font-bold text-white hover:bg-[#082d6d]"
+                      className="w-full bg-gradient-to-r from-[#0b3b8f] to-[#082d6d] font-bold text-white shadow-lg shadow-blue-950/50 hover:shadow-xl hover:shadow-blue-900/60"
                       disabled={busy}
                     >
                       {busy ? "Signing in..." : "Sign in"}
@@ -575,8 +579,8 @@ function Landing() {
                   </form>
                 )}
 
-                <div className="mt-5 flex items-center gap-2 text-xs text-slate-500">
-                  <ShieldCheck className="h-4 w-4 text-[#f15922]" />
+                <div className="mt-5 flex items-center gap-2 text-xs text-slate-400">
+                  <ShieldCheck className="h-4 w-4 text-orange-300" />
                   Every sale is recorded against the person signed in.
                 </div>
               </Card>
@@ -585,24 +589,24 @@ function Landing() {
         </section>
 
         {/* Trust strip */}
-        <section className="mt-6 grid gap-4 rounded-3xl border border-white/15 bg-white/10 p-5 shadow-[0_8px_25px_rgba(0,0,0,0.3)] backdrop-blur-md sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+        <section className="mt-6 grid gap-4 rounded-3xl border border-white/10 bg-slate-950/50 p-5 shadow-[0_8px_30px_rgba(0,0,0,0.35)] backdrop-blur-md sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
           {trustItems.map(({ icon: TrustIcon, title, body }, index) => (
             <div
               key={title}
               className={`flex items-center gap-3 px-4 py-2 ${
-                index > 0 ? "lg:border-l lg:border-white/15" : ""
+                index > 0 ? "lg:border-l lg:border-white/10" : ""
               }`}
             >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#f15922]/20 text-[#ff8a5c] backdrop-blur-sm ring-1 ring-inset ring-[#f15922]/30">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-orange-500/25 to-blue-500/25 text-orange-300 ring-1 ring-white/10">
                 <TrustIcon className="h-5 w-5" />
               </span>
 
               <div>
-                <div className="text-xs font-bold tracking-wide text-[#ffb08a]">
+                <div className="text-xs font-bold tracking-wide text-orange-300">
                   {title}
                 </div>
 
-                <div className="mt-1 text-xs text-white/70">
+                <div className="mt-1 text-xs text-slate-400">
                   {body}
                 </div>
               </div>
@@ -613,7 +617,7 @@ function Landing() {
         {/* Product range */}
         <section
           id="range"
-          className="relative mt-24 overflow-hidden rounded-[2rem] border border-white/15 px-4 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] sm:px-8"
+          className="relative mt-24 overflow-hidden rounded-[2rem] border border-white/10 px-4 py-8 sm:px-8"
         >
           <img
             src={sectionBackdropImage}
@@ -621,17 +625,22 @@ function Landing() {
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            className="pointer-events-none absolute inset-0 size-full object-cover opacity-25"
+            className="pointer-events-none absolute inset-0 size-full object-cover opacity-25 mix-blend-luminosity"
           />
 
+          {/* Dark orange → blue gradient overlay */}
           <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0a1834]/85 via-[#0b3b8f]/60 to-[#c4410f]/70"
+            className="pointer-events-none absolute inset-0"
             aria-hidden="true"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(241,89,34,0.22) 0%, rgba(10,23,48,0.75) 50%, rgba(11,59,143,0.28) 100%)",
+            }}
           />
 
           <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff8a5c]">
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-orange-300">
                 EXO skincare
               </span>
 
@@ -639,25 +648,27 @@ function Landing() {
                 The Ignited BrandZ range
               </h2>
 
-              <p className="mt-2 max-w-2xl text-white/70">
+              <p className="mt-2 max-w-2xl text-slate-300">
                 Creams and oils that work together - moisture first, then
                 repair.
               </p>
             </div>
 
-            <div className="hidden h-1 w-24 rounded-full bg-[#f15922] sm:block" />
+            <div className="hidden h-1 w-24 rounded-full bg-gradient-to-r from-orange-400 via-white/40 to-blue-400 sm:block" />
           </div>
 
           <div className="relative z-10 mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {products.map((p, index) => (
               <article
                 key={p.name}
-                className="group overflow-hidden rounded-2xl border border-white/15 bg-white/95 shadow-[0_8px_25px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-1 hover:border-[#ff8a5c]/50 hover:shadow-[0_18px_40px_rgba(0,0,0,0.5)]"
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 shadow-[0_8px_30px_rgba(0,0,0,0.4)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-orange-400/30 hover:bg-slate-950/80 hover:shadow-[0_18px_50px_rgba(241,89,34,0.15)]"
               >
-                <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50 via-slate-50 to-orange-50/40 p-5">
+                <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/60 p-5">
                   <div
                     className={`absolute left-0 top-0 h-1 w-full ${
-                      index % 2 === 0 ? "bg-[#0b3b8f]" : "bg-[#f15922]"
+                      index % 2 === 0
+                        ? "bg-gradient-to-r from-[#0b3b8f] to-[#1557b0]"
+                        : "bg-gradient-to-r from-[#f15922] to-[#ff7a45]"
                     }`}
                   />
 
@@ -674,15 +685,15 @@ function Landing() {
                 </div>
 
                 <div className="p-5">
-                  <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f15922]">
+                  <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-orange-300">
                     EXO skincare
                   </div>
 
-                  <h3 className="font-bold leading-snug text-[#07152f]">
+                  <h3 className="font-bold leading-snug text-white">
                     {p.name}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                  <p className="mt-2 text-sm leading-relaxed text-slate-400">
                     {p.body}
                   </p>
                 </div>
@@ -694,7 +705,7 @@ function Landing() {
         {/* Shades */}
         <section
           id="shades"
-          className="relative mt-24 overflow-hidden rounded-[2rem] border border-white/15 px-4 py-8 shadow-[0_20px_60px_rgba(0,0,0,0.4)] sm:px-8"
+          className="relative mt-24 overflow-hidden rounded-[2rem] border border-white/10 px-4 py-8 sm:px-8"
         >
           <img
             src={sectionBackdropImage}
@@ -702,31 +713,36 @@ function Landing() {
             aria-hidden="true"
             loading="lazy"
             decoding="async"
-            className="pointer-events-none absolute inset-0 size-full object-cover opacity-20"
+            className="pointer-events-none absolute inset-0 size-full object-cover opacity-25 mix-blend-luminosity"
           />
 
+          {/* Blue → white → orange gradient overlay */}
           <div
-            className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#0a1834]/90 via-[#7a2d10]/60 to-[#0b3b8f]/75"
+            className="pointer-events-none absolute inset-0"
             aria-hidden="true"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(11,59,143,0.30) 0%, rgba(10,23,48,0.75) 50%, rgba(241,89,34,0.22) 100%)",
+            }}
           />
 
           <div className="relative z-10">
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#ff8a5c]">
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-orange-300">
               Product identification
             </span>
 
             <h2 className="mt-2 text-3xl font-black tracking-tight text-white">
-              Shades &amp; variants
+              Shades & variants
             </h2>
 
-            <p className="mt-2 max-w-2xl text-white/70">
+            <p className="mt-2 max-w-2xl text-slate-300">
               The colour of each cap and lid tells you which oil or cream is in
               the bottle.
             </p>
 
             <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
-              <figure className="overflow-hidden rounded-2xl border border-white/15 bg-white/95 p-4 shadow-[0_8px_25px_rgba(0,0,0,0.35)] transition duration-300 hover:border-[#ff8a5c]/40 hover:shadow-[0_15px_35px_rgba(0,0,0,0.45)]">
-                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-slate-50">
+              <figure className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.4)] backdrop-blur-sm transition duration-300 hover:border-orange-400/30 hover:shadow-[0_15px_45px_rgba(241,89,34,0.15)]">
+                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/60">
                   <img
                     src={productImages.oilColors}
                     alt="Ignited BrandZ oil colour chart showing each oil variant"
@@ -739,14 +755,14 @@ function Landing() {
                   />
                 </div>
 
-                <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
-                  <span className="h-2 w-2 rounded-full bg-[#f15922]" />
+                <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-blue-200">
+                  <span className="h-2 w-2 rounded-full bg-orange-400" />
                   Oil colours
                 </figcaption>
               </figure>
 
-              <figure className="overflow-hidden rounded-2xl border border-white/15 bg-white/95 p-4 shadow-[0_8px_25px_rgba(0,0,0,0.35)] transition duration-300 hover:border-[#ff8a5c]/40 hover:shadow-[0_15px_35px_rgba(0,0,0,0.45)]">
-                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 to-slate-50">
+              <figure className="overflow-hidden rounded-2xl border border-white/10 bg-slate-950/60 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.4)] backdrop-blur-sm transition duration-300 hover:border-orange-400/30 hover:shadow-[0_15px_45px_rgba(241,89,34,0.15)]">
+                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-slate-900 via-slate-950 to-blue-950/60">
                   <img
                     src={productImages.creamColors}
                     alt="Ignited BrandZ cream colour chart showing each cream variant"
@@ -759,8 +775,8 @@ function Landing() {
                   />
                 </div>
 
-                <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
-                  <span className="h-2 w-2 rounded-full bg-[#f15922]" />
+                <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-blue-200">
+                  <span className="h-2 w-2 rounded-full bg-orange-400" />
                   Cream colours
                 </figcaption>
               </figure>
@@ -770,14 +786,14 @@ function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-[#0a1834]/60 py-8 text-center text-sm text-white/70 backdrop-blur-md">
-        <div className="mx-auto mb-3 h-1 w-16 rounded-full bg-[#f15922]" />
+      <footer className="relative border-t border-white/10 bg-slate-950/50 py-8 text-center text-sm text-slate-400 backdrop-blur-md">
+        <div className="mx-auto mb-3 h-1 w-16 rounded-full bg-gradient-to-r from-orange-400 via-white/40 to-blue-400" />
 
-        <span className="font-semibold text-white">
+        <span className="font-semibold text-blue-200">
           {new Date().getFullYear()} Ignited BrandZ
         </span>
 
-        <span className="mx-2 text-white/30">•</span>
+        <span className="mx-2 text-slate-600">•</span>
 
         Affordable skincare for healthy skin.
       </footer>
