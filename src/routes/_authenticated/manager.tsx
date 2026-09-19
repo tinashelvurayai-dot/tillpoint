@@ -62,7 +62,7 @@ const navItems: Array<{
   { to: "/manager/manuals", label: "Manuals", icon: BookOpen },
 ];
 
-const LOGO_URL = "https://i.postimg.cc/5td7tzMx/6cm-IBZ-Logo.png";
+const LOGO_URL = "https://i.postimg.cc/Hkq55G3M/Whats-App-Image-2026-09-07-at-9-29-12-AM.jpg";
 const INTRO_DURATION_MS = 5000;
 
 function LegendaryLoader() {
