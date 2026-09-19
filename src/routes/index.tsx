@@ -248,9 +248,53 @@ function Landing() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50">
-      {/* Ambient gradient orbs */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div className="relative min-h-screen">
+      {/* ═══════════════════════════════════════════════════════════
+          FIXED FULL-PAGE BACKGROUND
+          Two fixed backdrop images stacked over a tri-color wash.
+          Section content scrolls over this — the images stay put.
+      ═══════════════════════════════════════════════════════════ */}
+      <div className="pointer-events-none fixed inset-0 -z-20">
+        {/* Base gradient wash: orange → white → blue */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(135deg, #fff5ed 0%, #ffffff 38%, #eef4ff 68%, #e8f0ff 100%)",
+          }}
+        />
+
+        {/* glassFrameBackdropImage — soft, top-of-page framing */}
+        <img
+          src={glassFrameBackdropImage}
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover opacity-[0.35] mix-blend-multiply"
+        />
+
+        {/* sectionBackdropImage — layered below with a soft screen blend */}
+        <img
+          src={sectionBackdropImage}
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-screen"
+        />
+
+        {/* Orange → white → blue tint pass to bind the images together */}
+        <div
+          className="absolute inset-0"
+          aria-hidden="true"
+          style={{
+            background:
+              "linear-gradient(120deg, rgba(241,89,34,0.10) 0%, rgba(255,255,255,0.60) 45%, rgba(11,59,143,0.12) 100%)",
+          }}
+        />
+
+        {/* Ambient gradient orbs for depth */}
         <div
           className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-30 blur-3xl"
           style={{
@@ -265,17 +309,10 @@ function Landing() {
               "linear-gradient(135deg, #0b3b8f 0%, #1557b0 60%, #f15922 100%)",
           }}
         />
-        <div
-          className="absolute left-1/2 top-1/3 h-[400px] w-[400px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
-          style={{
-            background:
-              "linear-gradient(135deg, #1557b0 0%, #ffffff 50%, #f15922 100%)",
-          }}
-        />
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-blue-100/60 bg-white/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
           <BrandLogo />
 
@@ -308,30 +345,21 @@ function Landing() {
       </header>
 
       <main className="relative mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
-        {/* Hero */}
-        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/80 bg-white/70 px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.12)] backdrop-blur-sm sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
+        {/* Hero — translucent so the fixed background shows through */}
+        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-white/55 px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.14)] backdrop-blur-md sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
+          {/* Subtle glass-frame image inside the hero for depth */}
           <img
             src={glassFrameBackdropImage}
             alt=""
             aria-hidden="true"
             loading="eager"
             decoding="async"
-            className="pointer-events-none absolute inset-0 -z-20 h-full w-full object-cover opacity-40"
-          />
-
-          {/* Orange → white → blue gradient wash */}
-          <div
-            className="pointer-events-none absolute inset-0 -z-10"
-            aria-hidden="true"
-            style={{
-              background:
-                "linear-gradient(120deg, rgba(241,89,34,0.10) 0%, rgba(255,255,255,0.85) 45%, rgba(11,59,143,0.12) 100%)",
-            }}
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-25"
           />
 
           {/* Hero content */}
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922] backdrop-blur-sm">
               Ignited BrandZ
             </span>
 
@@ -388,7 +416,7 @@ function Landing() {
               ].map((f, index) => (
                 <div
                   key={f.t}
-                  className="group rounded-2xl border border-blue-100 bg-white/90 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.12)]"
+                  className="group rounded-2xl border border-blue-100 bg-white/85 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.12)]"
                 >
                   <f.icon
                     className={`h-5 w-5 ${
@@ -446,7 +474,7 @@ function Landing() {
                 />
               </Button>
             ) : (
-              <Card className="w-full border-blue-100 bg-white/95 p-6 shadow-[0_20px_50px_rgba(11,59,143,0.12)] backdrop-blur-sm">
+              <Card className="w-full border-blue-100 bg-white/95 p-6 shadow-[0_20px_50px_rgba(11,59,143,0.12)] backdrop-blur-md">
                 <div className="mb-5">
                   <h2 className="text-xl font-bold text-[#07152f]">
                     Sign in
@@ -489,7 +517,7 @@ function Landing() {
                         value={c1}
                         onChange={(e) => setC1(e.target.value)}
                         autoComplete="off"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
                     </div>
 
@@ -507,7 +535,7 @@ function Landing() {
                         value={c2}
                         onChange={(e) => setC2(e.target.value)}
                         autoComplete="off"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
                     </div>
 
@@ -535,7 +563,7 @@ function Landing() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         autoComplete="username"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
                     </div>
 
@@ -553,7 +581,7 @@ function Landing() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="current-password"
-                        className="border-blue-100 focus-visible:ring-[#f15922]"
+                        className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
                     </div>
 
@@ -577,7 +605,7 @@ function Landing() {
         </section>
 
         {/* Trust strip */}
-        <section className="mt-6 grid gap-4 rounded-3xl border border-blue-100 bg-white/90 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+        <section className="mt-6 grid gap-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-md sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
           {trustItems.map(({ icon: TrustIcon, title, body }, index) => (
             <div
               key={title}
@@ -602,30 +630,11 @@ function Landing() {
           ))}
         </section>
 
-        {/* Product range */}
+        {/* Product range — now transparent so the fixed background shows through */}
         <section
           id="range"
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
         >
-          <img
-            src={sectionBackdropImage}
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            decoding="async"
-            className="pointer-events-none absolute inset-0 size-full object-cover opacity-60"
-          />
-
-          {/* Orange → white → blue gradient overlay */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            aria-hidden="true"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(241,89,34,0.10) 0%, rgba(255,255,255,0.75) 50%, rgba(11,59,143,0.12) 100%)",
-            }}
-          />
-
           <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
@@ -649,9 +658,9 @@ function Landing() {
             {products.map((p, index) => (
               <article
                 key={p.name}
-                className="group overflow-hidden rounded-2xl border border-blue-100 bg-white/95 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_18px_40px_rgba(11,59,143,0.13)]"
+                className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
               >
-                <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50 via-white to-orange-50/50 p-5">
+                <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60 p-5">
                   <div
                     className={`absolute left-0 top-0 h-1 w-full ${
                       index % 2 === 0
@@ -690,30 +699,11 @@ function Landing() {
           </div>
         </section>
 
-        {/* Shades */}
+        {/* Shades — transparent too */}
         <section
           id="shades"
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
         >
-          <img
-            src={sectionBackdropImage}
-            alt=""
-            aria-hidden="true"
-            loading="lazy"
-            decoding="async"
-            className="pointer-events-none absolute inset-0 size-full object-cover opacity-55"
-          />
-
-          {/* Orange → white → blue gradient overlay */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            aria-hidden="true"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(11,59,143,0.12) 0%, rgba(255,255,255,0.80) 50%, rgba(241,89,34,0.10) 100%)",
-            }}
-          />
-
           <div className="relative z-10">
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
               Product identification
@@ -729,8 +719,8 @@ function Landing() {
             </p>
 
             <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
-              <figure className="overflow-hidden rounded-2xl border border-blue-100 bg-white/95 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-sm transition duration-300 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.10)]">
-                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 via-white to-orange-50/40">
+              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
+                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
                   <img
                     src={productImages.oilColors}
                     alt="Ignited BrandZ oil colour chart showing each oil variant"
@@ -749,8 +739,8 @@ function Landing() {
                 </figcaption>
               </figure>
 
-              <figure className="overflow-hidden rounded-2xl border border-blue-100 bg-white/95 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-sm transition duration-300 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.10)]">
-                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50 via-white to-orange-50/40">
+              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
+                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
                   <img
                     src={productImages.creamColors}
                     alt="Ignited BrandZ cream colour chart showing each cream variant"
@@ -774,7 +764,7 @@ function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="relative border-t border-blue-100 bg-gradient-to-r from-blue-50/60 via-white to-orange-50/60 py-8 text-center text-sm text-slate-500">
+      <footer className="relative border-t border-white/40 bg-white/60 py-8 text-center text-sm text-slate-500 backdrop-blur-md">
         <div className="mx-auto mb-3 h-1 w-16 rounded-full bg-gradient-to-r from-[#0b3b8f] to-[#f15922]" />
 
         <span className="font-semibold text-[#0b3b8f]">
