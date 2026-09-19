@@ -36,6 +36,7 @@ import {
   Lock as LockIcon,
   Undo2,
   Menu,
+  Sparkles,
 } from "lucide-react";
 import { enqueueSale, flushQueue, getQueue } from "@/lib/offline-queue";
 import {
@@ -89,8 +90,6 @@ function CashierScreen() {
   const [checkingOut, setCheckingOut] = useState(false);
   const [manualOpen, setManualOpen] = useState(false);
   const [queuedCount, setQueuedCount] = useState<number>(() => getQueue().length);
-  // Today's takings, read from the local transaction log so the figure is
-  // correct even with no connection.
   const [today, setToday] = useState({ total: 0, count: 0 });
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
   const [lastSync, setLastSync] = useState<string | null>(null);
@@ -122,8 +121,6 @@ function CashierScreen() {
   }, []);
 
   useEffect(() => {
-    // Durable offline history lives in IndexedDB; pull it in so the header is
-    // right after a reload with no connection.
     void hydrateLogFromIdb();
     let latest: TxLogEntry[] = [];
     const recompute = () => setToday(computeSalesToday(latest));
@@ -174,7 +171,6 @@ function CashierScreen() {
     void idbGet<Variant[]>(IDB_KEYS.catalog).then((c) => {
       if (c?.length) setIdbCatalog(c);
     });
-    // Opening the till switches to cashier mode, but a manager keeps their access.
     if (!isManagerMode()) setMode("cashier");
     void hydrateStockDeltas();
   }, []);
@@ -248,7 +244,6 @@ function CashierScreen() {
     [online, qc],
   );
 
-  // Auto-sync queued sales when back online
   useEffect(() => {
     if (!online) {
       setSyncStatus(getQueue().length > 0 ? "idle" : "synced");
@@ -311,19 +306,16 @@ function CashierScreen() {
       .replace(/[.,!?]/g, "");
     if (!text) return;
 
-    // "new" / "new sale" / "clear" -> reset cart
     if (/^(new( sale)?|clear|reset)$/.test(text)) {
       setCart([]);
       toast.info("Cart cleared");
       return;
     }
-    // "checkout" / "complete sale" / "pay"
     if (/^(checkout|complete( sale)?|pay|finish)$/.test(text)) {
       if (cart.length === 0) return toast.error("Cart is empty");
       checkout.mutate();
       return;
     }
-    // "cash" / "mobile" / "ecocash"
     if (/^cash$/.test(text)) {
       setPayment("cash");
       toast.info("Payment: Cash");
@@ -335,7 +327,6 @@ function CashierScreen() {
       return;
     }
 
-    // "remove <phrase>" -> remove matching cart line
     const rm = text.match(/^remove\s+(.+)$/);
     if (rm) {
       const line = cart.find((l) =>
@@ -347,14 +338,12 @@ function CashierScreen() {
       } else toast.error(`Not in cart: ${rm[1]}`);
       return;
     }
-    // "search <phrase>"
     const sr = text.match(/^(search|find)\s+(.+)$/);
     if (sr) {
       setSearch(sr[2]);
       return;
     }
 
-    // "add <n> <phrase>" or "<n> <phrase>" or "add <phrase>"
     const addN = text.match(/^(?:add\s+)?(\d+)\s+(.+)$/);
     const addPhrase = text.match(/^add\s+(.+)$/);
     let qty = 1;
@@ -396,8 +385,6 @@ function CashierScreen() {
       const cashierName = profile?.full_name ?? CASHIER_NAME;
       const saleId = crypto.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
 
-      // LOCAL FIRST: the sale is committed to this device before anything else.
-      // The till never waits for the cloud, so a sale can never hang on the network.
       const entry = enqueueSale({
         id: saleId,
         cashier_id: session?.user.id ?? offlineCashierId,
@@ -415,7 +402,6 @@ function CashierScreen() {
         items: logItems,
         status: "queued",
       });
-      // Reduce on-hand counts locally right away so offline stock stays accurate.
       recordSaleDelta(entry.id, items);
       setQueuedCount(getQueue().length);
 
@@ -437,7 +423,6 @@ function CashierScreen() {
       );
       setCart([]);
       setAmountPaid("");
-      // Background upload; failures simply stay queued and retry automatically.
       if (typeof navigator === "undefined" || navigator.onLine) {
         void runSync().then(() => {
           setQueuedCount(getQueue().length);
@@ -452,65 +437,119 @@ function CashierScreen() {
 
   if (loading)
     return (
-      <div className="flex min-h-screen items-center justify-center text-muted-foreground">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 text-muted-foreground">
         Loading...
       </div>
     );
-  // Cashier mode is always allowed here; the manager reaches their console
-  // through the secret code gate instead of an automatic redirect.
 
   const showManual = settings.data?.show_cashier_manual !== false;
 
   return (
-    <div className="grid min-h-screen bg-background lg:grid-cols-[1fr_400px]">
+    <div className="grid min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50 lg:grid-cols-[1fr_420px]">
+      {/* Main product area */}
       <div className="flex flex-col overflow-hidden">
-        <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-card px-4 py-3 sm:px-6 sm:py-4">
+        {/* Header */}
+        <header className="relative flex flex-wrap items-center justify-between gap-2 border-b border-slate-200/80 bg-white/80 px-4 py-3 shadow-sm backdrop-blur-lg sm:px-6 sm:py-4">
           <div className="flex items-center gap-3">
             <ManagerGateLogo />
-            <div className="hidden sm:block border-l border-border pl-3">
-              <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            <div className="hidden border-l border-slate-200 pl-3 sm:block">
+              <div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">
                 Green Shop · Cashier
               </div>
-              <div className="text-sm font-semibold">
+              <div className="text-sm font-bold text-slate-800">
                 {roleIdentity.cashierName ?? profile?.full_name ?? "Cashier"}
               </div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-xs text-slate-500">
                 {roleIdentity.cashierTitle ?? "Cashier"}
               </div>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <div className="rounded-lg border border-orange-200 bg-orange-50 px-3 py-1.5 text-right">
-              <div className="text-[10px] font-medium uppercase tracking-wider text-[#f15922]">
-                Sales today
-              </div>
-              <div className="text-base font-bold tabular-nums text-[#0b3b8f]">
-                {formatCurrency(today.total)}
-              </div>
-              <div className="text-[10px] text-[#0b3b8f]">
-                {today.count} sale{today.count === 1 ? "" : "s"}
+            {/* Sales today card */}
+            <div className="relative overflow-hidden rounded-xl border border-orange-200/60 bg-gradient-to-br from-orange-50 to-amber-50 px-4 py-2 text-right shadow-sm">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(241,89,34,0.08),transparent_60%)]" />
+              <div className="relative">
+                <div className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#f15922]">
+                  Sales today
+                </div>
+                <div className="text-lg font-black tabular-nums text-[#0b3b8f]">
+                  {formatCurrency(today.total)}
+                </div>
+                <div className="text-[10px] font-medium text-[#0b3b8f]/80">
+                  {today.count} sale{today.count === 1 ? "" : "s"}
+                </div>
               </div>
             </div>
-            <div className="hidden sm:block"><SyncIndicator /></div>
+            <div className="hidden sm:block">
+              <SyncIndicator />
+            </div>
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="outline" size="sm" aria-label="Open cashier actions">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  aria-label="Open cashier actions"
+                  className="border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                >
                   <Menu data-icon="inline-start" /> Actions
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="border-l-slate-200 bg-white/95 backdrop-blur-lg">
                 <SheetHeader>
-                  <SheetTitle>Cashier actions</SheetTitle>
+                  <SheetTitle className="text-slate-800">Cashier actions</SheetTitle>
                   <SheetDescription>Operational tools and account controls.</SheetDescription>
                 </SheetHeader>
                 <div className="flex flex-col gap-3 p-4">
-                  <Button variant="outline" onClick={() => syncOfflineQueue(true)} disabled={!online || syncStatus === "syncing"}><RefreshCw data-icon="inline-start" /> Sync</Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => syncOfflineQueue(true)}
+                    disabled={!online || syncStatus === "syncing"}
+                    className="border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                  >
+                    <RefreshCw data-icon="inline-start" /> Sync
+                  </Button>
                   <PWAInstallButton variant="outline" size="sm" label="Install" />
-                  <Link to="/transactions"><Button variant="outline" className="w-full"><ClipboardList data-icon="inline-start" /> Transaction log</Button></Link>
-                  <Link to="/sync"><Button variant="outline" className="w-full">Sync queue</Button></Link>
-                  <Link to="/shift"><Button variant="outline" className="w-full"><LockIcon data-icon="inline-start" /> Shift close</Button></Link>
-                  <Link to="/refunds"><Button variant="outline" className="w-full"><Undo2 data-icon="inline-start" /> Refunds</Button></Link>
-                  {showManual && <Button variant="outline" onClick={() => setManualOpen(true)}><BookOpen data-icon="inline-start" /> Manual</Button>}
+                  <Link to="/transactions">
+                    <Button
+                      variant="outline"
+                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                    >
+                      <ClipboardList data-icon="inline-start" /> Transaction log
+                    </Button>
+                  </Link>
+                  <Link to="/sync">
+                    <Button
+                      variant="outline"
+                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                    >
+                      Sync queue
+                    </Button>
+                  </Link>
+                  <Link to="/shift">
+                    <Button
+                      variant="outline"
+                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                    >
+                      <LockIcon data-icon="inline-start" /> Shift close
+                    </Button>
+                  </Link>
+                  <Link to="/refunds">
+                    <Button
+                      variant="outline"
+                      className="w-full border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                    >
+                      <Undo2 data-icon="inline-start" /> Refunds
+                    </Button>
+                  </Link>
+                  {showManual && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setManualOpen(true)}
+                      className="border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                    >
+                      <BookOpen data-icon="inline-start" /> Manual
+                    </Button>
+                  )}
                   <SignOutButton variant="outline" />
                 </div>
               </SheetContent>
@@ -520,21 +559,26 @@ function CashierScreen() {
 
         <SyncAlertBanner />
 
+        {/* Status bar */}
         <div
-          className={`border-b px-4 py-3 text-xs sm:px-6 ${online ? "border-orange-100 bg-orange-50 text-[#0b3b8f]" : "border-amber-200 bg-amber-50 text-amber-950"}`}
+          className={`border-b px-4 py-2.5 text-xs sm:px-6 ${
+            online
+              ? "border-orange-100/80 bg-gradient-to-r from-orange-50/80 to-amber-50/60 text-[#0b3b8f]"
+              : "border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 text-amber-950"
+          }`}
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               {syncStatus === "syncing" ? (
-                <RefreshCw className="h-4 w-4 animate-spin" />
+                <RefreshCw className="h-4 w-4 animate-spin text-[#f15922]" />
               ) : online ? (
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
               ) : (
-                <AlertTriangle className="h-4 w-4" />
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
               )}
-              <span className="font-medium">
+              <span className="font-semibold">
                 {!online
-                  ? "Offline mode active - sales are saved on this device."
+                  ? "Offline mode active — sales are saved on this device."
                   : syncStatus === "syncing"
                     ? "Syncing offline sales now..."
                     : queuedCount > 0
@@ -542,7 +586,7 @@ function CashierScreen() {
                       : "Online and synced."}
               </span>
             </div>
-            <span className="text-muted-foreground">
+            <span className="text-slate-500">
               {lastSync
                 ? `Last sync: ${new Date(lastSync).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
                 : "Catalog is available after it loads once."}
@@ -550,15 +594,16 @@ function CashierScreen() {
           </div>
         </div>
 
-        <div className="border-b border-border bg-card px-4 py-3 sm:px-6">
+        {/* Search */}
+        <div className="border-b border-slate-200/80 bg-white/70 px-4 py-3 backdrop-blur-sm sm:px-6">
           <div className="relative max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <Input
               id="cashier-search"
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-10"
+              className="border-slate-200 bg-white/80 pl-9 pr-10 shadow-sm transition-all placeholder:text-slate-400 focus:border-[#f15922]/50 focus:ring-[#f15922]/20"
             />
             {search.length > 0 && (
               <button
@@ -568,7 +613,7 @@ function CashierScreen() {
                   setSearch("");
                   document.getElementById("cashier-search")?.focus();
                 }}
-                className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-foreground"
+                className="absolute right-2 top-1/2 grid h-7 w-7 -translate-y-1/2 place-items-center rounded-md text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -576,46 +621,59 @@ function CashierScreen() {
           </div>
         </div>
 
+        {/* Product grid */}
         <div className="flex-1 overflow-auto p-4 sm:p-6">
-              {filtered.length === 0 ? (
+          {filtered.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center text-center">
-              <PackageIcon className="h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 text-sm text-muted-foreground">No products found.</p>
+              <div className="grid h-16 w-16 place-items-center rounded-2xl bg-slate-100">
+                <PackageIcon className="h-8 w-8 text-slate-400" />
+              </div>
+              <p className="mt-4 text-sm font-medium text-slate-500">No products found.</p>
+              <p className="mt-1 text-xs text-slate-400">Try a different search term.</p>
             </div>
           ) : (
-            <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4">
               {filtered.map((v) => {
                 const image = v.image_url || v.product?.image_url;
                 return (
-                  <div key={v.id} className="relative">
+                  <div key={v.id} className="relative group">
                     <button
                       onClick={() => addToCart(v)}
-                      className="group w-full overflow-hidden rounded-xl border border-border bg-card text-left shadow-[var(--shadow-elev-1)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-elev-2)]"
+                      className="w-full overflow-hidden rounded-2xl border border-slate-200/80 bg-white text-left shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-200/80 hover:shadow-lg hover:shadow-orange-100/40"
                     >
                       {!hideImages && (
-                        <div className="aspect-square overflow-hidden bg-accent">
+                        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
                           {image ? (
                             <img
                               src={image}
                               alt={v.product?.name}
-                              className="h-full w-full object-cover transition group-hover:scale-105"
+                              className="h-full w-full object-cover transition duration-500 group-hover:scale-110"
                             />
                           ) : (
                             <div className="grid h-full w-full place-items-center">
-                              <PackageIcon className="h-8 w-8 text-muted-foreground" />
+                              <PackageIcon className="h-8 w-8 text-slate-300" />
                             </div>
                           )}
+                          {/* Subtle overlay gradient */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
                         </div>
                       )}
-                      <div className="p-3">
-                        <div className="truncate text-sm font-semibold">{v.product?.name}</div>
-                        <div className="mt-0.5 truncate text-xs text-muted-foreground">
-                          {v.variant_name}
-                          {v.size ? ` - ${v.size}` : ""}
+                      <div className="p-3.5">
+                        <div className="truncate text-sm font-bold text-slate-800">
+                          {v.product?.name}
                         </div>
-                        <div className="mt-2 flex items-center justify-between">
-                          <span className="text-base font-bold">{formatCurrency(v.price)}</span>
-                          <span className="text-xs text-muted-foreground">In stock</span>
+                        <div className="mt-0.5 truncate text-xs text-slate-500">
+                          {v.variant_name}
+                          {v.size ? ` · ${v.size}` : ""}
+                        </div>
+                        <div className="mt-2.5 flex items-center justify-between">
+                          <span className="text-base font-black text-[#0b3b8f]">
+                            {formatCurrency(v.price)}
+                          </span>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-700">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                            In stock
+                          </span>
                         </div>
                       </div>
                     </button>
@@ -627,75 +685,88 @@ function CashierScreen() {
         </div>
       </div>
 
-      <aside className="flex flex-col border-t border-border bg-card lg:border-l lg:border-t-0">
-        <div className="border-b border-border px-4 py-3 sm:px-6 sm:py-4">
-          <h2 className="text-lg font-bold">Current sale</h2>
-          <p className="text-xs text-muted-foreground">
+      {/* Cart sidebar */}
+      <aside className="flex flex-col border-t border-slate-200/80 bg-white/80 backdrop-blur-lg lg:border-l lg:border-t-0">
+        <div className="border-b border-slate-200/80 px-4 py-3 sm:px-6 sm:py-4">
+          <div className="flex items-center gap-2">
+            <ShoppingCart className="h-4 w-4 text-[#f15922]" />
+            <h2 className="text-lg font-bold text-slate-800">Current sale</h2>
+          </div>
+          <p className="mt-0.5 text-xs text-slate-500">
             {cart.length} line{cart.length === 1 ? "" : "s"} · {cart.reduce((s, l) => s + l.qty, 0)}{" "}
             item{cart.reduce((s, l) => s + l.qty, 0) === 1 ? "" : "s"}
           </p>
         </div>
+
         <div className="flex-1 overflow-auto px-4 py-3">
           {cart.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center py-10 text-center">
-              <ShoppingCart className="h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 text-sm text-muted-foreground">Tap a product to start.</p>
+              <div className="grid h-16 w-16 place-items-center rounded-2xl bg-slate-100">
+                <ShoppingCart className="h-8 w-8 text-slate-300" />
+              </div>
+              <p className="mt-4 text-sm font-medium text-slate-500">Your cart is empty</p>
+              <p className="mt-1 text-xs text-slate-400">Tap a product to start a sale.</p>
             </div>
           ) : (
-            <div className="relative rounded-xl border border-dashed border-border bg-[hsl(var(--card))] p-4 font-mono text-[13px] shadow-[var(--shadow-elev-1)]">
+            <div className="relative rounded-2xl border border-dashed border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-4 font-mono text-[13px] shadow-sm">
               <button
                 type="button"
                 aria-label="Cancel sale"
                 title="Cancel this sale"
                 onClick={cancelSale}
-                className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-md border border-border text-muted-foreground transition hover:bg-destructive hover:text-destructive-foreground"
+                className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-lg border border-slate-200 bg-white text-slate-400 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500"
               >
                 <X className="h-4 w-4" />
               </button>
+
               <div className="text-center">
-                <div className="text-sm font-bold tracking-[0.18em] uppercase">Receipt</div>
-                <div className="text-[11px] text-muted-foreground">
+                <div className="flex items-center justify-center gap-1.5 text-sm font-black tracking-[0.18em] uppercase text-slate-700">
+                  <Sparkles className="h-3.5 w-3.5 text-[#f15922]" />
+                  Receipt
+                </div>
+                <div className="mt-0.5 text-[11px] text-slate-400">
                   {new Date().toLocaleString()}
                 </div>
               </div>
 
-              <div className="my-3 border-t border-dashed border-border" />
+              <div className="my-3 border-t border-dashed border-slate-200" />
+
               <ul className="space-y-3">
                 {cart.map((l) => (
                   <li key={l.variant.id}>
                     <div className="flex items-baseline justify-between gap-2">
-                      <span className="min-w-0 truncate font-semibold">
+                      <span className="min-w-0 truncate font-bold text-slate-800">
                         {l.variant.product?.name}
                       </span>
-                      <span className="tabular-nums font-semibold">
+                      <span className="tabular-nums font-bold text-slate-800">
                         {formatCurrency(Number(l.variant.price) * l.qty)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+                    <div className="mt-1 flex items-center justify-between gap-2 text-[11px] text-slate-500">
                       <span className="min-w-0 truncate">
                         {l.variant.variant_name}
-                        {l.variant.size ? ` - ${l.variant.size}` : ""} · {l.qty} ×{" "}
+                        {l.variant.size ? ` · ${l.variant.size}` : ""} · {l.qty} ×{" "}
                         {formatCurrency(l.variant.price)}
                       </span>
                       <span className="flex items-center gap-1">
                         <button
                           aria-label="Decrease"
                           onClick={() => changeQty(l.variant.id, -1)}
-                          className="grid h-6 w-6 place-items-center rounded border border-border hover:bg-accent"
+                          className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50"
                         >
                           <Minus className="h-3 w-3" />
                         </button>
                         <button
                           aria-label="Increase"
                           onClick={() => changeQty(l.variant.id, 1)}
-                          className="grid h-6 w-6 place-items-center rounded border border-border hover:bg-accent"
+                          className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-all hover:border-slate-300 hover:bg-slate-50"
                         >
                           <Plus className="h-3 w-3" />
                         </button>
                         <button
                           aria-label="Remove"
                           onClick={() => removeLine(l.variant.id)}
-                          className="grid h-6 w-6 place-items-center rounded border border-border hover:bg-destructive/10 hover:text-destructive"
+                          className="grid h-6 w-6 place-items-center rounded-md border border-slate-200 bg-white text-slate-500 transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-500"
                         >
                           <Trash2 className="h-3 w-3" />
                         </button>
@@ -704,20 +775,25 @@ function CashierScreen() {
                   </li>
                 ))}
               </ul>
-              <div className="my-3 border-t border-dashed border-border" />
-              <div className="flex items-baseline justify-between text-sm font-bold">
-                <span>TOTAL</span>
-                <span className="tabular-nums">{formatCurrency(subtotal)}</span>
+
+              <div className="my-3 border-t border-dashed border-slate-200" />
+
+              <div className="flex items-baseline justify-between text-base font-black">
+                <span className="text-slate-700">TOTAL</span>
+                <span className="tabular-nums text-[#0b3b8f]">{formatCurrency(subtotal)}</span>
               </div>
             </div>
           )}
         </div>
 
-        <div className="border-t border-border p-4 space-y-3">
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">Payment</label>
+        {/* Payment & checkout */}
+        <div className="space-y-3 border-t border-slate-200/80 bg-white/60 p-4">
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Payment method
+            </label>
             <Select value={payment} onValueChange={(v) => setPayment(v as typeof payment)}>
-              <SelectTrigger>
+              <SelectTrigger className="border-slate-200 bg-white shadow-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -727,48 +803,65 @@ function CashierScreen() {
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1">
-            <label className="text-xs font-medium text-muted-foreground">
-              Amount paid (optional)
+
+          <div className="space-y-1.5">
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+              Amount paid <span className="font-normal normal-case text-slate-400">(optional)</span>
             </label>
             <Input
               inputMode="decimal"
               placeholder={formatCurrency(subtotal)}
               value={amountPaid}
               onChange={(e) => setAmountPaid(e.target.value)}
+              className="border-slate-200 bg-white shadow-sm"
             />
             {Number(amountPaid) > subtotal && (
-              <p className="text-xs font-medium text-emerald-700">
+              <p className="text-xs font-bold text-emerald-600">
                 Change: {formatCurrency(Number(amountPaid) - subtotal)}
               </p>
             )}
           </div>
-          <div className="flex items-center justify-between text-lg font-bold">
-            <span>Total</span>
-            <span>{formatCurrency(subtotal)}</span>
+
+          <div className="flex items-center justify-between rounded-xl border border-slate-200/80 bg-gradient-to-r from-slate-50 to-white px-4 py-3 shadow-sm">
+            <span className="text-sm font-bold text-slate-700">Total</span>
+            <span className="text-xl font-black text-[#0b3b8f]">{formatCurrency(subtotal)}</span>
           </div>
+
           <Button
-            className="w-full"
+            className="w-full bg-gradient-to-r from-[#f15922] to-[#e04a15] text-white shadow-md shadow-orange-200/50 transition-all hover:shadow-lg hover:shadow-orange-300/50 hover:brightness-105 disabled:opacity-50 disabled:shadow-none"
             size="lg"
             disabled={cart.length === 0 || checkingOut}
             onClick={() => checkout.mutate()}
           >
-            {checkingOut ? "Saving on device..." : online ? "Complete sale" : "Save sale offline"}
+            {checkingOut ? (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                Saving on device...
+              </>
+            ) : online ? (
+              "Complete sale"
+            ) : (
+              "Save sale offline"
+            )}
           </Button>
-          <p className="text-center text-[11px] text-muted-foreground">
+
+          <p className="text-center text-[11px] leading-relaxed text-slate-400">
             Sales are saved on this device first, then uploaded automatically.
           </p>
         </div>
       </aside>
 
+      {/* Manual dialog */}
       <Dialog open={manualOpen} onOpenChange={setManualOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-auto">
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto">
           <DialogHeader>
-            <DialogTitle>Cashier User Manual</DialogTitle>
+            <DialogTitle className="text-slate-800">Cashier User Manual</DialogTitle>
           </DialogHeader>
           <CashierManualContent />
         </DialogContent>
       </Dialog>
+
+      {/* Receipt dialog */}
       <Dialog
         open={receipt !== null}
         onOpenChange={(o) => {
@@ -777,25 +870,25 @@ function CashierScreen() {
       >
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Sale completed</DialogTitle>
+            <DialogTitle className="text-slate-800">Sale completed</DialogTitle>
           </DialogHeader>
           {receipt && (
             <div className="space-y-3">
-              <div className="rounded-lg border border-dashed border-border bg-accent/30 p-3 text-xs">
-                <pre className="whitespace-pre-wrap font-mono leading-relaxed">
+              <div className="rounded-xl border border-dashed border-slate-200 bg-gradient-to-b from-white to-slate-50/50 p-4 text-xs shadow-sm">
+                <pre className="whitespace-pre-wrap font-mono leading-relaxed text-slate-700">
                   {receiptText(receipt.entry, {
                     amountPaid: receipt.amountPaid,
                     change: receipt.change,
                   })}
                 </pre>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-slate-500">
                 Receipt {receiptNumber(receipt.entry)} is stored on this device. Reprint it any time
                 from the transaction log.
               </p>
               <div className="flex flex-wrap gap-2">
                 <Button
-                  className="flex-1"
+                  className="flex-1 bg-gradient-to-r from-[#f15922] to-[#e04a15] text-white shadow-sm transition-all hover:shadow-md hover:brightness-105"
                   onClick={() =>
                     printReceipt(receipt.entry, {
                       amountPaid: receipt.amountPaid,
@@ -807,7 +900,7 @@ function CashierScreen() {
                 </Button>
                 <Button
                   variant="outline"
-                  className="flex-1"
+                  className="flex-1 border-slate-200 bg-white shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
                   onClick={() =>
                     downloadReceipt(receipt.entry, {
                       amountPaid: receipt.amountPaid,
@@ -817,7 +910,11 @@ function CashierScreen() {
                 >
                   Download
                 </Button>
-                <Button variant="ghost" onClick={() => setReceipt(null)}>
+                <Button
+                  variant="ghost"
+                  className="text-slate-500 transition-colors hover:text-slate-700"
+                  onClick={() => setReceipt(null)}
+                >
                   Next sale
                 </Button>
               </div>
@@ -842,17 +939,17 @@ export function VoiceCommandHelp() {
   ];
   return (
     <div className="space-y-3 text-sm">
-      <p className="text-muted-foreground">
+      <p className="text-slate-500">
         Tap Voice, speak one command clearly, then wait for the action to complete.
       </p>
       <div className="grid gap-2">
         {commands.map(([command, description]) => (
           <div
             key={command}
-            className="grid gap-2 rounded-lg border border-orange-100 bg-orange-50/40 p-3 sm:grid-cols-[140px_1fr]"
+            className="grid gap-2 rounded-xl border border-orange-100 bg-gradient-to-r from-orange-50/40 to-amber-50/30 p-3 sm:grid-cols-[140px_1fr]"
           >
-            <code className="font-semibold text-[#0b3b8f]">{command}</code>
-            <span className="text-muted-foreground">{description}</span>
+            <code className="font-bold text-[#0b3b8f]">{command}</code>
+            <span className="text-slate-500">{description}</span>
           </div>
         ))}
       </div>
@@ -864,78 +961,78 @@ export function CashierManualContent() {
   return (
     <div className="space-y-4 text-sm leading-relaxed">
       <section>
-        <h3 className="font-semibold text-base">1. Opening cashier mode</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">1. Opening cashier mode</h3>
+        <p className="text-slate-500">
           From the welcome or auth page, tap Enter Cashier Mode. The till opens without a password
           for fast counter access. Named cashier accounts can still sign in when the manager wants
           staff-specific tracking.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">2. Finding a product</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">2. Finding a product</h3>
+        <p className="text-slate-500">
           Use the search bar at the top of the product grid. You can search by product name,
           variant, or category.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">3. Adding items to the cart</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">3. Adding items to the cart</h3>
+        <p className="text-slate-500">
           Tap any product card. It appears in the current sale panel. Use plus and minus to change
           quantity. Tap the trash icon to remove a line.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">4. Taking payment</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">4. Taking payment</h3>
+        <p className="text-slate-500">
           Choose the payment method, confirm the total with the customer, and tap Complete sale.
           Stock updates automatically.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">5. Voice commands</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">5. Voice commands</h3>
+        <p className="text-slate-500">
           Tap Voice and say commands such as add Coke, add 3 Coke, remove Coke, search sugar, new,
           cash, ecocash, or checkout. Use Voice help in the cashier top bar for the full list.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">6. Working offline and syncing</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">6. Working offline and syncing</h3>
+        <p className="text-slate-500">
           If the connection drops, keep serving customers. Sales are stored securely on this device,
           a pending badge shows what is waiting, and sync runs automatically when the device comes
           back online. You can also press Sync while online.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">6b. Refunds and voids</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">6b. Refunds and voids</h3>
+        <p className="text-slate-500">
           Tap Refunds in the top bar to open your refunds page. A refund gives money back to a
           customer; a void cancels a sale entered by mistake. Both can return the items to stock and
           both remove the sale from the day&apos;s takings, so sales and refunds always balance. You
           can only complete one yourself when the manager has switched on{" "}
-          <span className="font-medium">auto-approve refunds</span> - otherwise the page tells you
-          to ask the manager. Refunds need a connection; if you are offline, wait until the device
-          is back online.
+          <span className="font-medium text-slate-700">auto-approve refunds</span> — otherwise the
+          page tells you to ask the manager. Refunds need a connection; if you are offline, wait
+          until the device is back online.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">7. Stock warnings</h3>
-        <p className="text-muted-foreground">
-          Out means the item cannot be sold. Low means only a few units remain - let the manager
+        <h3 className="text-base font-bold text-slate-800">7. Stock warnings</h3>
+        <p className="text-slate-500">
+          Out means the item cannot be sold. Low means only a few units remain — let the manager
           know.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">8. Installing on a device</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">8. Installing on a device</h3>
+        <p className="text-slate-500">
           Tap Install in Chrome or Edge on the published site. The app appears with the other apps
           on the device and keeps the cashier dashboard available after it has loaded once.
         </p>
       </section>
       <section>
-        <h3 className="font-semibold text-base">9. Signing out</h3>
-        <p className="text-muted-foreground">
+        <h3 className="text-base font-bold text-slate-800">9. Signing out</h3>
+        <p className="text-slate-500">
           Tap Sign out at the end of your shift when using a named account. Shared cashier mode can
           be opened again from the auth page.
         </p>
