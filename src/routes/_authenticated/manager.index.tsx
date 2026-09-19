@@ -638,87 +638,14 @@ function ManagerDashboard() {
                     );
                   })
                 ) : (
-                                <ul className="divide-y divide-slate-100">
-                {stats.data?.lowStock.length ? (
-                  stats.data.lowStock.slice(0, 8).map((s: any) => {
-                    const isFinished = s.quantity === 0;
-                    const percentage =
-                      s.low_stock_alert_level > 0
-                        ? Math.min(100, (s.quantity / s.low_stock_alert_level) * 100)
-                        : 0;
-
-                    return (
-                      <li
-                        key={s.variant?.id}
-                        className={`group py-3 transition-colors ${
-                          isFinished
-                            ? "hover:bg-gradient-to-r hover:from-rose-50/40 hover:to-transparent"
-                            : "hover:bg-gradient-to-r hover:from-orange-50/40 hover:to-transparent"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div className="flex min-w-0 items-center gap-3">
-                            <div
-                              className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg shadow-sm ${
-                                isFinished
-                                  ? "bg-gradient-to-br from-rose-500 to-red-500 shadow-rose-500/20"
-                                  : "bg-gradient-to-br from-orange-500 to-amber-500 shadow-orange-500/20"
-                              }`}
-                            >
-                              {isFinished ? (
-                                <PackageX className="h-4 w-4 text-white" />
-                              ) : (
-                                <AlertTriangle className="h-4 w-4 text-white" />
-                              )}
-                            </div>
-
-                            <div className="min-w-0">
-                              <div className="truncate text-sm font-semibold text-slate-900">
-                                {s.variant?.product?.name}
-                              </div>
-                              <div className="truncate text-[11px] text-slate-500">
-                                {s.variant?.variant_name}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex shrink-0 flex-col items-end gap-1">
-                            <span
-                              className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold tabular-nums ${
-                                isFinished
-                                  ? "bg-gradient-to-r from-rose-50 to-red-50 text-rose-700"
-                                  : "bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700"
-                              }`}
-                            >
-                              {s.quantity} left
-                            </span>
-
-                            <div className="h-1 w-16 overflow-hidden rounded-full bg-slate-100">
-                              <div
-                                className={`h-full rounded-full ${
-                                  isFinished
-                                    ? "bg-gradient-to-r from-rose-500 to-red-500"
-                                    : "bg-gradient-to-r from-orange-500 to-amber-500"
-                                }`}
-                                style={{ width: `${Math.max(6, percentage)}%` }}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      </li>
-                    );
-                  })
-                ) : (
                   <li className="py-12 text-center">
                     <div className="flex flex-col items-center gap-2">
                       <div className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-emerald-100 to-teal-100">
                         <CheckCircle2 className="h-6 w-6 text-emerald-500" />
                       </div>
-
                       <p className="text-sm font-semibold text-slate-700">
                         All stock levels healthy
                       </p>
-
                       <p className="text-xs text-slate-500">
                         Nothing has reached the minimum threshold.
                       </p>
