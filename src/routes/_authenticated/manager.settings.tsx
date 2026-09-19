@@ -250,7 +250,7 @@ function ManagerSettingsPage() {
                 </div>
                 <div>
                   <div className="text-sm font-bold text-rose-700">Transaction Reset</div>
-                  <div className="text-[11px] text-rose-700/70">Permanent — cannot be undone</div>
+                  <div className="text-[11px] text-rose-700/70">Permanent - cannot be undone</div>
                 </div>
               </div>
               <p className="mt-3 text-sm text-slate-600">
@@ -295,7 +295,7 @@ function ManagerSettingsPage() {
               </div>
               <p className="mt-3 text-sm text-slate-600">
                 Sets the cashier&apos;s &quot;Sales today&quot; total back to zero for a fresh shift.
-                Sales records, stock and reports are untouched — only the till counter restarts.
+                Sales records, stock and reports are untouched - only the till counter restarts.
               </p>
 
               <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-orange-200/60 bg-white/70 px-3 py-2">
@@ -549,7 +549,7 @@ function ManagerSettingsPage() {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    This shop operates tax free — prices and receipts are the final amount.
+                    This shop operates tax free - prices and receipts are the final amount.
                   </p>
                 </div>
 
