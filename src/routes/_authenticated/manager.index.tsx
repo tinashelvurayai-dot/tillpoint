@@ -11,7 +11,6 @@ import {
   ShoppingBag,
   Package,
   AlertTriangle,
-  Sparkles,
   TrendingUp,
   Users,
   Receipt,
@@ -335,7 +334,7 @@ function ManagerDashboard() {
             <div className="relative">
               <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 opacity-30 blur-md" />
               <div className="relative grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/30">
-                <Sparkles className="h-5 w-5 text-white" />
+                <TrendingUp className="h-5 w-5 text-white" />
               </div>
             </div>
             <div>
@@ -407,7 +406,7 @@ function ManagerDashboard() {
               </div>
               {stats.data?.byCashier.length ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50/60 px-2.5 py-1 text-[11px] font-bold text-indigo-700">
-                  <Sparkles className="h-3 w-3" />
+                  <Users className="h-3 w-3" />
                   {stats.data.byCashier.length} active
                 </span>
               ) : null}
