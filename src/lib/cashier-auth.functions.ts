@@ -29,8 +29,7 @@ export const listCashiers = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertManager(context as never);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await context.supabase
       .from("cashier_accounts")
       .select("id, user_id, name, code1, code2, active, sale_permission, created_at")
       .order("created_at", { ascending: true });
@@ -50,49 +49,24 @@ export const createCashier = createServerFn({ method: "POST" })
     if (!data.name || data.code1.length < 4 || data.code2.length < 4) {
       throw new Error("Enter a name and two access codes of at least 4 characters each.");
     }
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: clash } = await supabaseAdmin
+    const { data: clash } = await context.supabase
       .from("cashier_accounts")
       .select("id")
       .eq("code1", data.code1)
       .maybeSingle();
     if (clash) throw new Error("That first access code is already used by another cashier.");
 
-    const loginEmail = emailFor(data.code1);
-    const loginPassword = randomPassword();
-    const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
-      email: loginEmail,
-      password: loginPassword,
-      email_confirm: true,
-      user_metadata: { full_name: data.name, cashier_id: data.code1 },
-    });
-    if (createError || !created?.user) {
-      throw new Error(createError?.message ?? "Could not create the cashier account.");
-    }
-
-    const { error } = await supabaseAdmin.from("cashier_accounts").insert({
-      user_id: created.user.id,
+    const { error } = await context.supabase.from("cashier_accounts").insert({
       name: data.name,
       code1: data.code1,
       code2: data.code2,
       active: true,
       sale_permission: true,
-      login_email: loginEmail,
-      login_password: loginPassword,
+      login_email: emailFor(data.code1),
+      login_password: randomPassword(),
     });
     if (error) throw new Error(error.message);
-
-    // Make sure the staff profile and cashier role exist for the new account.
-    await supabaseAdmin
-      .from("profiles")
-      .upsert(
-        { id: created.user.id, full_name: data.name, cashier_id: data.code1, active: true },
-        { onConflict: "id" },
-      );
-    await supabaseAdmin
-      .from("user_roles")
-      .upsert({ user_id: created.user.id, role: "cashier" }, { onConflict: "user_id,role" });
 
     return { ok: true };
   });
@@ -121,16 +95,17 @@ export const updateCashier = createServerFn({ method: "POST" })
     if (!data.name || data.code1.length < 4 || data.code2.length < 4) {
       throw new Error("Enter a name and two access codes of at least 4 characters each.");
     }
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: row } = await supabaseAdmin
+    const { data: row } = await context.supabase
       .from("cashier_accounts")
-      .select("id, user_id, code1")
+      .select("id, user_id, code1, login_password")
       .eq("id", data.id)
       .maybeSingle();
     if (!row) throw new Error("That cashier was not found.");
 
-    const { error } = await supabaseAdmin
+    const codeChanged = normaliseCode(row.code1) !== data.code1;
+
+    const { error } = await context.supabase
       .from("cashier_accounts")
       .update({
         name: data.name,
@@ -139,16 +114,14 @@ export const updateCashier = createServerFn({ method: "POST" })
         active: data.active,
         sale_permission: data.sale_permission,
         login_email: emailFor(data.code1),
+        login_password: codeChanged ? randomPassword() : (row.login_password ?? randomPassword()),
+        ...(codeChanged ? { user_id: null } : {}),
       })
       .eq("id", data.id);
     if (error) throw new Error(error.message);
 
-    if (row.user_id) {
-      await supabaseAdmin.auth.admin.updateUserById(row.user_id, {
-        email: emailFor(data.code1),
-        user_metadata: { full_name: data.name, cashier_id: data.code1 },
-      });
-      await supabaseAdmin
+    if (row.user_id && !codeChanged) {
+      await context.supabase
         .from("profiles")
         .update({ full_name: data.name, cashier_id: data.code1, active: data.active })
         .eq("id", row.user_id);
@@ -161,17 +134,17 @@ export const deleteCashier = createServerFn({ method: "POST" })
   .inputValidator((input: { id: string }) => ({ id: String(input.id) }))
   .handler(async ({ data, context }) => {
     await assertManager(context as never);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: row } = await supabaseAdmin
+    const { data: row } = await context.supabase
       .from("cashier_accounts")
       .select("id, user_id")
       .eq("id", data.id)
       .maybeSingle();
     if (!row) return { ok: true };
-    await supabaseAdmin.from("cashier_accounts").delete().eq("id", data.id);
+
+    await context.supabase.from("cashier_accounts").delete().eq("id", data.id);
     if (row.user_id) {
-      await supabaseAdmin.from("profiles").update({ active: false }).eq("id", row.user_id);
-      await supabaseAdmin.auth.admin.deleteUser(row.user_id).catch(() => undefined);
+      // The staff profile is switched off so the old login can no longer be used.
+      await context.supabase.from("profiles").update({ active: false }).eq("id", row.user_id);
     }
     return { ok: true };
   });
