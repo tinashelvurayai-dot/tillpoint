@@ -23,7 +23,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/format";
-import { Truck, Plus, Trash2, PackageCheck, Pencil } from "lucide-react";
+import {
+  Truck,
+  Plus,
+  Trash2,
+  PackageCheck,
+  Pencil,
+  Sparkles,
+  Users,
+  Mail,
+  Phone,
+  MapPin,
+  Building2,
+  ShoppingBag,
+  Calendar,
+  Zap,
+  ArrowRight,
+  ClipboardList,
+  Info,
+  Boxes,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -311,213 +330,496 @@ function SuppliersPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["purchase-orders"] }),
   });
 
+  const statusStyles: Record<string, { bg: string; label: string; dot: string }> = {
+    pending: {
+      bg: "from-amber-500 to-orange-500",
+      label: "Pending",
+      dot: "from-amber-400 to-orange-400",
+    },
+    ordered: {
+      bg: "from-blue-500 to-indigo-500",
+      label: "Ordered",
+      dot: "from-blue-400 to-indigo-400",
+    },
+    received: {
+      bg: "from-emerald-500 to-teal-500",
+      label: "Received",
+      dot: "from-emerald-400 to-teal-400",
+    },
+    cancelled: {
+      bg: "from-slate-400 to-slate-500",
+      label: "Cancelled",
+      dot: "from-slate-300 to-slate-400",
+    },
+  };
+
   return (
-    <div className="p-6 md:p-10">
-      <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Suppliers & Purchase Orders</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage suppliers, issue POs, and auto-reorder items running low.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" onClick={() => setSupplierOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add supplier
-          </Button>
-          <Button onClick={() => setPoOpen(true)} disabled={!suppliers.data?.length}>
-            <Plus className="mr-2 h-4 w-4" /> New PO
-          </Button>
-        </div>
-      </header>
+    <div className="relative p-6 md:p-10">
+      {/* Ambient gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-20 right-1/4 h-72 w-72 rounded-full bg-gradient-to-br from-indigo-400/10 to-purple-400/10 blur-3xl" />
+        <div className="absolute top-1/2 -left-20 h-72 w-72 rounded-full bg-gradient-to-br from-orange-400/10 to-amber-400/10 blur-3xl" />
+        <div className="absolute -bottom-20 right-1/3 h-72 w-72 rounded-full bg-gradient-to-br from-blue-400/10 to-cyan-400/10 blur-3xl" />
+      </div>
 
-      <section className="grid gap-6 lg:grid-cols-[380px_1fr]">
-        <Card className="border-blue-100 p-5">
-          <h2 className="mb-4 flex items-center gap-2 font-semibold">
-            <Truck className="h-4 w-4 text-blue-600" /> Suppliers
-          </h2>
-          <ul className="divide-y divide-blue-100">
-            {(suppliers.data ?? []).map((s) => (
-              <li key={s.id} className="py-3">
-                <div className="flex items-center justify-between gap-2">
-                  <div className="font-medium">{s.name}</div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    onClick={() => {
-                      setEditingSupplier(s);
-                      setSupForm({
-                        name: s.name ?? "",
-                        contact_name: s.contact_name ?? "",
-                        phone: s.phone ?? "",
-                        email: s.email ?? "",
-                        address: s.address ?? "",
-                        notes: s.notes ?? "",
-                        products_offered: "",
-                      });
-                      setSupplierOpen(true);
-                    }}
-                    aria-label={`Edit ${s.name}`}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="text-destructive hover:text-destructive"
-                    disabled={deleteSupplier.isPending}
-                    onClick={() => {
-                      if (
-                        window.confirm(
-                          `Delete supplier "${s.name}"? This cannot be undone. Past stock-in records stay in place.`,
-                        )
-                      )
-                        deleteSupplier.mutate(s);
-                    }}
-                    aria-label={`Delete ${s.name}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {s.contact_name} {s.phone && `· ${s.phone}`}
-                </div>
-                {s.email && <div className="text-xs text-muted-foreground">{s.email}</div>}
-              </li>
-            ))}
-            {suppliers.data?.length === 0 && (
-              <li className="py-6 text-center text-sm text-muted-foreground">No suppliers yet.</li>
-            )}
-          </ul>
-        </Card>
-
-        <Card className="border-blue-100 p-5">
-          <h2 className="mb-4 flex items-center gap-2 font-semibold">
-            <PackageCheck className="h-4 w-4 text-blue-600" /> Purchase orders
-          </h2>
-          <ul className="divide-y divide-blue-100">
-            {(pos.data ?? []).map((p: any) => (
-              <li key={p.id} className="py-3">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div>
-                    <div className="font-medium">{p.supplier?.name ?? "Supplier"}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {formatDate(p.order_date)} · {(p.items as POItem[])?.length ?? 0} items
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{formatCurrency(orderTotal(p))}</span>
-                    <Select
-                      value={p.status}
-                      onValueChange={(v) => updateStatus.mutate({ id: p.id, status: v })}
-                    >
-                      <SelectTrigger className="h-8 w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="ordered">Ordered</SelectItem>
-                        <SelectItem value="received">Received</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button size="sm" variant="outline" onClick={() => openPOEditor(p)}>
-                      Edit costs
-                    </Button>
-                    {p.auto_reorder && (
-                      <Badge variant="outline" className="border-blue-300 text-blue-700">
-                        Auto
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-                <ul className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  {(p.items as POItem[])?.slice(0, 4).map((it, i) => (
-                    <li key={i}>
-                      {it.quantity}x {it.name} @ {formatCurrency(it.unit_cost)}
-                    </li>
-                  ))}
-                  {(p.items as POItem[])?.length > 4 && <li>+ {p.items.length - 4} more</li>}
-                </ul>
-              </li>
-            ))}
-            {pos.data?.length === 0 && (
-              <li className="py-6 text-center text-sm text-muted-foreground">
-                No purchase orders yet.
-              </li>
-            )}
-          </ul>
-        </Card>
-      </section>
-
-      {/* Add supplier dialog */}
-      <Dialog open={supplierOpen} onOpenChange={setSupplierOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingSupplier ? "Edit supplier" : "Add supplier"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
+      <div className="relative">
+        {/* Header */}
+        <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 opacity-30 blur-md" />
+              <div className="relative grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-500/30">
+                <Truck className="h-5 w-5 text-white" />
+              </div>
+            </div>
             <div>
-              <Label>Name *</Label>
+              <h1 className="bg-gradient-to-r from-slate-900 via-blue-900 to-indigo-900 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
+                Suppliers & Purchase Orders
+              </h1>
+              <p className="mt-1 text-sm text-slate-500">
+                Manage suppliers, issue POs, and auto-reorder items running low.
+              </p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditingSupplier(null);
+                setSupForm({
+                  name: "",
+                  contact_name: "",
+                  phone: "",
+                  email: "",
+                  address: "",
+                  notes: "",
+                  products_offered: "",
+                });
+                setSupplierOpen(true);
+              }}
+              className="border-blue-200 hover:border-blue-300 hover:bg-blue-50"
+            >
+              <Plus className="mr-2 h-4 w-4" /> Add supplier
+            </Button>
+            <Button
+              onClick={() => setPoOpen(true)}
+              disabled={!suppliers.data?.length}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-purple-500/40"
+            >
+              <Plus className="mr-2 h-4 w-4" /> New PO
+            </Button>
+          </div>
+        </header>
+
+        <section className="grid gap-6 lg:grid-cols-[380px_1fr]">
+          {/* Suppliers panel */}
+          <Card className="relative overflow-hidden border-blue-100/60 bg-white/80 shadow-sm backdrop-blur-sm">
+            <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
+            <div className="p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md shadow-blue-500/25">
+                    <Building2 className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">Suppliers</h2>
+                    <p className="text-[11px] text-slate-500">Vendor directory</p>
+                  </div>
+                </div>
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50/60 px-2.5 py-1">
+                  <Users className="h-3 w-3 text-blue-600" />
+                  <span className="text-[11px] font-bold text-blue-700">
+                    {suppliers.data?.length ?? 0}
+                  </span>
+                </div>
+              </div>
+
+              <ul className="divide-y divide-slate-100">
+                {(suppliers.data ?? []).map((s) => (
+                  <li key={s.id} className="group py-3.5 transition-colors hover:bg-gradient-to-r hover:from-blue-50/40 hover:to-indigo-50/20">
+                    <div className="flex items-start gap-3">
+                      <div className="relative shrink-0">
+                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 opacity-30 blur-sm" />
+                        <div className="relative grid h-10 w-10 place-items-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white shadow-md shadow-blue-500/30">
+                          {s.name.charAt(0).toUpperCase()}
+                        </div>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="truncate font-bold text-slate-900">{s.name}</div>
+                            {s.contact_name && (
+                              <div className="truncate text-xs text-slate-500">
+                                {s.contact_name}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-7 w-7 hover:bg-indigo-50 hover:text-indigo-600"
+                              onClick={() => {
+                                setEditingSupplier(s);
+                                setSupForm({
+                                  name: s.name ?? "",
+                                  contact_name: s.contact_name ?? "",
+                                  phone: s.phone ?? "",
+                                  email: s.email ?? "",
+                                  address: s.address ?? "",
+                                  notes: s.notes ?? "",
+                                  products_offered: "",
+                                });
+                                setSupplierOpen(true);
+                              }}
+                              aria-label={`Edit ${s.name}`}
+                            >
+                              <Pencil className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-7 w-7 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+                              disabled={deleteSupplier.isPending}
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    `Delete supplier "${s.name}"? This cannot be undone. Past stock-in records stay in place.`,
+                                  )
+                                )
+                                  deleteSupplier.mutate(s);
+                              }}
+                              aria-label={`Delete ${s.name}`}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                        {(s.phone || s.email) && (
+                          <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                            {s.phone && (
+                              <span className="inline-flex items-center gap-1">
+                                <Phone className="h-3 w-3 text-blue-500" />
+                                {s.phone}
+                              </span>
+                            )}
+                            {s.email && (
+                              <span className="inline-flex items-center gap-1 truncate">
+                                <Mail className="h-3 w-3 text-indigo-500" />
+                                {s.email}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                        {s.address && (
+                          <div className="mt-1 inline-flex items-center gap-1 text-[11px] text-slate-400">
+                            <MapPin className="h-3 w-3" />
+                            <span className="truncate">{s.address}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+                {suppliers.data?.length === 0 && (
+                  <li className="py-10 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100">
+                        <Truck className="h-6 w-6 text-blue-500" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-700">No suppliers yet</p>
+                      <p className="text-xs text-slate-500">Add your first vendor to get started.</p>
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </Card>
+
+          {/* Purchase orders panel */}
+          <Card className="relative overflow-hidden border-indigo-100/60 bg-white/80 shadow-sm backdrop-blur-sm">
+            <div className="h-1 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-orange-500" />
+            <div className="p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2.5">
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 shadow-md shadow-indigo-500/25">
+                    <ClipboardList className="h-4 w-4 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">Purchase orders</h2>
+                    <p className="text-[11px] text-slate-500">Track order fulfillment</p>
+                  </div>
+                </div>
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-indigo-100 bg-indigo-50/60 px-2.5 py-1">
+                  <PackageCheck className="h-3 w-3 text-indigo-600" />
+                  <span className="text-[11px] font-bold text-indigo-700">
+                    {pos.data?.length ?? 0}
+                  </span>
+                </div>
+              </div>
+
+              <ul className="divide-y divide-slate-100">
+                {(pos.data ?? []).map((p: any) => {
+                  const statusInfo = statusStyles[p.status] ?? statusStyles.pending;
+                  const items: POItem[] = Array.isArray(p.items) ? p.items : [];
+                  return (
+                    <li
+                      key={p.id}
+                      className="group py-4 transition-colors hover:bg-gradient-to-r hover:from-indigo-50/30 hover:to-purple-50/20"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-3">
+                        <div className="flex min-w-0 flex-1 items-start gap-3">
+                          <div className="relative shrink-0">
+                            <div
+                              className={`absolute inset-0 rounded-lg bg-gradient-to-br ${statusInfo.bg} opacity-30 blur-sm`}
+                            />
+                            <div
+                              className={`relative grid h-10 w-10 place-items-center rounded-lg bg-gradient-to-br ${statusInfo.bg} shadow-md`}
+                            >
+                              <ShoppingBag className="h-4 w-4 text-white" />
+                            </div>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <div className="font-bold text-slate-900">
+                                {p.supplier?.name ?? "Supplier"}
+                              </div>
+                              {p.auto_reorder && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm shadow-orange-500/30">
+                                  <Zap className="h-2.5 w-2.5" />
+                                  Auto
+                                </span>
+                              )}
+                            </div>
+                            <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                              <span className="inline-flex items-center gap-1">
+                                <Calendar className="h-3 w-3 text-indigo-500" />
+                                {formatDate(p.order_date)}
+                              </span>
+                              <span className="h-1 w-1 rounded-full bg-slate-300" />
+                              <span className="inline-flex items-center gap-1">
+                                <Boxes className="h-3 w-3 text-purple-500" />
+                                {items.length} item{items.length === 1 ? "" : "s"}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div className="rounded-lg border border-indigo-100 bg-gradient-to-r from-indigo-50 to-purple-50 px-3 py-1.5">
+                            <div className="text-[10px] font-bold uppercase tracking-wider text-indigo-600">
+                              Total
+                            </div>
+                            <div className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-sm font-extrabold tabular-nums text-transparent">
+                              {formatCurrency(orderTotal(p))}
+                            </div>
+                          </div>
+
+                          <Select
+                            value={p.status}
+                            onValueChange={(v) => updateStatus.mutate({ id: p.id, status: v })}
+                          >
+                            <SelectTrigger className="h-9 w-[130px] border-slate-200 bg-white shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20">
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`h-2 w-2 rounded-full bg-gradient-to-br ${statusInfo.dot}`}
+                                />
+                                <SelectValue />
+                              </div>
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="pending">
+                                <span className="flex items-center gap-2">
+                                  <span className="h-2 w-2 rounded-full bg-gradient-to-br from-amber-400 to-orange-400" />
+                                  Pending
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="ordered">
+                                <span className="flex items-center gap-2">
+                                  <span className="h-2 w-2 rounded-full bg-gradient-to-br from-blue-400 to-indigo-400" />
+                                  Ordered
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="received">
+                                <span className="flex items-center gap-2">
+                                  <span className="h-2 w-2 rounded-full bg-gradient-to-br from-emerald-400 to-teal-400" />
+                                  Received
+                                </span>
+                              </SelectItem>
+                              <SelectItem value="cancelled">
+                                <span className="flex items-center gap-2">
+                                  <span className="h-2 w-2 rounded-full bg-gradient-to-br from-slate-300 to-slate-400" />
+                                  Cancelled
+                                </span>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => openPOEditor(p)}
+                            className="border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50"
+                          >
+                            <Pencil className="mr-1.5 h-3.5 w-3.5" />
+                            Edit costs
+                          </Button>
+                        </div>
+                      </div>
+
+                      {/* Items preview */}
+                      {items.length > 0 && (
+                        <div className="mt-3 ml-13 rounded-lg border border-slate-100 bg-gradient-to-r from-slate-50/80 to-indigo-50/40 p-2.5">
+                          <ul className="space-y-1">
+                            {items.slice(0, 4).map((it, i) => (
+                              <li
+                                key={i}
+                                className="flex items-center justify-between gap-2 text-[11px]"
+                              >
+                                <div className="flex min-w-0 items-center gap-2">
+                                  <span className="grid h-5 w-5 shrink-0 place-items-center rounded bg-gradient-to-br from-indigo-500 to-purple-500 text-[10px] font-bold text-white">
+                                    {it.quantity}
+                                  </span>
+                                  <span className="truncate font-medium text-slate-700">
+                                    {it.name}
+                                  </span>
+                                </div>
+                                <span className="shrink-0 font-semibold tabular-nums text-indigo-700">
+                                  {formatCurrency(it.unit_cost)}
+                                </span>
+                              </li>
+                            ))}
+                            {items.length > 4 && (
+                              <li className="pt-0.5 text-[10px] font-medium text-indigo-500">
+                                + {items.length - 4} more item
+                                {items.length - 4 === 1 ? "" : "s"}
+                              </li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                    </li>
+                  );
+                })}
+                {pos.data?.length === 0 && (
+                  <li className="py-12 text-center">
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-indigo-100 via-purple-100 to-orange-100">
+                        <PackageCheck className="h-6 w-6 text-indigo-500" />
+                      </div>
+                      <p className="text-sm font-semibold text-slate-700">
+                        No purchase orders yet
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Create one to start tracking fulfillment.
+                      </p>
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </Card>
+        </section>
+      </div>
+
+      {/* Add/Edit supplier dialog */}
+      <Dialog open={supplierOpen} onOpenChange={setSupplierOpen}>
+        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto border-blue-100 bg-gradient-to-b from-white to-blue-50/30">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2.5">
+              <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 shadow-md shadow-blue-500/30">
+                <Building2 className="h-4 w-4 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                {editingSupplier ? "Edit supplier" : "Add supplier"}
+              </span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">
+                Name <span className="text-rose-500">*</span>
+              </Label>
               <Input
                 value={supForm.name}
                 onChange={(e) => setSupForm({ ...supForm, name: e.target.value })}
+                placeholder="e.g. Delta Beverages"
+                className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
-            <div>
-              <Label>Contact person</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">Contact person</Label>
               <Input
                 value={supForm.contact_name}
                 onChange={(e) => setSupForm({ ...supForm, contact_name: e.target.value })}
+                placeholder="e.g. John Moyo"
+                className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label>Phone</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-700">Phone</Label>
                 <Input
                   value={supForm.phone}
                   onChange={(e) => setSupForm({ ...supForm, phone: e.target.value })}
+                  className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
-              <div>
-                <Label>Email</Label>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-slate-700">Email</Label>
                 <Input
                   value={supForm.email}
                   onChange={(e) => setSupForm({ ...supForm, email: e.target.value })}
+                  className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
                 />
               </div>
             </div>
-            <div>
-              <Label>Address</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">Address</Label>
               <Input
                 value={supForm.address}
                 onChange={(e) => setSupForm({ ...supForm, address: e.target.value })}
+                className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
-            <div>
-              <Label>Products and prices offered</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">
+                Products and prices offered
+              </Label>
               <Textarea
-                placeholder="e.g. Sugar - $2.70/kg\nRice - $5/5kg"
+                placeholder={"e.g. Sugar - $2.70/kg\nRice - $5/5kg"}
                 value={supForm.products_offered}
                 onChange={(e) => setSupForm({ ...supForm, products_offered: e.target.value })}
+                className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
-            <div>
-              <Label>Notes</Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">Notes</Label>
               <Textarea
                 value={supForm.notes}
                 onChange={(e) => setSupForm({ ...supForm, notes: e.target.value })}
+                className="border-slate-200 bg-white shadow-sm focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20"
               />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSupplierOpen(false)}>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setSupplierOpen(false)}
+              className="border-slate-200"
+            >
               Cancel
             </Button>
             <Button
               onClick={() => (editingSupplier ? updateSupplier.mutate() : addSupplier.mutate())}
               disabled={addSupplier.isPending || updateSupplier.isPending}
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md shadow-blue-500/30 hover:shadow-lg hover:shadow-indigo-500/40"
             >
-              Save
+              {addSupplier.isPending || updateSupplier.isPending
+                ? "Saving..."
+                : editingSupplier
+                  ? "Save changes"
+                  : "Add supplier"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -525,18 +827,25 @@ function SuppliersPage() {
 
       {/* PO dialog */}
       <Dialog open={poOpen} onOpenChange={setPoOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto border-indigo-100 bg-gradient-to-b from-white to-indigo-50/30">
           <DialogHeader>
-            <DialogTitle>{editingPO ? "Edit purchase order" : "New purchase order"}</DialogTitle>
+            <DialogTitle className="flex items-center gap-2.5">
+              <div className="grid h-9 w-9 place-items-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 shadow-md shadow-indigo-500/30">
+                <ClipboardList className="h-4 w-4 text-white" />
+              </div>
+              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                {editingPO ? "Edit purchase order" : "New purchase order"}
+              </span>
+            </DialogTitle>
           </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <Label>Supplier</Label>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">Supplier</Label>
               <Select
                 value={poForm.supplier_id}
                 onValueChange={(v) => setPoForm({ ...poForm, supplier_id: v })}
               >
-                <SelectTrigger>
+                <SelectTrigger className="border-slate-200 bg-white shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20">
                   <SelectValue placeholder="Choose supplier" />
                 </SelectTrigger>
                 <SelectContent>
@@ -548,11 +857,15 @@ function SuppliersPage() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <Label>Items</Label>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">Items</Label>
               <div className="space-y-2">
                 {poForm.items.map((it, i) => (
-                  <div key={i} className="grid grid-cols-[1fr_80px_100px_36px] items-center gap-2">
+                  <div
+                    key={i}
+                    className="grid grid-cols-[1fr_80px_100px_36px] items-center gap-2 rounded-lg border border-slate-100 bg-white/60 p-2"
+                  >
                     <Input
                       placeholder="Item name"
                       value={it.name}
@@ -561,16 +874,18 @@ function SuppliersPage() {
                         items[i] = { ...it, name: e.target.value };
                         setPoForm({ ...poForm, items });
                       }}
+                      className="border-slate-200 bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                     />
                     <Input
                       type="number"
-                      placeholder="# of Units"
+                      placeholder="# Units"
                       value={it.quantity === 0 ? "" : it.quantity}
                       onChange={(e) => {
                         const items = [...poForm.items];
                         items[i] = { ...it, quantity: Number(e.target.value) };
                         setPoForm({ ...poForm, items });
                       }}
+                      className="border-slate-200 bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                     />
                     <Input
                       type="number"
@@ -582,15 +897,17 @@ function SuppliersPage() {
                         items[i] = { ...it, unit_cost: Number(e.target.value) };
                         setPoForm({ ...poForm, items });
                       }}
+                      className="border-slate-200 bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                     />
                     <Button
                       size="icon"
                       variant="ghost"
+                      className="h-8 w-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
                       onClick={() =>
                         setPoForm({ ...poForm, items: poForm.items.filter((_, x) => x !== i) })
                       }
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 ))}
@@ -603,47 +920,75 @@ function SuppliersPage() {
                       items: [...poForm.items, { name: "", quantity: 1, unit_cost: 0 }],
                     })
                   }
+                  className="border-indigo-200 hover:border-indigo-300 hover:bg-indigo-50"
                 >
                   <Plus className="mr-1 h-3 w-3" /> Add row
                 </Button>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+
+            <label
+              htmlFor="auto"
+              className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-orange-200/60 bg-gradient-to-r from-orange-50 to-amber-50 p-3 transition-colors hover:border-orange-300"
+            >
               <input
                 id="auto"
                 type="checkbox"
                 checked={poForm.auto_reorder}
                 onChange={(e) => setPoForm({ ...poForm, auto_reorder: e.target.checked })}
-                className="h-4 w-4"
+                className="h-4 w-4 accent-orange-500"
               />
-              <Label htmlFor="auto">Mark as auto-reorder (recurring)</Label>
-            </div>
-            <div>
-              <Label>Notes</Label>
+              <Zap className="h-4 w-4 text-orange-500" />
+              <span className="text-sm font-medium text-slate-700">
+                Mark as auto-reorder (recurring)
+              </span>
+            </label>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-slate-700">Notes</Label>
               <Textarea
                 value={poForm.notes}
                 onChange={(e) => setPoForm({ ...poForm, notes: e.target.value })}
+                className="border-slate-200 bg-white shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
               />
             </div>
-            <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-sm font-semibold text-blue-900">
-              Total: {formatCurrency(poTotal)}
+
+            <div className="relative overflow-hidden rounded-lg border border-indigo-200/60 bg-gradient-to-r from-indigo-50 via-purple-50 to-orange-50 p-4">
+              <div className="pointer-events-none absolute -right-4 -top-4 h-16 w-16 rounded-full bg-gradient-to-br from-indigo-400/20 to-purple-400/20 blur-xl" />
+              <div className="relative flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600 shadow-md shadow-indigo-500/30">
+                    <Sparkles className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700">Order total</span>
+                </div>
+                <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-2xl font-extrabold tabular-nums text-transparent">
+                  {formatCurrency(poTotal)}
+                </span>
+              </div>
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="gap-2">
             <Button
               variant="outline"
               onClick={() => {
                 setPoOpen(false);
                 setEditingPO(null);
               }}
+              className="border-slate-200"
             >
               Cancel
             </Button>
             <Button
               onClick={() => (editingPO ? savePO.mutate() : addPO.mutate())}
               disabled={addPO.isPending || savePO.isPending}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-md shadow-indigo-500/30 hover:shadow-lg hover:shadow-purple-500/40"
             >
-              {editingPO ? "Save changes" : "Create PO"}
+              {addPO.isPending || savePO.isPending
+                ? "Saving..."
+                : editingPO
+                  ? "Save changes"
+                  : "Create PO"}
             </Button>
           </DialogFooter>
         </DialogContent>
