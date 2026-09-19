@@ -262,7 +262,7 @@ function StockInRecordsPage() {
                   Stock-In Records
                 </h1>
                 <p className="mt-1 max-w-2xl text-sm text-slate-500">
-                  A complete, searchable register of deliveries, buying costs, suppliers, and
+                  A complete, searchable register of deliveries, buying costs, suppliers and
                   inventory movement.
                 </p>
               </div>
