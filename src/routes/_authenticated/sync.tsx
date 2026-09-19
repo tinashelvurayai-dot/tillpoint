@@ -397,7 +397,7 @@ function SyncQueuePage() {
             ) : (
               <ul className="space-y-2.5">
                 {queue.map((q) => {
-                  const cfg = statusConfig[q.status] ?? statusConfig.pending;
+                  const cfg = statusConfig[q.status ?? "pending"] ?? statusConfig.pending;
                   const paymentGradient = getPaymentGradient(q.payment_type);
                   const isFailed = q.status === "failed";
                   return (
