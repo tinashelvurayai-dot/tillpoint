@@ -11,7 +11,6 @@ import {
   ShoppingBag,
   Package,
   AlertTriangle,
-  TrendingUp,
   Users,
   Receipt,
   Wallet,
@@ -330,20 +329,10 @@ function ManagerDashboard() {
       <div className="relative">
         {/* Header */}
         <header className="mb-8">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 opacity-30 blur-md" />
-              <div className="relative grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/30">
-                <TrendingUp className="h-5 w-5 text-white" />
-              </div>
-            </div>
-            <div>
-              <h1 className="bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
-                {shopName} Dashboard
-              </h1>
-              <p className="mt-1 text-sm text-slate-500">Live snapshot of your shop.</p>
-            </div>
-          </div>
+          <h1 className="bg-gradient-to-r from-slate-900 via-indigo-900 to-purple-900 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
+            {shopName} Dashboard
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">Live snapshot of your shop.</p>
         </header>
 
         <PendingSyncNotice />
@@ -661,13 +650,12 @@ function ManagerDashboard() {
                         Nothing has reached the minimum threshold.
                       </p>
                     </div>
-                  </li>
-                )}
-              </ul>
-            </div>
-          </Card>
-        </section>
+                  </td>
+                </ul>
+              </div>
+            </Card>
+          </section>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
