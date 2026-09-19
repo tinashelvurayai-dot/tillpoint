@@ -36,7 +36,6 @@ import {
   Lock as LockIcon,
   Undo2,
   Menu,
-  Sparkles,
   TrendingUp,
   Wallet,
   Receipt,
@@ -80,6 +79,215 @@ type CartLine = { variant: Variant; qty: number };
 type SyncStatus = "idle" | "syncing" | "synced" | "failed";
 
 const OFFLINE_CACHE_KEY = "tillpoint.cashier.catalog.v1";
+const LOGO_URL = "https://i.postimg.cc/Hkq55G3M/Whats-App-Image-2026-09-07-at-9-29-12-AM.jpg";
+const INTRO_DURATION_MS = 7000;
+
+function LegendaryLoader({ label = "Till Loading" }: { label?: string }) {
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
+      {/* Animated grid backdrop */}
+      <div
+        className="absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(129,140,248,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(129,140,248,0.6) 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+          animation: "gridDrift 8s linear infinite",
+        }}
+      />
+
+      {/* Sweeping light beams */}
+      <div
+        className="absolute -inset-x-1/2 top-0 h-full w-[200%] opacity-40"
+        style={{
+          background:
+            "conic-gradient(from 180deg at 50% 50%, transparent 0deg, rgba(99,102,241,0.25) 45deg, transparent 90deg, rgba(249,89,34,0.2) 180deg, transparent 270deg)",
+          animation: "beamRotate 7s linear infinite",
+        }}
+      />
+
+      {/* Rotating orbit rings */}
+      <div className="absolute h-[520px] w-[520px]" style={{ animation: "spin 7s linear infinite" }}>
+        <div className="absolute inset-0 rounded-full border border-indigo-500/20" />
+        <div className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400 shadow-[0_0_24px_6px_rgba(129,140,248,0.7)]" />
+      </div>
+      <div
+        className="absolute h-[400px] w-[400px]"
+        style={{ animation: "spin 4.5s linear infinite reverse" }}
+      >
+        <div className="absolute inset-0 rounded-full border border-orange-500/20" />
+        <div className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-orange-400 to-amber-400 shadow-[0_0_24px_6px_rgba(249,89,34,0.7)]" />
+      </div>
+      <div className="absolute h-[300px] w-[300px]" style={{ animation: "spin 3s linear infinite" }}>
+        <div className="absolute inset-0 rounded-full border border-purple-500/20" />
+        <div className="absolute left-1/2 top-0 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-purple-400 to-fuchsia-400 shadow-[0_0_20px_5px_rgba(168,85,247,0.7)]" />
+      </div>
+
+      {/* Pulsing halo behind logo */}
+      <div
+        className="absolute h-[360px] w-[360px] rounded-full bg-gradient-to-br from-indigo-500/30 via-purple-500/20 to-orange-500/20 blur-3xl"
+        style={{ animation: "haloPulse 2.4s ease-in-out infinite" }}
+      />
+
+      {/* Corner brackets */}
+      <div className="pointer-events-none absolute inset-8 sm:inset-16">
+        {[
+          "top-0 left-0 border-t-2 border-l-2",
+          "top-0 right-0 border-t-2 border-r-2",
+          "bottom-0 left-0 border-b-2 border-l-2",
+          "bottom-0 right-0 border-b-2 border-r-2",
+        ].map((pos, i) => (
+          <div
+            key={i}
+            className={`absolute h-10 w-10 sm:h-14 sm:w-14 ${pos} rounded-sm border-indigo-400/50`}
+            style={{ animation: `cornerPulse 3s ease-in-out ${i * 0.2}s infinite` }}
+          />
+        ))}
+      </div>
+
+      {/* Center: logo + text */}
+      <div className="relative flex flex-col items-center gap-8">
+        <div
+          className="relative"
+          style={{ animation: "logoReveal 7s cubic-bezier(0.16, 1, 0.3, 1) forwards" }}
+        >
+          {/* Glow ring behind logo */}
+          <div
+            className="absolute -inset-6 rounded-full bg-gradient-to-br from-indigo-500/40 via-purple-500/30 to-orange-500/40 blur-2xl"
+            style={{ animation: "haloPulse 2.4s ease-in-out infinite" }}
+          />
+
+          {/* Logo with gradient border frame */}
+          <div className="relative">
+            <div
+              className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-indigo-500 via-purple-500 to-orange-500 opacity-90 blur-[2px]"
+              style={{ animation: "borderSpin 7s linear infinite" }}
+            />
+            <div className="relative overflow-hidden rounded-3xl bg-slate-950 p-1">
+              <img
+                src={LOGO_URL}
+                alt="Logo"
+                className="h-40 w-40 rounded-2xl object-contain sm:h-52 sm:w-52"
+                style={{
+                  animation: "logoFloat 3.5s ease-in-out infinite",
+                  filter: "drop-shadow(0 8px 24px rgba(99,102,241,0.5))",
+                }}
+              />
+              {/* Shimmer sweep across logo */}
+              <div
+                className="absolute inset-0 rounded-2xl"
+                style={{
+                  background:
+                    "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%)",
+                  backgroundSize: "250% 100%",
+                  animation: "shimmer 2.4s ease-in-out infinite",
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Brand text */}
+        <div
+          className="flex flex-col items-center gap-2"
+          style={{ animation: "fadeUp 7s ease-out 0.9s both" }}
+        >
+          <div className="bg-gradient-to-r from-indigo-300 via-purple-300 to-orange-300 bg-clip-text text-2xl font-black uppercase tracking-[0.3em] text-transparent sm:text-3xl">
+            Cashier
+          </div>
+          <div className="bg-gradient-to-r from-indigo-400/70 via-purple-400/70 to-orange-400/70 bg-clip-text text-[10px] font-bold uppercase tracking-[0.5em] text-transparent">
+            {label}
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div className="relative h-1 w-64 overflow-hidden rounded-full bg-white/10 sm:w-80">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-orange-500"
+            style={{ animation: "progressFill 7s cubic-bezier(0.65, 0, 0.35, 1) forwards" }}
+          />
+          <div
+            className="absolute inset-y-0 left-0 w-24 rounded-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
+            style={{ animation: "progressShine 1.6s ease-in-out infinite" }}
+          />
+        </div>
+
+        {/* Animated dots */}
+        <div className="flex items-center gap-2">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="h-1.5 w-1.5 rounded-full bg-gradient-to-r from-indigo-400 to-purple-400"
+              style={{ animation: `dotBounce 1.4s ease-in-out ${i * 0.18}s infinite` }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Inline keyframes */}
+      <style>{`
+        @keyframes logoReveal {
+          0% { opacity: 0; transform: scale(0.4) rotate(-12deg); filter: blur(20px); }
+          15% { opacity: 1; transform: scale(1.12) rotate(3deg); filter: blur(0); }
+          30% { transform: scale(0.96) rotate(-1deg); }
+          45% { transform: scale(1.03) rotate(0.5deg); }
+          60% { transform: scale(1) rotate(0deg); }
+          80% { transform: scale(1.01) rotate(0deg); }
+          100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        @keyframes logoFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes haloPulse {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.08); }
+        }
+        @keyframes borderSpin {
+          0% { filter: hue-rotate(0deg); }
+          100% { filter: hue-rotate(360deg); }
+        }
+        @keyframes shimmer {
+          0% { background-position: 250% 0; }
+          100% { background-position: -150% 0; }
+        }
+        @keyframes beamRotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes gridDrift {
+          0% { background-position: 0 0; }
+          100% { background-position: 48px 48px; }
+        }
+        @keyframes cornerPulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+        @keyframes fadeUp {
+          0% { opacity: 0; transform: translateY(16px); }
+          30% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes progressFill {
+          0% { width: 0%; }
+          100% { width: 100%; }
+        }
+        @keyframes progressShine {
+          0% { transform: translateX(-100px); }
+          100% { transform: translateX(360px); }
+        }
+        @keyframes dotBounce {
+          0%, 100% { transform: translateY(0); opacity: 0.4; }
+          50% { transform: translateY(-6px); opacity: 1; }
+        }
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+}
 
 function CashierScreen() {
   const { profile, session, loading } = useAuth();
@@ -97,6 +305,7 @@ function CashierScreen() {
   const [syncStatus, setSyncStatus] = useState<SyncStatus>("idle");
   const [lastSync, setLastSync] = useState<string | null>(null);
   const [amountPaid, setAmountPaid] = useState("");
+  const [showIntro, setShowIntro] = useState(true);
   const [receipt, setReceipt] = useState<{
     entry: TxLogEntry;
     amountPaid: number;
@@ -109,6 +318,11 @@ function CashierScreen() {
       return {};
     }
   });
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowIntro(false), INTRO_DURATION_MS);
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const onSettings = (event: StorageEvent) => {
@@ -439,20 +653,10 @@ function CashierScreen() {
     onError: (e: Error) => toast.error(e.message),
   });
 
-  if (loading)
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-950">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative h-16 w-16">
-            <div className="absolute inset-0 animate-ping rounded-full bg-gradient-to-r from-orange-500 to-amber-400 opacity-20" />
-            <div className="relative grid h-16 w-16 place-items-center rounded-full bg-gradient-to-br from-orange-500 to-amber-500 shadow-lg shadow-orange-500/40">
-              <Sparkles className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <p className="text-sm font-medium text-slate-300">Loading till...</p>
-        </div>
-      </div>
-    );
+  // Legendary 7-second intro on mount
+  if (showIntro) return <LegendaryLoader label="Till Loading" />;
+
+  if (loading) return <LegendaryLoader label="Connecting" />;
 
   const showManual = settings.data?.show_cashier_manual !== false;
 
