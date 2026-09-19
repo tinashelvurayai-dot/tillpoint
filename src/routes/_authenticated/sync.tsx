@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_authenticated/sync")({
 });
 
 const statusConfig: Record<
-  QueuedSale["status"],
+  NonNullable<QueuedSale["status"]>,
   { gradient: string; shadow: string; label: string; dot: string }
 > = {
   uploading: {
@@ -73,7 +73,7 @@ const statusConfig: Record<
 };
 
 function statusBadge(s: QueuedSale["status"]) {
-  const cfg = statusConfig[s] ?? statusConfig.pending;
+  const cfg = statusConfig[s ?? "pending"] ?? statusConfig.pending;
   return (
     <Badge className={`border-0 bg-gradient-to-r ${cfg.gradient} text-white shadow-sm ${cfg.shadow}`}>
       <span className={`mr-1 h-1.5 w-1.5 rounded-full bg-white/90`} />
@@ -397,7 +397,7 @@ function SyncQueuePage() {
             ) : (
               <ul className="space-y-2.5">
                 {queue.map((q) => {
-                  const cfg = statusConfig[q.status] ?? statusConfig.pending;
+                  const cfg = statusConfig[q.status ?? "pending"] ?? statusConfig.pending;
                   const paymentGradient = getPaymentGradient(q.payment_type);
                   const isFailed = q.status === "failed";
                   return (

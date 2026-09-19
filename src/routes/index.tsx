@@ -166,14 +166,42 @@ function Landing() {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
+      let { error } = await supabase.auth.signInWithPassword({
         email: res.email,
         password: res.password,
       });
 
       if (error) {
+        // First time this till account is used on the live site: register it, then sign in.
+        const { data: signed, error: signUpError } = await supabase.auth.signUp({
+          email: res.email,
+          password: res.password,
+          options: { data: { full_name: res.name ?? "Cashier", cashier_id: c1.trim().toUpperCase() } },
+        });
+        if (!signUpError) {
+          if (!signed.session) {
+            const retry = await supabase.auth.signInWithPassword({
+              email: res.email,
+              password: res.password,
+            });
+            error = retry.error;
+          } else {
+            error = null;
+          }
+        }
+      }
+
+      if (error) {
         toast.error("Could not open the till. Please try again.");
         return;
+      }
+
+      const { data: me } = await supabase.auth.getUser();
+      if (me.user) {
+        await supabase.rpc("cashier_link_user", {
+          p_code1: c1.trim().toUpperCase(),
+          p_user_id: me.user.id,
+        });
       }
 
       setMode("cashier");
