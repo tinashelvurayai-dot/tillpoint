@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_authenticated/sync")({
 });
 
 const statusConfig: Record<
-  QueuedSale["status"],
+  NonNullable<QueuedSale["status"]>,
   { gradient: string; shadow: string; label: string; dot: string }
 > = {
   uploading: {
