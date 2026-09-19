@@ -12,17 +12,17 @@ import { HandoverReceipt } from "@/components/handover-receipt";
 export const Route = createFileRoute("/_authenticated/manager/agreement")({
   head: () => ({
     meta: [
-      { title: "Handover & Acceptance Agreement - TillPoint Retail OS" },
+      { title: "Handover & Acceptance Agreement - Retail OS" },
       {
         name: "description",
         content:
           "The final POS software development, handover and acceptance agreement for TillPoint Retail OS.",
       },
-      { property: "og:title", content: "Handover & Acceptance Agreement - TillPoint Retail OS" },
+      { property: "og:title", content: "Handover & Acceptance Agreement - Retail OS" },
       {
         property: "og:description",
         content:
-          "The final POS software development, handover and acceptance agreement for TillPoint Retail OS.",
+          "The final POS software development, handover and acceptance agreement for Retail OS.",
       },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
@@ -34,14 +34,14 @@ export const Route = createFileRoute("/_authenticated/manager/agreement")({
 const KEY = "tillpoint.handover.agreement.v3";
 
 const RECORD: Array<[string, string]> = [
-  ["Agreement Date", "17 August 2026"],
-  ["Project Name", "TillPoint Retail OS"],
+  ["Agreement Date", "27 September 2026"],
+  ["Project Name", "Retail OS"],
   ["Software Type", "Cloud-Based Point of Sale (POS) & Retail Management System"],
   ["Application URL", "https://advanced-pos-tillpoint.vercel.app"],
   ["Developers", "codedevelopers151@gmail.com"],
-  ["Client", "Mr Pride Tatire"],
-  ["Client Contact", "+263 77 688 9832"],
-  ["Document Version", "Version 1.0"],
+  ["Client", "Mr..."],
+  ["Client Contact", "+263..."],
+  ["Document Version", "Version 3.0"],
   ["Status", "Final Handover & Acceptance"],
 ];
 
@@ -451,22 +451,22 @@ function buildDocument(form: typeof initial): string {
     "The undersigned certify that they are authorized representatives of their respective parties and agree to the terms contained in this Agreement.",
     `Developer 1 Name: ${form.developerOne || "__________________________________________"}`,
     "Developer 1 Signature: __________________________________________",
-    "Date: 17 August 2026",
+    "Date: 27 September 2026",
     `Developer 2 Name: ${form.developerTwo || "__________________________________________"}`,
     "Developer 2 Signature: __________________________________________",
-    "Date: 17 August 2026",
-    `Client Name: ${form.clientSigner || "Mr Pride Tatire"}`,
+    "Date: 27 September 2026",
+    `Client Name: ${form.clientSigner || "Mr..."}`,
     "Client Signature: __________________________________________",
-    "Date: 17 August 2026",
+    "Date: 27 September 2026",
     "",
     "CERTIFICATE OF COMPLETION",
     "The Developers hereby certify that the TillPoint Retail OS has been successfully designed, developed, deployed and formally handed over to the Client in accordance with the agreed project scope. The Client acknowledges receipt of the delivered software, associated operational workflows and system demonstration, subject only to any written exceptions recorded within this Agreement.",
     "",
     "Document Title: POS Software Development, Handover & Acceptance Agreement",
-    "Project: TillPoint Retail OS",
+    "Project: Retail OS",
     "Version: 3.0",
     "Status: Final",
-    "Date: 17 August 2026",
+    "Date: 27 September 2026",
   );
   return lines.join("\n");
 }
@@ -501,7 +501,7 @@ function AgreementPage() {
           POS Software Development, Handover &amp; Acceptance Agreement
         </h1>
         <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
-          TillPoint Retail OS - final handover and acceptance record dated 17 August 2026.
+          Retail OS - final handover and acceptance record dated 17 August 2026.
         </p>
       </header>
 
@@ -561,7 +561,7 @@ function AgreementPage() {
                   onChange={(e) => update("developerOne", e.target.value)}
                 />
                 <p className="mt-2 text-xs text-slate-500">
-                  Signature: __________________ · Date: 17 August 2026
+                  Signature: __________________ · Date: 27 September 2026
                 </p>
               </div>
               <div>
@@ -571,7 +571,7 @@ function AgreementPage() {
                   onChange={(e) => update("developerTwo", e.target.value)}
                 />
                 <p className="mt-2 text-xs text-slate-500">
-                  Signature: __________________ · Date: 17 August 2026
+                  Signature: __________________ · Date: 27 September 2026
                 </p>
               </div>
               <div className="sm:col-span-2">
@@ -581,7 +581,7 @@ function AgreementPage() {
                   onChange={(e) => update("clientSigner", e.target.value)}
                 />
                 <p className="mt-2 text-xs text-slate-500">
-                  Signature: __________________ · Date: 17 August 2026
+                  Signature: __________________ · Date: 27 September 2026
                 </p>
               </div>
             </div>
@@ -599,7 +599,7 @@ function AgreementPage() {
               any written exceptions recorded within this Agreement.
             </p>
             <p className="mt-4 text-xs uppercase tracking-[0.18em] text-slate-500">
-              Project: TillPoint Retail OS · Version 3.0 · Status: Final · 17 August 2026
+              Project: TillPoint Retail OS · Version 3.0 · Status: Final · 27 September 2026
             </p>
           </section>
         </div>
