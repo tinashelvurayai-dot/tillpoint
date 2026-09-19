@@ -706,6 +706,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cashier_link_user: {
+        Args: { p_code1: string; p_user_id: string }
+        Returns: undefined
+      }
       cashier_login: {
         Args: { p_code1: string; p_code2: string }
         Returns: Json
