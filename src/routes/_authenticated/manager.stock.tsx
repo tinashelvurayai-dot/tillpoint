@@ -57,7 +57,8 @@ type StockRow = {
     variant_name: string;
     size: string | null;
     price: number;
-    product: { name: string; category: string | null } | null;
+    image_url?: string | null;
+    product: { name: string; category: string | null; image_url?: string | null } | null;
   } | null;
 };
 
