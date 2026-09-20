@@ -72,6 +72,7 @@ export type Database = {
           login_email: string | null
           login_password: string | null
           name: string
+          photo_url: string | null
           sale_permission: boolean
           user_id: string | null
         }
@@ -84,6 +85,7 @@ export type Database = {
           login_email?: string | null
           login_password?: string | null
           name: string
+          photo_url?: string | null
           sale_permission?: boolean
           user_id?: string | null
         }
@@ -96,6 +98,7 @@ export type Database = {
           login_email?: string | null
           login_password?: string | null
           name?: string
+          photo_url?: string | null
           sale_permission?: boolean
           user_id?: string | null
         }
@@ -727,6 +730,7 @@ export type Database = {
         Args: { _variant_id: string }
         Returns: undefined
       }
+      my_cashier_profile: { Args: never; Returns: Json }
       record_stock_in: {
         Args: {
           p_notes?: string

@@ -15,6 +15,13 @@
       "when": 1789847974415,
       "tag": "0001_cashier_admin_without_service_key",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789889582902,
+      "tag": "0002_cashier_photo",
+      "breakpoints": true
     }
   ]
 }
