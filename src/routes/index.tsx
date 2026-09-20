@@ -72,7 +72,7 @@ const products = [
     img: productImages.tissueOilCream,
     name: "EXO Moisture Intensive Tissue Oil Cream",
     body:
-      "Unveil a radiant you with EXO’s luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin’s thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
+      "Unveil a radiant you with EXO's luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin's thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
   },
   {
     img: productImages.tripleGlycerine,
@@ -84,7 +84,7 @@ const products = [
     img: productImages.camphorCream,
     name: "EXO Triple Intensive Camphor Cream",
     body:
-      "EXO’s Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
+      "EXO's Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
   },
   {
     img: productImages.q10Cream,
@@ -96,7 +96,7 @@ const products = [
     img: productImages.maxMoisture,
     name: "EXO Max Moisture Triple Glycerine Cream",
     body:
-      "A rich moisturizer designed for men’s skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
+      "A rich moisturizer designed for men's skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
   },
   {
     img: productImages.menTissueOilCream,
@@ -266,7 +266,7 @@ function Landing() {
     {
       icon: ArrowRight,
       title: "HONEST PRICING",
-      body: "Premium care that’s affordable",
+      body: "Premium care that's affordable",
     },
     {
       icon: Droplets,
@@ -281,6 +281,7 @@ function Landing() {
           FIXED FULL-PAGE BACKGROUND
           Two fixed backdrop images stacked over a tri-color wash.
           Section content scrolls over this — the images stay put.
+          Images are kept CRISP: no blur, no blend modes, high opacity.
       ═══════════════════════════════════════════════════════════ */}
       <div className="pointer-events-none fixed inset-0 -z-20">
         {/* Base gradient wash: orange → white → blue */}
@@ -292,46 +293,46 @@ function Landing() {
           }}
         />
 
-        {/* glassFrameBackdropImage — soft, top-of-page framing */}
+        {/* glassFrameBackdropImage — clear, no blur, no blend */}
         <img
           src={glassFrameBackdropImage}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-[0.35] mix-blend-multiply"
+          className="absolute inset-0 h-full w-full object-cover opacity-80"
         />
 
-        {/* sectionBackdropImage — layered below with a soft screen blend */}
+        {/* sectionBackdropImage — clear, no blur, no blend */}
         <img
           src={sectionBackdropImage}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-25 mix-blend-screen"
+          className="absolute inset-0 h-full w-full object-cover opacity-70"
         />
 
-        {/* Orange → white → blue tint pass to bind the images together */}
+        {/* Very light tint pass — kept subtle so images stay clear */}
         <div
           className="absolute inset-0"
           aria-hidden="true"
           style={{
             background:
-              "linear-gradient(120deg, rgba(241,89,34,0.10) 0%, rgba(255,255,255,0.60) 45%, rgba(11,59,143,0.12) 100%)",
+              "linear-gradient(120deg, rgba(241,89,34,0.05) 0%, rgba(255,255,255,0.12) 45%, rgba(11,59,143,0.06) 100%)",
           }}
         />
 
-        {/* Ambient gradient orbs for depth */}
+        {/* Ambient gradient orbs — NO blur, kept crisp */}
         <div
-          className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-30 blur-3xl"
+          className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-20"
           style={{
             background:
               "linear-gradient(135deg, #f15922 0%, #f15922 35%, #0b3b8f 100%)",
           }}
         />
         <div
-          className="absolute -bottom-48 -left-48 h-[560px] w-[560px] rounded-full opacity-25 blur-3xl"
+          className="absolute -bottom-48 -left-48 h-[560px] w-[560px] rounded-full opacity-15"
           style={{
             background:
               "linear-gradient(135deg, #0b3b8f 0%, #1557b0 60%, #f15922 100%)",
@@ -375,14 +376,14 @@ function Landing() {
       <main className="relative mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
         {/* Hero — translucent so the fixed background shows through */}
         <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-white/55 px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.14)] backdrop-blur-md sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
-          {/* Subtle glass-frame image inside the hero for depth */}
+          {/* Subtle glass-frame image inside the hero for depth — crisp */}
           <img
             src={glassFrameBackdropImage}
             alt=""
             aria-hidden="true"
             loading="eager"
             decoding="async"
-            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-25"
+            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-40"
           />
 
           {/* Hero content */}
