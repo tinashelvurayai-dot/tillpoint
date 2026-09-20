@@ -29,6 +29,7 @@ import {
   UserPlus,
   UserCog,
   Hash,
+  ImagePlus,
 } from "lucide-react";
 import {
   listCashiers,
@@ -36,6 +37,7 @@ import {
   updateCashier,
   deleteCashier,
 } from "@/lib/cashier-auth.functions";
+import { fileToCompressedDataUrl } from "@/lib/image-utils";
 
 export const Route = createFileRoute("/_authenticated/manager/cashiers")({
   component: CashiersPage,
@@ -48,12 +50,29 @@ type Row = {
   code2: string;
   active: boolean;
   sale_permission: boolean;
+  photo_url: string | null;
   created_at: string;
 };
 
-type Draft = { id: string | null; name: string; code1: string; code2: string; active: boolean; sale_permission: boolean };
+type Draft = {
+  id: string | null;
+  name: string;
+  code1: string;
+  code2: string;
+  active: boolean;
+  sale_permission: boolean;
+  photo_url: string | null;
+};
 
-const emptyDraft: Draft = { id: null, name: "", code1: "", code2: "", active: true, sale_permission: false };
+const emptyDraft: Draft = {
+  id: null,
+  name: "",
+  code1: "",
+  code2: "",
+  active: true,
+  sale_permission: false,
+  photo_url: null,
+};
 
 // Rotating gradient palette for avatar tiles
 const AVATAR_GRADIENTS = [
@@ -83,10 +102,18 @@ function CashiersPage() {
     mutationFn: async (d: Draft) => {
       if (d.id) {
         await edit({
-          data: { id: d.id, name: d.name, code1: d.code1, code2: d.code2, active: d.active, sale_permission: d.sale_permission },
+          data: {
+            id: d.id,
+            name: d.name,
+            code1: d.code1,
+            code2: d.code2,
+            active: d.active,
+            sale_permission: d.sale_permission,
+            photo_url: d.photo_url,
+          },
         });
       } else {
-        await add({ data: { name: d.name, code1: d.code1, code2: d.code2 } });
+        await add({ data: { name: d.name, code1: d.code1, code2: d.code2, photo_url: d.photo_url } });
       }
     },
     onSuccess: () => {
@@ -273,11 +300,19 @@ function CashiersPage() {
                           <div
                             className={`absolute inset-0 rounded-xl bg-gradient-to-br ${gradient} opacity-40 blur-sm`}
                           />
-                          <div
-                            className={`relative grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br ${gradient} text-base font-bold text-white shadow-md`}
-                          >
-                            {c.name.charAt(0).toUpperCase()}
-                          </div>
+                          {c.photo_url ? (
+                            <img
+                              src={c.photo_url}
+                              alt={c.name}
+                              className="relative h-11 w-11 rounded-xl object-cover shadow-md"
+                            />
+                          ) : (
+                            <div
+                              className={`relative grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br ${gradient} text-base font-bold text-white shadow-md`}
+                            >
+                              {c.name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
                         </div>
 
                         <div className="min-w-0">
@@ -325,6 +360,7 @@ function CashiersPage() {
                               code2: c.code2,
                               active: c.active,
                               sale_permission: c.sale_permission,
+                              photo_url: c.photo_url ?? null,
                             })
                           }
                         >
@@ -411,6 +447,50 @@ function CashiersPage() {
                 save.mutate(draft);
               }}
             >
+              <div className="flex items-center gap-4 rounded-xl border border-indigo-100 bg-white/70 p-3">
+                {draft.photo_url ? (
+                  <img
+                    src={draft.photo_url}
+                    alt="Cashier photo"
+                    className="h-16 w-16 rounded-xl object-cover shadow-sm"
+                  />
+                ) : (
+                  <div className="grid h-16 w-16 place-items-center rounded-xl bg-gradient-to-br from-indigo-100 to-purple-100 text-indigo-500">
+                    <ImagePlus className="h-6 w-6" />
+                  </div>
+                )}
+                <div className="space-y-1">
+                  <Label htmlFor="cphoto" className="text-xs font-semibold text-slate-700">
+                    Cashier photo
+                  </Label>
+                  <Input
+                    id="cphoto"
+                    type="file"
+                    accept="image/*"
+                    className="text-xs"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      try {
+                        const url = await fileToCompressedDataUrl(file, 320, 0.8);
+                        setDraft((d) => (d ? { ...d, photo_url: url } : d));
+                      } catch {
+                        toast.error("Could not read that picture. Try a JPG or PNG.");
+                      }
+                    }}
+                  />
+                  {draft.photo_url && (
+                    <button
+                      type="button"
+                      className="text-[11px] font-semibold text-rose-600 hover:underline"
+                      onClick={() => setDraft((d) => (d ? { ...d, photo_url: null } : d))}
+                    >
+                      Remove photo
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="cname" className="text-xs font-semibold text-slate-700">
                   Cashier name
