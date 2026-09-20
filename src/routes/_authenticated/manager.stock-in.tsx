@@ -146,7 +146,7 @@ function StockInRecordsPage() {
       const { data, error } = await (supabase as any)
         .from("stock_in_records")
         .select(
-          "id, variant_id, stock_id, supplier_id, quantity, unit_buying_price, total_cost, received_at, notes, variant:product_variants(variant_name, product:products(name, category)), supplier:suppliers(name)",
+          "id, variant_id, stock_id, supplier_id, quantity, unit_buying_price, total_cost, received_at, created_at, notes, variant:product_variants(variant_name, product:products(name, category)), supplier:suppliers(name)",
         )
         .order("received_at", { ascending: false });
       if (error) throw error;
@@ -157,6 +157,9 @@ function StockInRecordsPage() {
   const save = useMutation({
     mutationFn: async () => {
       if (!form.variantId && !editing) throw new Error("Choose a product variant");
+      if (editing && msLeftToEdit(editing, Date.now()) <= 0) {
+        throw new Error("This record can no longer be edited - the 60 second window has passed.");
+      }
       const variantId = editing?.variant_id ?? form.variantId;
       const variant = variants.data?.find((v) => v.id === variantId);
       let stockId = editing?.stock_id ?? variant?.stock?.[0]?.id;
@@ -236,6 +239,10 @@ function StockInRecordsPage() {
   const totalUnits = filtered.reduce((sum, r) => sum + Number(r.quantity), 0);
 
   function editRecord(record: RecordRow) {
+    if (msLeftToEdit(record, Date.now()) <= 0) {
+      toast.error("This record can no longer be edited - the 60 second window has passed.");
+      return;
+    }
     setEditing(record);
     setForm({
       variantId: record.variant_id,
@@ -692,15 +699,32 @@ function StockInRecordsPage() {
                             total
                           </div>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => editRecord(r)}
-                          aria-label="Edit stock-in record"
-                          className="text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
+                        {(() => {
+                          const left = msLeftToEdit(r, now);
+                          return left > 0 ? (
+                            <div className="flex flex-col items-center">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => editRecord(r)}
+                                aria-label="Edit stock-in record"
+                                className="text-slate-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <span className="text-[10px] font-semibold tabular-nums text-indigo-600">
+                                {Math.ceil(left / 1000)}s
+                              </span>
+                            </div>
+                          ) : (
+                            <span
+                              title="Editing closed - records can only be changed within 60 seconds"
+                              className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400"
+                            >
+                              Locked
+                            </span>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
