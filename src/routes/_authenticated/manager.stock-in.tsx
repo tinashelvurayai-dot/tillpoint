@@ -97,6 +97,12 @@ function StockInRecordsPage() {
   const [supplierFilter, setSupplierFilter] = useState("all");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const tick = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(tick);
+  }, []);
 
   useEffect(() => {
     setShowForm(new URLSearchParams(window.location.search).get("record") === "1");
