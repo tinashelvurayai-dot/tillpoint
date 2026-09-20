@@ -65,10 +65,19 @@ type RecordRow = {
   unit_buying_price: number;
   total_cost: number;
   received_at: string;
+  created_at?: string | null;
   notes: string | null;
   variant: Variant | null;
   supplier: { name: string } | null;
 };
+
+// Stock-in records can only be corrected within one minute of being captured.
+const EDIT_WINDOW_MS = 60_000;
+function msLeftToEdit(record: RecordRow, now: number) {
+  const created = new Date(record.created_at ?? record.received_at).getTime();
+  if (!Number.isFinite(created)) return 0;
+  return Math.max(0, created + EDIT_WINDOW_MS - now);
+}
 const blank = {
   variantId: "",
   supplierId: "none",
