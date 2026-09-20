@@ -57,7 +57,8 @@ type StockRow = {
     variant_name: string;
     size: string | null;
     price: number;
-    product: { name: string; category: string | null } | null;
+    image_url?: string | null;
+    product: { name: string; category: string | null; image_url?: string | null } | null;
   } | null;
 };
 
@@ -86,7 +87,7 @@ function StockPage() {
       const { data, error } = await supabase
         .from("stock")
         .select(
-          "id, quantity, low_stock_alert_level, available, variant:product_variants(id, variant_name, size, price, product:products(name, category))",
+          "id, quantity, low_stock_alert_level, available, variant:product_variants(id, variant_name, size, price, image_url, product:products(name, category, image_url))",
         )
         .order("quantity");
       if (error) throw error;
@@ -592,11 +593,21 @@ function StockEditor({
     >
       <TableCell>
         <div className="flex items-center gap-3">
-          <div
-            className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg shadow-sm bg-gradient-to-br ${statusConfig.gradient} ${statusConfig.shadow}`}
-          >
-            <Package className="h-3.5 w-3.5 text-white" />
-          </div>
+          {row.variant?.image_url || row.variant?.product?.image_url ? (
+            <img
+              src={row.variant?.image_url ?? row.variant?.product?.image_url ?? ""}
+              alt={row.variant?.product?.name ?? "Product"}
+              loading="lazy"
+              decoding="async"
+              className="h-9 w-9 shrink-0 rounded-lg border border-slate-200 bg-white object-cover shadow-sm"
+            />
+          ) : (
+            <div
+              className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg shadow-sm bg-gradient-to-br ${statusConfig.gradient} ${statusConfig.shadow}`}
+            >
+              <Package className="h-3.5 w-3.5 text-white" />
+            </div>
+          )}
           <div className="min-w-0">
             <div className="truncate font-semibold text-slate-900">
               {row.variant?.product?.name}

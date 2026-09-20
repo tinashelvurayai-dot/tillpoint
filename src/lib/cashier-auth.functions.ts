@@ -31,7 +31,7 @@ export const listCashiers = createServerFn({ method: "POST" })
     await assertManager(context as never);
     const { data, error } = await context.supabase
       .from("cashier_accounts")
-      .select("id, user_id, name, code1, code2, active, sale_permission, created_at")
+      .select("id, user_id, name, code1, code2, active, sale_permission, photo_url, created_at")
       .order("created_at", { ascending: true });
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -39,10 +39,11 @@ export const listCashiers = createServerFn({ method: "POST" })
 
 export const createCashier = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { name: string; code1: string; code2: string }) => ({
+  .inputValidator((input: { name: string; code1: string; code2: string; photo_url?: string | null }) => ({
     name: String(input.name ?? "").trim(),
     code1: normaliseCode(input.code1),
     code2: normaliseCode(input.code2),
+    photo_url: input.photo_url ? String(input.photo_url) : null,
   }))
   .handler(async ({ data, context }) => {
     await assertManager(context as never);
@@ -63,6 +64,7 @@ export const createCashier = createServerFn({ method: "POST" })
       code2: data.code2,
       active: true,
       sale_permission: true,
+      photo_url: data.photo_url,
       login_email: emailFor(data.code1),
       login_password: randomPassword(),
     });
@@ -81,6 +83,7 @@ export const updateCashier = createServerFn({ method: "POST" })
       code2: string;
       active: boolean;
       sale_permission?: boolean;
+      photo_url?: string | null;
     }) => ({
       id: String(input.id),
       name: String(input.name ?? "").trim(),
@@ -88,6 +91,7 @@ export const updateCashier = createServerFn({ method: "POST" })
       code2: normaliseCode(input.code2),
       active: Boolean(input.active),
       sale_permission: Boolean(input.sale_permission),
+      photo_url: input.photo_url ? String(input.photo_url) : null,
     }),
   )
   .handler(async ({ data, context }) => {
@@ -113,6 +117,7 @@ export const updateCashier = createServerFn({ method: "POST" })
         code2: data.code2,
         active: data.active,
         sale_permission: data.sale_permission,
+        photo_url: data.photo_url,
         login_email: emailFor(data.code1),
         login_password: codeChanged ? randomPassword() : (row.login_password ?? randomPassword()),
         ...(codeChanged ? { user_id: null } : {}),

@@ -319,6 +319,34 @@ function CashierScreen() {
     }
   });
 
+  const [cashierPhoto, setCashierPhoto] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem("tillpoint.cashier.photo.v1");
+    } catch {
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    let cancelled = false;
+    void supabase
+      .rpc("my_cashier_profile")
+      .then(({ data }) => {
+        if (cancelled) return;
+        const photo = (data as { photo_url?: string | null } | null)?.photo_url ?? null;
+        setCashierPhoto(photo);
+        try {
+          if (photo) localStorage.setItem("tillpoint.cashier.photo.v1", photo);
+          else localStorage.removeItem("tillpoint.cashier.photo.v1");
+        } catch {
+          /* best effort */
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => setShowIntro(false), INTRO_DURATION_MS);
     return () => clearTimeout(timer);
@@ -680,6 +708,13 @@ function CashierScreen() {
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 opacity-30 blur-md" />
                   <div className="relative"><ManagerGateLogo /></div>
                 </div>
+                {cashierPhoto && (
+                  <img
+                    src={cashierPhoto}
+                    alt="Cashier"
+                    className="h-10 w-10 rounded-xl border border-white/70 object-cover shadow-md"
+                  />
+                )}
                 <div className="hidden border-l border-slate-200 pl-3 sm:block">
                   <div className="flex items-center gap-1.5">
                     <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500" />
