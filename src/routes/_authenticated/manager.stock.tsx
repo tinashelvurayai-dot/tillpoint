@@ -87,7 +87,7 @@ function StockPage() {
       const { data, error } = await supabase
         .from("stock")
         .select(
-          "id, quantity, low_stock_alert_level, available, variant:product_variants(id, variant_name, size, price, product:products(name, category))",
+          "id, quantity, low_stock_alert_level, available, variant:product_variants(id, variant_name, size, price, image_url, product:products(name, category, image_url))",
         )
         .order("quantity");
       if (error) throw error;
