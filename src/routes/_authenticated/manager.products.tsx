@@ -70,6 +70,9 @@ type Product = {
     flavour: string | null;
     price: number;
     sku: string | null;
+    sell_mode: string | null;
+    pack_size: number | null;
+    pack_price: number | null;
     stock: { quantity: number } | null;
   }>;
 };
@@ -181,12 +184,100 @@ function ProductImagePicker({ value, onChange }: { value: string; onChange: (v: 
   );
 }
 
+const SELL_MODES = [
+  { value: "unit", label: "Individual units only" },
+  { value: "pack", label: "Packs only" },
+  { value: "both", label: "Both packs and units" },
+] as const;
+
+function SellingOptionsFields({
+  accent = "indigo",
+  sellMode,
+  packSize,
+  packPrice,
+}: {
+  accent?: "indigo" | "purple";
+  sellMode?: string | null;
+  packSize?: number | null;
+  packPrice?: number | null;
+}) {
+  const ring =
+    accent === "purple"
+      ? "focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20"
+      : "focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20";
+  const icon = accent === "purple" ? "text-purple-500" : "text-indigo-500";
+
+  return (
+    <div className="space-y-3 rounded-xl border border-slate-200 bg-white/70 p-3">
+      <div className="space-y-2">
+        <Label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+          <Boxes className={`h-3.5 w-3.5 ${icon}`} />
+          How is this sold?
+        </Label>
+        <Select name="sell_mode" defaultValue={sellMode ?? "unit"}>
+          <SelectTrigger className={`border-slate-200 bg-white shadow-sm ${ring}`}>
+            <SelectValue placeholder="Choose selling option" />
+          </SelectTrigger>
+          <SelectContent>
+            {SELL_MODES.map((m) => (
+              <SelectItem key={m.value} value={m.value}>
+                {m.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+            <Hash className={`h-3.5 w-3.5 ${icon}`} />
+            Units per pack
+          </Label>
+          <Input
+            name="pack_size"
+            type="number"
+            min="1"
+            step="1"
+            defaultValue={packSize ?? 6}
+            className={`border-slate-200 bg-white shadow-sm ${ring}`}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+            <DollarSign className={`h-3.5 w-3.5 ${icon}`} />
+            Pack price
+          </Label>
+          <Input
+            name="pack_price"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={packPrice ?? ""}
+            className={`border-slate-200 bg-white font-semibold shadow-sm ${ring}`}
+          />
+        </div>
+      </div>
+      <p className="text-[11px] text-slate-500">
+        Pack settings are only used when packs are sold. Leave the pack price blank for
+        unit-only products.
+      </p>
+    </div>
+  );
+}
+
+
 function ProductsPage() {
   const qc = useQueryClient();
   const [openNewProduct, setOpenNewProduct] = useState(false);
   const [variantFor, setVariantFor] = useState<Product | null>(null);
   const [image, setImage] = useState("");
-  const [editingVariant, setEditingVariant] = useState<{ id: string; price: number } | null>(null);
+  const [editingVariant, setEditingVariant] = useState<{
+    id: string;
+    price: number;
+    sell_mode: string | null;
+    pack_size: number | null;
+    pack_price: number | null;
+  } | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editImage, setEditImage] = useState("");
   const [hideImages, setHideImages] = useHideImages();
@@ -198,7 +289,7 @@ function ProductsPage() {
       const { data, error } = await supabase
         .from("products")
         .select(
-          "id, name, description, category, image_url, base_price, active, variants:product_variants(id, variant_name, size, flavour, price, sku, stock(quantity))",
+          "id, name, description, category, image_url, base_price, active, variants:product_variants(id, variant_name, size, flavour, price, sku, sell_mode, pack_size, pack_price, stock(quantity))",
         )
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -213,6 +304,9 @@ function ProductsPage() {
       category: string;
       base_price: number;
       image_url: string;
+      sell_mode: string;
+      pack_size: number;
+      pack_price: number | null;
     }) => {
       const { data: existing, error: lookupError } = await supabase
         .from("products")
@@ -243,6 +337,9 @@ function ProductsPage() {
         variant_name: "Standard",
         price: input.base_price || 0,
         image_url: input.image_url || null,
+        sell_mode: input.sell_mode,
+        pack_size: input.pack_size,
+        pack_price: input.pack_price,
       });
       if (variantError) throw variantError;
     },
@@ -330,6 +427,9 @@ function ProductsPage() {
       price: number;
       sku: string;
       initial_qty: number;
+      sell_mode: string;
+      pack_size: number;
+      pack_price: number | null;
     }) => {
       const { data, error } = await supabase
         .from("product_variants")
@@ -340,6 +440,9 @@ function ProductsPage() {
           flavour: input.flavour || null,
           price: input.price,
           sku: input.sku || null,
+          sell_mode: input.sell_mode,
+          pack_size: input.pack_size,
+          pack_price: input.pack_price,
         })
         .select("id")
         .single();
@@ -362,8 +465,23 @@ function ProductsPage() {
   });
 
   const updatePrice = useMutation({
-    mutationFn: async ({ id, price }: { id: string; price: number }) => {
-      const { error } = await supabase.from("product_variants").update({ price }).eq("id", id);
+    mutationFn: async ({
+      id,
+      price,
+      sell_mode,
+      pack_size,
+      pack_price,
+    }: {
+      id: string;
+      price: number;
+      sell_mode: string;
+      pack_size: number;
+      pack_price: number | null;
+    }) => {
+      const { error } = await supabase
+        .from("product_variants")
+        .update({ price, sell_mode, pack_size, pack_price })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -473,6 +591,11 @@ function ProductsPage() {
                       category: String(fd.get("category") ?? ""),
                       base_price: parseFloat(String(fd.get("base_price") ?? "0")) || 0,
                       image_url: image,
+                      sell_mode: String(fd.get("sell_mode") ?? "unit"),
+                      pack_size: parseInt(String(fd.get("pack_size") ?? "6"), 10) || 6,
+                      pack_price: String(fd.get("pack_price") ?? "").trim()
+                        ? parseFloat(String(fd.get("pack_price")))
+                        : null,
                     });
                   }}
                   className="space-y-4"
@@ -699,13 +822,29 @@ function ProductsPage() {
                               </div>
                             </div>
                             <div className="flex shrink-0 items-center gap-1.5 pl-2">
-                              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-sm font-bold tabular-nums text-transparent">
-                                {formatCurrency(v.price)}
+                              <span className="flex flex-col items-end leading-tight">
+                                {(v.sell_mode ?? "unit") !== "pack" && (
+                                  <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-sm font-bold tabular-nums text-transparent">
+                                    {formatCurrency(v.price)}
+                                  </span>
+                                )}
+                                {(v.sell_mode ?? "unit") !== "unit" && (
+                                  <span className="text-[10px] font-bold tabular-nums text-orange-600">
+                                    {formatCurrency(Number(v.pack_price ?? 0))} / pack of{" "}
+                                    {v.pack_size ?? 6}
+                                  </span>
+                                )}
                               </span>
                               <button
-                                title="Edit price"
+                                title="Edit pricing"
                                 onClick={() =>
-                                  setEditingVariant({ id: v.id, price: Number(v.price) })
+                                  setEditingVariant({
+                                    id: v.id,
+                                    price: Number(v.price),
+                                    sell_mode: v.sell_mode ?? "unit",
+                                    pack_size: v.pack_size ?? 6,
+                                    pack_price: v.pack_price,
+                                  })
                                 }
                                 className="grid h-6 w-6 place-items-center rounded-md text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600"
                               >
@@ -912,7 +1051,7 @@ function ProductsPage() {
                 <DollarSign className="h-4 w-4 text-white" />
               </div>
               <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
-                Edit price
+                Edit pricing
               </span>
             </DialogTitle>
           </DialogHeader>
@@ -922,12 +1061,20 @@ function ProductsPage() {
                 e.preventDefault();
                 const fd = new FormData(e.currentTarget);
                 const price = parseFloat(String(fd.get("price") ?? "0"));
-                if (price >= 0) updatePrice.mutate({ id: editingVariant.id, price });
+                const packPriceRaw = String(fd.get("pack_price") ?? "").trim();
+                if (price >= 0)
+                  updatePrice.mutate({
+                    id: editingVariant.id,
+                    price,
+                    sell_mode: String(fd.get("sell_mode") ?? "unit"),
+                    pack_size: parseInt(String(fd.get("pack_size") ?? "6"), 10) || 6,
+                    pack_price: packPriceRaw ? parseFloat(packPriceRaw) : null,
+                  });
               }}
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-slate-700">New price</Label>
+                <Label className="text-xs font-semibold text-slate-700">Unit price</Label>
                 <Input
                   name="price"
                   type="number"
@@ -939,6 +1086,11 @@ function ProductsPage() {
                   className="border-slate-200 bg-white font-bold shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                 />
               </div>
+              <SellingOptionsFields
+                sellMode={editingVariant.sell_mode}
+                packSize={editingVariant.pack_size}
+                packPrice={editingVariant.pack_price}
+              />
               <DialogFooter>
                 <Button
                   type="submit"

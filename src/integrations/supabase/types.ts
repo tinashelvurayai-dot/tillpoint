@@ -174,8 +174,11 @@ export type Database = {
           flavour: string | null
           id: string
           image_url: string | null
+          pack_price: number | null
+          pack_size: number
           price: number
           product_id: string
+          sell_mode: string
           size: Database["public"]["Enums"]["variant_size"] | null
           sku: string | null
           updated_at: string
@@ -187,8 +190,11 @@ export type Database = {
           flavour?: string | null
           id?: string
           image_url?: string | null
+          pack_price?: number | null
+          pack_size?: number
           price: number
           product_id: string
+          sell_mode?: string
           size?: Database["public"]["Enums"]["variant_size"] | null
           sku?: string | null
           updated_at?: string
@@ -200,8 +206,11 @@ export type Database = {
           flavour?: string | null
           id?: string
           image_url?: string | null
+          pack_price?: number | null
+          pack_size?: number
           price?: number
           product_id?: string
+          sell_mode?: string
           size?: Database["public"]["Enums"]["variant_size"] | null
           sku?: string | null
           updated_at?: string
