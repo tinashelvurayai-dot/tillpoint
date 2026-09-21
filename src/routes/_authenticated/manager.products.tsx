@@ -70,6 +70,9 @@ type Product = {
     flavour: string | null;
     price: number;
     sku: string | null;
+    sell_mode: string | null;
+    pack_size: number | null;
+    pack_price: number | null;
     stock: { quantity: number } | null;
   }>;
 };
@@ -181,12 +184,100 @@ function ProductImagePicker({ value, onChange }: { value: string; onChange: (v: 
   );
 }
 
+const SELL_MODES = [
+  { value: "unit", label: "Individual units only" },
+  { value: "pack", label: "Packs only" },
+  { value: "both", label: "Both packs and units" },
+] as const;
+
+function SellingOptionsFields({
+  accent = "indigo",
+  sellMode,
+  packSize,
+  packPrice,
+}: {
+  accent?: "indigo" | "purple";
+  sellMode?: string | null;
+  packSize?: number | null;
+  packPrice?: number | null;
+}) {
+  const ring =
+    accent === "purple"
+      ? "focus:border-purple-400 focus:ring-2 focus:ring-purple-500/20"
+      : "focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20";
+  const icon = accent === "purple" ? "text-purple-500" : "text-indigo-500";
+
+  return (
+    <div className="space-y-3 rounded-xl border border-slate-200 bg-white/70 p-3">
+      <div className="space-y-2">
+        <Label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+          <Boxes className={`h-3.5 w-3.5 ${icon}`} />
+          How is this sold?
+        </Label>
+        <Select name="sell_mode" defaultValue={sellMode ?? "unit"}>
+          <SelectTrigger className={`border-slate-200 bg-white shadow-sm ${ring}`}>
+            <SelectValue placeholder="Choose selling option" />
+          </SelectTrigger>
+          <SelectContent>
+            {SELL_MODES.map((m) => (
+              <SelectItem key={m.value} value={m.value}>
+                {m.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+            <Hash className={`h-3.5 w-3.5 ${icon}`} />
+            Units per pack
+          </Label>
+          <Input
+            name="pack_size"
+            type="number"
+            min="1"
+            step="1"
+            defaultValue={packSize ?? 6}
+            className={`border-slate-200 bg-white shadow-sm ${ring}`}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+            <DollarSign className={`h-3.5 w-3.5 ${icon}`} />
+            Pack price
+          </Label>
+          <Input
+            name="pack_price"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={packPrice ?? ""}
+            className={`border-slate-200 bg-white font-semibold shadow-sm ${ring}`}
+          />
+        </div>
+      </div>
+      <p className="text-[11px] text-slate-500">
+        Pack settings are only used when packs are sold. Leave the pack price blank for
+        unit-only products.
+      </p>
+    </div>
+  );
+}
+
+
 function ProductsPage() {
   const qc = useQueryClient();
   const [openNewProduct, setOpenNewProduct] = useState(false);
   const [variantFor, setVariantFor] = useState<Product | null>(null);
   const [image, setImage] = useState("");
-  const [editingVariant, setEditingVariant] = useState<{ id: string; price: number } | null>(null);
+  const [editingVariant, setEditingVariant] = useState<{
+    id: string;
+    price: number;
+    sell_mode: string | null;
+    pack_size: number | null;
+    pack_price: number | null;
+  } | null>(null);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [editImage, setEditImage] = useState("");
   const [hideImages, setHideImages] = useHideImages();
@@ -198,7 +289,7 @@ function ProductsPage() {
       const { data, error } = await supabase
         .from("products")
         .select(
-          "id, name, description, category, image_url, base_price, active, variants:product_variants(id, variant_name, size, flavour, price, sku, stock(quantity))",
+          "id, name, description, category, image_url, base_price, active, variants:product_variants(id, variant_name, size, flavour, price, sku, sell_mode, pack_size, pack_price, stock(quantity))",
         )
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -213,6 +304,9 @@ function ProductsPage() {
       category: string;
       base_price: number;
       image_url: string;
+      sell_mode: string;
+      pack_size: number;
+      pack_price: number | null;
     }) => {
       const { data: existing, error: lookupError } = await supabase
         .from("products")
@@ -243,6 +337,9 @@ function ProductsPage() {
         variant_name: "Standard",
         price: input.base_price || 0,
         image_url: input.image_url || null,
+        sell_mode: input.sell_mode,
+        pack_size: input.pack_size,
+        pack_price: input.pack_price,
       });
       if (variantError) throw variantError;
     },
