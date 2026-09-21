@@ -427,6 +427,9 @@ function ProductsPage() {
       price: number;
       sku: string;
       initial_qty: number;
+      sell_mode: string;
+      pack_size: number;
+      pack_price: number | null;
     }) => {
       const { data, error } = await supabase
         .from("product_variants")
@@ -437,6 +440,9 @@ function ProductsPage() {
           flavour: input.flavour || null,
           price: input.price,
           sku: input.sku || null,
+          sell_mode: input.sell_mode,
+          pack_size: input.pack_size,
+          pack_price: input.pack_price,
         })
         .select("id")
         .single();
@@ -459,8 +465,23 @@ function ProductsPage() {
   });
 
   const updatePrice = useMutation({
-    mutationFn: async ({ id, price }: { id: string; price: number }) => {
-      const { error } = await supabase.from("product_variants").update({ price }).eq("id", id);
+    mutationFn: async ({
+      id,
+      price,
+      sell_mode,
+      pack_size,
+      pack_price,
+    }: {
+      id: string;
+      price: number;
+      sell_mode: string;
+      pack_size: number;
+      pack_price: number | null;
+    }) => {
+      const { error } = await supabase
+        .from("product_variants")
+        .update({ price, sell_mode, pack_size, pack_price })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -570,6 +591,11 @@ function ProductsPage() {
                       category: String(fd.get("category") ?? ""),
                       base_price: parseFloat(String(fd.get("base_price") ?? "0")) || 0,
                       image_url: image,
+                      sell_mode: String(fd.get("sell_mode") ?? "unit"),
+                      pack_size: parseInt(String(fd.get("pack_size") ?? "6"), 10) || 6,
+                      pack_price: String(fd.get("pack_price") ?? "").trim()
+                        ? parseFloat(String(fd.get("pack_price")))
+                        : null,
                     });
                   }}
                   className="space-y-4"
@@ -796,13 +822,29 @@ function ProductsPage() {
                               </div>
                             </div>
                             <div className="flex shrink-0 items-center gap-1.5 pl-2">
-                              <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-sm font-bold tabular-nums text-transparent">
-                                {formatCurrency(v.price)}
+                              <span className="flex flex-col items-end leading-tight">
+                                {(v.sell_mode ?? "unit") !== "pack" && (
+                                  <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-sm font-bold tabular-nums text-transparent">
+                                    {formatCurrency(v.price)}
+                                  </span>
+                                )}
+                                {(v.sell_mode ?? "unit") !== "unit" && (
+                                  <span className="text-[10px] font-bold tabular-nums text-orange-600">
+                                    {formatCurrency(Number(v.pack_price ?? 0))} / pack of{" "}
+                                    {v.pack_size ?? 6}
+                                  </span>
+                                )}
                               </span>
                               <button
-                                title="Edit price"
+                                title="Edit pricing"
                                 onClick={() =>
-                                  setEditingVariant({ id: v.id, price: Number(v.price) })
+                                  setEditingVariant({
+                                    id: v.id,
+                                    price: Number(v.price),
+                                    sell_mode: v.sell_mode ?? "unit",
+                                    pack_size: v.pack_size ?? 6,
+                                    pack_price: v.pack_price,
+                                  })
                                 }
                                 className="grid h-6 w-6 place-items-center rounded-md text-slate-400 transition hover:bg-indigo-50 hover:text-indigo-600"
                               >
@@ -1009,7 +1051,7 @@ function ProductsPage() {
                 <DollarSign className="h-4 w-4 text-white" />
               </div>
               <span className="bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
-                Edit price
+                Edit pricing
               </span>
             </DialogTitle>
           </DialogHeader>
@@ -1019,12 +1061,20 @@ function ProductsPage() {
                 e.preventDefault();
                 const fd = new FormData(e.currentTarget);
                 const price = parseFloat(String(fd.get("price") ?? "0"));
-                if (price >= 0) updatePrice.mutate({ id: editingVariant.id, price });
+                const packPriceRaw = String(fd.get("pack_price") ?? "").trim();
+                if (price >= 0)
+                  updatePrice.mutate({
+                    id: editingVariant.id,
+                    price,
+                    sell_mode: String(fd.get("sell_mode") ?? "unit"),
+                    pack_size: parseInt(String(fd.get("pack_size") ?? "6"), 10) || 6,
+                    pack_price: packPriceRaw ? parseFloat(packPriceRaw) : null,
+                  });
               }}
               className="space-y-4"
             >
               <div className="space-y-2">
-                <Label className="text-xs font-semibold text-slate-700">New price</Label>
+                <Label className="text-xs font-semibold text-slate-700">Unit price</Label>
                 <Input
                   name="price"
                   type="number"
@@ -1036,6 +1086,11 @@ function ProductsPage() {
                   className="border-slate-200 bg-white font-bold shadow-sm focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/20"
                 />
               </div>
+              <SellingOptionsFields
+                sellMode={editingVariant.sell_mode}
+                packSize={editingVariant.pack_size}
+                packPrice={editingVariant.pack_price}
+              />
               <DialogFooter>
                 <Button
                   type="submit"
