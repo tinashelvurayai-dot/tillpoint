@@ -1187,8 +1187,8 @@ function CashierScreen() {
 
       {/* Manual dialog */}
       <Dialog open={manualOpen} onOpenChange={setManualOpen}>
-        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto border-indigo-100 bg-gradient-to-b from-white to-indigo-50/30">
-          <DialogHeader>
+        <DialogContent className="max-h-[80vh] max-w-2xl overflow-auto border-indigo-100 bg-white shadow-xl">
+          <DialogHeader className="border-b border-indigo-100 pb-3">
             <DialogTitle className="flex items-center gap-2">
               <div className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-indigo-600 to-purple-600">
                 <BookOpen className="h-4 w-4 text-white" />
@@ -1283,17 +1283,17 @@ export function VoiceCommandHelp() {
   ];
   return (
     <div className="space-y-3 text-sm">
-      <p className="text-muted-foreground">
+      <p className="text-slate-700">
         Tap Voice, speak one command clearly, then wait for the action to complete.
       </p>
       <div className="grid gap-2">
         {commands.map(([command, description]) => (
           <div
             key={command}
-            className="grid gap-2 rounded-lg border border-indigo-100 bg-gradient-to-r from-indigo-50/50 to-purple-50/50 p-3 sm:grid-cols-[140px_1fr]"
+            className="grid gap-2 rounded-lg border border-indigo-100 bg-white p-3 shadow-sm sm:grid-cols-[140px_1fr]"
           >
             <code className="font-semibold text-indigo-700">{command}</code>
-            <span className="text-muted-foreground">{description}</span>
+            <span className="text-slate-700">{description}</span>
           </div>
         ))}
       </div>
@@ -1303,80 +1303,109 @@ export function VoiceCommandHelp() {
 
 export function CashierManualContent() {
   return (
-    <div className="space-y-4 text-sm leading-relaxed">
-      <section>
-        <h3 className="font-semibold text-base">1. Opening cashier mode</h3>
-        <p className="text-muted-foreground">
+    <div className="space-y-5 text-[13.5px] leading-relaxed text-slate-800">
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          1. Opening cashier mode
+        </h3>
+        <p className="text-slate-700">
           From the welcome or auth page, tap Enter Cashier Mode. The till opens without a password
           for fast counter access. Named cashier accounts can still sign in when the manager wants
           staff-specific tracking.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">2. Finding a product</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          2. Finding a product
+        </h3>
+        <p className="text-slate-700">
           Use the search bar at the top of the product grid. You can search by product name,
           variant, or category.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">3. Adding items to the cart</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          3. Adding items to the cart
+        </h3>
+        <p className="text-slate-700">
           Tap any product card. It appears in the current sale panel. Use plus and minus to change
           quantity. Tap the trash icon to remove a line.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">4. Taking payment</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          4. Taking payment
+        </h3>
+        <p className="text-slate-700">
           Choose the payment method, confirm the total with the customer, and tap Complete sale.
           Stock updates automatically.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">5. Voice commands</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          5. Voice commands
+        </h3>
+        <p className="text-slate-700">
           Tap Voice and say commands such as add Coke, add 3 Coke, remove Coke, search sugar, new,
           cash, ecocash, or checkout. Use Voice help in the cashier top bar for the full list.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">6. Working offline and syncing</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          6. Working offline and syncing
+        </h3>
+        <p className="text-slate-700">
           If the connection drops, keep serving customers. Sales are stored securely on this device,
           a pending badge shows what is waiting, and sync runs automatically when the device comes
           back online. You can also press Sync while online.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">6b. Refunds and voids</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          6b. Refunds and voids
+        </h3>
+        <p className="text-slate-700">
           Tap Refunds in the top bar to open your refunds page. A refund gives money back to a
           customer; a void cancels a sale entered by mistake. Both can return the items to stock and
           both remove the sale from the day&apos;s takings, so sales and refunds always balance. You
           can only complete one yourself when the manager has switched on{" "}
-          <span className="font-medium">auto-approve refunds</span> - otherwise the page tells you
-          to ask the manager. Refunds need a connection; if you are offline, wait until the device
-          is back online.
+          <span className="font-semibold text-indigo-800">auto-approve refunds</span> - otherwise
+          the page tells you to ask the manager. Refunds need a connection; if you are offline, wait
+          until the device is back online.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">7. Stock warnings</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          7. Stock warnings
+        </h3>
+        <p className="text-slate-700">
           Out means the item cannot be sold. Low means only a few units remain - let the manager
           know.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">8. Installing on a device</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          8. Installing on a device
+        </h3>
+        <p className="text-slate-700">
           Tap Install in Chrome or Edge on the published site. The app appears with the other apps
           on the device and keeps the cashier dashboard available after it has loaded once.
         </p>
       </section>
-      <section>
-        <h3 className="font-semibold text-base">9. Signing out</h3>
-        <p className="text-muted-foreground">
+
+      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
+        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
+          9. Signing out
+        </h3>
+        <p className="text-slate-700">
           Tap Sign out at the end of your shift when using a named account. Shared cashier mode can
           be opened again from the auth page.
         </p>
