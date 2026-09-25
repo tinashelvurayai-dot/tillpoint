@@ -69,13 +69,36 @@ type Variant = {
   size: string | null;
   flavour: string | null;
   price: number;
+  sell_mode?: string | null;
+  pack_size?: number | null;
+  pack_price?: number | null;
   image_url: string | null;
   active: boolean;
   product: { id: string; name: string; category: string | null; image_url: string | null } | null;
   stock: { quantity: number; available?: boolean } | null;
 };
 
-type CartLine = { variant: Variant; qty: number };
+type SellUnit = "unit" | "pack";
+type CartLine = { variant: Variant; qty: number; mode: SellUnit };
+
+function sellMode(v: Variant): string {
+  return v.sell_mode ?? "unit";
+}
+function packSize(v: Variant): number {
+  return Number(v.pack_size ?? 6) || 6;
+}
+function defaultSellUnit(v: Variant): SellUnit {
+  return sellMode(v) === "pack" ? "pack" : "unit";
+}
+function priceFor(v: Variant, mode: SellUnit): number {
+  return mode === "pack" ? Number(v.pack_price ?? 0) : Number(v.price);
+}
+function unitsFor(v: Variant, mode: SellUnit): number {
+  return mode === "pack" ? packSize(v) : 1;
+}
+function lineKeyOf(variantId: string, mode: SellUnit): string {
+  return `${variantId}:${mode}`;
+}
 type SyncStatus = "idle" | "syncing" | "synced" | "failed";
 
 const OFFLINE_CACHE_KEY = "tillpoint.cashier.catalog.v1";
