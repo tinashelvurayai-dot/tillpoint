@@ -648,6 +648,8 @@ function ProductsPage() {
                     />
                   </div>
 
+                  <SellingOptionsFields />
+
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold text-slate-700">Description</Label>
                     <Textarea
@@ -928,6 +930,11 @@ function ProductsPage() {
                   price: parseFloat(String(fd.get("price") ?? "0")),
                   sku: String(fd.get("sku") ?? ""),
                   initial_qty: parseInt(String(fd.get("initial_qty") ?? "0"), 10) || 0,
+                  sell_mode: String(fd.get("sell_mode") ?? "unit"),
+                  pack_size: parseInt(String(fd.get("pack_size") ?? "6"), 10) || 6,
+                  pack_price: String(fd.get("pack_price") ?? "").trim()
+                    ? parseFloat(String(fd.get("pack_price")))
+                    : null,
                 });
               }}
               className="space-y-4"
@@ -1017,6 +1024,9 @@ function ProductsPage() {
                 />
               </div>
 
+              <SellingOptionsFields accent="purple" />
+
+
               <DialogFooter>
                 <Button
                   type="submit"
@@ -1036,6 +1046,7 @@ function ProductsPage() {
                   )}
                 </Button>
               </DialogFooter>
+
             </form>
           )}
         </DialogContent>
