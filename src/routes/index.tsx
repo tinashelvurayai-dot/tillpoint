@@ -9,14 +9,22 @@ import { BrandLogo } from "@/components/brand-logo";
 import { PWAInstallButton } from "@/components/pwa-install-button";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Droplets, Leaf, ShieldCheck, Sun, ArrowRight } from "lucide-react";
+import {
+  Droplets,
+  Leaf,
+  ShieldCheck,
+  Sun,
+  ArrowRight,
+} from "lucide-react";
 import { setMode } from "@/lib/session-mode";
 import { useShowInstallButton } from "@/hooks/use-app-prefs";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ignited BrandZ - Till & Stock" },
+      {
+        title: "Ignited BrandZ - Till & Stock",
+      },
       {
         name: "description",
         content:
@@ -31,41 +39,89 @@ export const Route = createFileRoute("/")({
         content:
           "Sign in to the EXO till to sell creams and oils and follow daily takings.",
       },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
+      {
+        property: "og:type",
+        content: "website",
+      },
+      {
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
     ],
   }),
   component: Landing,
 });
 
+/* ============================================================
+   IMAGE SOURCES
+   ============================================================ */
+
 const creamHeroImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/WhatsApp%20Image%202026-09-14%20at%208.41.50%20AM-JsEVEvZANZ37QXaQ1WUzw4ecfeI2hk.jpeg";
 
+/*
+ * MAIN FULL-PAGE BACKGROUND
+ *
+ * This image is displayed directly and clearly.
+ * No opacity reduction.
+ * No blur.
+ * No glass layer.
+ */
 const sectionBackdropImage =
   "https://i.postimg.cc/3RCtGGN2/Chat-GPT-Image-Sep-18-2026-07-57-56-PM.png";
 
+/*
+ * HERO BACKGROUND
+ *
+ * This image sits directly behind:
+ * "Affordable Skincare Products"
+ * "Healthy Skin."
+ *
+ * No blur.
+ * No opacity reduction.
+ * No duplicate overlay.
+ */
 const glassFrameBackdropImage =
   "https://i.postimg.cc/QdxWbTM4/Chat-GPT-Image-Sep-18-2026-08-46-17-PM.png";
 
 const productImages = {
   oilColors:
     "https://i.postimg.cc/HLC8SD6Y/Chat-GPT-Image-Sep-14-2026-09-00-32-AM.png",
+
   creamColors:
     "https://i.postimg.cc/m2fcZGGt/Chat-GPT-Image-Sep-14-2026-08-48-36-AM.png",
+
   tissueOil:
     "https://i.postimg.cc/yNGfkTBH/Whats-App-Image-2026-09-07-at-9-24-42-AM.jpg",
+
   firmingOil:
     "https://i.postimg.cc/mgRKsV2b/Whats-App-Image-2026-09-07-at-9-24-43-AM.jpg",
+
   scarOil:
     "https://i.postimg.cc/BvpY4G7J/Whats-App-Image-2026-09-07-at-9-24-43-AM-(1).jpg",
-  tripleGlycerine: "https://i.postimg.cc/vZbRwnWf/a.png",
-  tissueOilCream: "https://i.postimg.cc/HkQNSkRh/e.png",
-  camphorCream: "https://i.postimg.cc/rwrTqTbx/f.png",
-  q10Cream: "https://i.postimg.cc/YCGrjYvT/d.png",
-  maxMoisture: "https://i.postimg.cc/FzpRgvvM/c.png",
+
+  tripleGlycerine:
+    "https://i.postimg.cc/vZbRwnWf/a.png",
+
+  tissueOilCream:
+    "https://i.postimg.cc/HkQNSkRh/e.png",
+
+  camphorCream:
+    "https://i.postimg.cc/rwrTqTbx/f.png",
+
+  q10Cream:
+    "https://i.postimg.cc/YCGrjYvT/d.png",
+
+  maxMoisture:
+    "https://i.postimg.cc/FzpRgvvM/c.png",
+
   menTissueOilCream:
     "https://i.postimg.cc/Kv5LJXQY/50ml-Exo-Tissue-oil-Men-768x802.png",
 };
+
+/* ============================================================
+   PRODUCTS
+   ============================================================ */
 
 const products = [
   {
@@ -74,48 +130,56 @@ const products = [
     body:
       "Unveil a radiant you with EXO's luxurious Tissue Oil Cream. This innovative formula combines the nourishing power of tissue oils with rich, hydrating ingredients to quench your skin's thirst. Perfect for all skin types, it leaves skin soft, supple and smooth.",
   },
+
   {
     img: productImages.tripleGlycerine,
     name: "EXO Moisture Intensive Triple Glycerine Cream",
     body:
       "Say goodbye to dryness with a powerful triple dose of glycerin, a natural humectant that attracts and retains moisture. It deeply hydrates rough, flaky skin for a soft, smooth and radiant glow.",
   },
+
   {
     img: productImages.camphorCream,
     name: "EXO Triple Intensive Camphor Cream",
     body:
       "EXO's Triple Camphor Formula delivers a powerful 3X cooling sensation to soothe irritation and refresh tired skin. Ideal for aches, muscle tension and post-workout soreness.",
   },
+
   {
     img: productImages.q10Cream,
     name: "EXO Q10 Firming Triple Glycerine Cream",
     body:
       "Triple hydration and rejuvenation combine with Coenzyme Q10 in this luxurious cream, giving your skin essential care and a refreshed, revitalized feel.",
   },
+
   {
     img: productImages.maxMoisture,
     name: "EXO Max Moisture Triple Glycerine Cream",
     body:
       "A rich moisturizer designed for men's skin. It helps combat environmental stressors while delivering essential nutrients and a luxurious triple-glycerine experience.",
   },
+
   {
     img: productImages.menTissueOilCream,
     name: "Tissue Oil Cream 450ml (Men)",
     body:
       "Blended with tissue oil and essential oils, dermatologist tested for 72-hour moisturization and enriched with triple glycerine and nourishing oils for deeply hydrated, healthy-looking skin.",
   },
+
   {
     img: productImages.tissueOil,
     name: "EXO Tissue Oil (125ml)",
     body:
       "A high-potency, non-greasy oil concentrate specially blended to reduce the appearance of scars, stretch marks and dehydrated or aging skin. Easily absorbed for deep penetration and visible results.",
   },
+
   {
     img: productImages.firmingOil,
     name: "Skin Firming & Toning Oil (125ml)",
     body:
       "Infused with Coenzyme Q10 and antioxidant-rich, age-defying properties, this non-greasy formula targets fine lines, stretch marks and uneven tone while supporting skin elasticity and vitality.",
   },
+
   {
     img: productImages.scarOil,
     name: "Scar & Stretch Mark Oil (125ml)",
@@ -124,26 +188,47 @@ const products = [
   },
 ];
 
+/* ============================================================
+   LANDING PAGE
+   ============================================================ */
+
 function Landing() {
   const navigate = useNavigate();
-  const { session, role, loading } = useAuth();
+
+  const {
+    session,
+    role,
+    loading,
+  } = useAuth();
+
   const [showInstall] = useShowInstallButton();
 
   const [tab, setTab] = useState<"cashier" | "manager">("cashier");
+
   const [signInOpen, setSignInOpen] = useState(false);
 
   const [c1, setC1] = useState("");
   const [c2, setC2] = useState("");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [busy, setBusy] = useState(false);
+
+  /* ============================================================
+     CASHIER LOGIN
+     ============================================================ */
 
   async function handleCashier(e: React.FormEvent) {
     e.preventDefault();
+
     setBusy(true);
 
     try {
-      const { data, error: rpcError } = await supabase.rpc("cashier_login", {
+      const {
+        data,
+        error: rpcError,
+      } = await supabase.rpc("cashier_login", {
         p_code1: c1,
         p_code2: c2,
       });
@@ -162,34 +247,44 @@ function Landing() {
       }
 
       if (!res.ok || !res.email || !res.password) {
-        toast.error(res.error ?? "Those access codes are not recognised.");
+        toast.error(
+          res.error ?? "Those access codes are not recognised.",
+        );
         return;
       }
 
-      let { error } = await supabase.auth.signInWithPassword({
-        email: res.email,
-        password: res.password,
-      });
+      let { error } =
+        await supabase.auth.signInWithPassword({
+          email: res.email,
+          password: res.password,
+        });
 
       if (error) {
-        const { data: signed, error: signUpError } =
-          await supabase.auth.signUp({
-            email: res.email,
-            password: res.password,
-            options: {
-              data: {
-                full_name: res.name ?? "Cashier",
-                cashier_id: c1.trim().toUpperCase(),
-              },
+        /*
+         * First time this till account is used on the live site:
+         * register it, then sign in.
+         */
+        const {
+          data: signed,
+          error: signUpError,
+        } = await supabase.auth.signUp({
+          email: res.email,
+          password: res.password,
+          options: {
+            data: {
+              full_name: res.name ?? "Cashier",
+              cashier_id: c1.trim().toUpperCase(),
             },
-          });
+          },
+        });
 
         if (!signUpError) {
           if (!signed.session) {
-            const retry = await supabase.auth.signInWithPassword({
-              email: res.email,
-              password: res.password,
-            });
+            const retry =
+              await supabase.auth.signInWithPassword({
+                email: res.email,
+                password: res.password,
+              });
 
             error = retry.error;
           } else {
@@ -199,11 +294,15 @@ function Landing() {
       }
 
       if (error) {
-        toast.error("Could not open the till. Please try again.");
+        toast.error(
+          "Could not open the till. Please try again.",
+        );
         return;
       }
 
-      const { data: me } = await supabase.auth.getUser();
+      const {
+        data: me,
+      } = await supabase.auth.getUser();
 
       if (me.user) {
         await supabase.rpc("cashier_link_user", {
@@ -213,39 +312,65 @@ function Landing() {
       }
 
       setMode("cashier");
-      toast.success(`Welcome, ${res.name ?? "cashier"}`);
-      navigate({ to: "/cashier" });
+
+      toast.success(
+        `Welcome, ${res.name ?? "cashier"}`,
+      );
+
+      navigate({
+        to: "/cashier",
+      });
     } catch {
-      toast.error("You need to be online to sign in.");
+      toast.error(
+        "You need to be online to sign in.",
+      );
     } finally {
       setBusy(false);
     }
   }
 
+  /* ============================================================
+     MANAGER LOGIN
+     ============================================================ */
+
   async function handleManager(e: React.FormEvent) {
     e.preventDefault();
+
     setBusy(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const {
+        error,
+      } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
       });
 
       if (error) {
-        toast.error("That email and password do not match.");
+        toast.error(
+          "That email and password do not match.",
+        );
         return;
       }
 
       setMode("manager");
-      navigate({ to: "/manager" });
+
+      navigate({
+        to: "/manager",
+      });
     } finally {
       setBusy(false);
     }
   }
 
+  /* ============================================================
+     LOADING / REDIRECTS
+     ============================================================ */
+
   if (loading) {
-    return <div className="min-h-screen bg-white" />;
+    return (
+      <div className="min-h-screen bg-white" />
+    );
   }
 
   if (session && role === "manager") {
@@ -256,6 +381,10 @@ function Landing() {
     return <Navigate to="/cashier" />;
   }
 
+  /* ============================================================
+     TRUST ITEMS
+     ============================================================ */
+
   const trustItems: Array<{
     icon: typeof ShieldCheck;
     title: string;
@@ -263,50 +392,54 @@ function Landing() {
   }> = [
     {
       icon: ShieldCheck,
-      title: "DISCOVER YOUR COMPLETE SKINCARE SOLUTION",
-      body: "INTENSIVE HYDRATION & REJUVENATION FOR ALL SKIN TYPES",
+      title:
+        "DISCOVER YOUR COMPLETE SKINCARE SOLUTION",
+      body:
+        "INTENSIVE HYDRATION & REJUVENATION FOR ALL SKIN TYPES",
     },
+
     {
       icon: Leaf,
       title: "QUALITY INGREDIENTS",
-      body: "Rosehip, jojoba & Q10 oils",
+      body:
+        "Rosehip, jojoba & Q10 oils",
     },
+
     {
       icon: ArrowRight,
       title: "HONEST PRICING",
-      body: "Premium care that's affordable",
+      body:
+        "Premium care that's affordable",
     },
+
     {
       icon: Droplets,
       title: "FOR THE WHOLE FAMILY",
-      body: "Care for every skin type",
+      body:
+        "Care for every skin type",
     },
   ];
 
+  /* ============================================================
+     PAGE
+     ============================================================ */
+
   return (
     <div className="relative min-h-screen">
-      {/* ============================================================
-          FIXED FULL-PAGE BACKGROUND
 
-          Both background images are displayed directly and crisply.
-          There is intentionally:
-          - no backdrop-blur
-          - no white glass layer
-          - no gradient wash
-          - no tint overlay
-          - no duplicate glass image inside the Hero
+      {/* ========================================================
+          FULL PAGE BACKGROUND
 
-          This keeps the original artwork and its colours visible.
-      ============================================================ */}
+          IMPORTANT:
+          - sectionBackdropImage is displayed directly.
+          - opacity is 100%.
+          - no blur.
+          - no backdrop-blur.
+          - no tint overlay.
+          - no duplicate glass layer.
+      ======================================================== */}
+
       <div className="pointer-events-none fixed inset-0 -z-20">
-        <img
-          src={glassFrameBackdropImage}
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
 
         <img
           src={sectionBackdropImage}
@@ -314,22 +447,31 @@ function Landing() {
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover opacity-100"
         />
+
       </div>
 
-      {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl">
+      {/* ========================================================
+          HEADER
+      ======================================================== */}
+
+      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70">
+
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
+
           <BrandLogo />
 
           <div className="flex items-center gap-2">
+
             <Button
               asChild
               variant="ghost"
               className="hidden font-semibold text-[#0b3b8f] transition-colors hover:bg-orange-50 hover:text-[#f15922] sm:inline-flex"
             >
-              <a href="#range">Our range</a>
+              <a href="#range">
+                Our range
+              </a>
             </Button>
 
             <Button
@@ -337,7 +479,9 @@ function Landing() {
               variant="ghost"
               className="hidden font-semibold text-[#0b3b8f] transition-colors hover:bg-orange-50 hover:text-[#f15922] sm:inline-flex"
             >
-              <a href="#shades">Shades</a>
+              <a href="#shades">
+                Shades
+              </a>
             </Button>
 
             {showInstall && (
@@ -347,31 +491,68 @@ function Landing() {
                 className="hidden rounded-full border-[#0b3b8f]/20 bg-white px-5 font-semibold text-[#0b3b8f] shadow-sm transition-all hover:border-[#f15922]/40 hover:bg-orange-50 sm:inline-flex"
               />
             )}
+
           </div>
+
         </div>
+
       </header>
 
+      {/* ========================================================
+          MAIN
+      ======================================================== */}
+
       <main className="relative mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
-        {/* ============================================================
+
+        {/* ======================================================
             HERO
 
-            IMPORTANT:
-            The large Hero container is now transparent.
-            There is no backdrop-blur here.
+            glassFrameBackdropImage is now the direct background
+            of this hero.
 
-            This allows the background artwork to remain sharp behind
-            "Affordable Skincare Products / Healthy Skin."
-        ============================================================ */}
-        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/40 bg-transparent px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.10)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
-          {/* Hero content */}
-          <div>
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922] backdrop-blur-sm">
+            There is:
+            - NO backdrop-blur
+            - NO opacity reduction
+            - NO white overlay
+            - NO second copy of this image
+        ====================================================== */}
+
+        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-transparent px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.14)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
+
+          {/* ====================================================
+              SECOND BACKGROUND IMAGE
+
+              This is the image containing the blue/orange
+              ribbons, leaves and oil droplets.
+
+              It is completely clear.
+          ==================================================== */}
+
+          <img
+            src={glassFrameBackdropImage}
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+            className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-100"
+          />
+
+          {/* ====================================================
+              HERO TEXT
+          ==================================================== */}
+
+          <div className="relative z-10">
+
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922]">
               Ignited BrandZ
             </span>
 
             <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-[#07152f] md:text-7xl">
+
               Affordable Skincare Products
+
               <br />
+
               <span
                 className="bg-clip-text text-transparent"
                 style={{
@@ -381,6 +562,7 @@ function Landing() {
               >
                 Healthy Skin.
               </span>
+
             </h1>
 
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
@@ -392,17 +574,24 @@ function Landing() {
             <Button
               size="lg"
               className="group mt-8 rounded-full bg-[#f15922] px-8 font-bold text-white shadow-lg shadow-orange-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#d94816] hover:shadow-xl hover:shadow-orange-500/30"
-              onClick={() => setSignInOpen(true)}
+              onClick={() =>
+                setSignInOpen(true)
+              }
             >
               Sign in{" "}
+
               <ArrowRight
                 className="transition-transform group-hover:translate-x-1"
                 data-icon="inline-end"
               />
             </Button>
 
-            {/* Feature cards */}
+            {/* ==================================================
+                FEATURE CARDS
+            ================================================== */}
+
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
+
               {[
                 {
                   icon: Droplets,
@@ -420,13 +609,17 @@ function Landing() {
                   b: "For the whole family",
                 },
               ].map((f, index) => (
+
                 <div
                   key={f.t}
-                  className="group rounded-2xl border border-blue-100 bg-white/85 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.12)]"
+                  className="group rounded-2xl border border-blue-100 bg-white/85 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.12)]"
                 >
+
                   <f.icon
                     className={`h-5 w-5 ${
-                      index === 1 ? "text-[#f15922]" : "text-[#0b3b8f]"
+                      index === 1
+                        ? "text-[#f15922]"
+                        : "text-[#0b3b8f]"
                     }`}
                   />
 
@@ -434,25 +627,37 @@ function Landing() {
                     {f.t}
                   </div>
 
-                  <div className="text-xs text-slate-500">{f.b}</div>
+                  <div className="text-xs text-slate-500">
+                    {f.b}
+                  </div>
+
                 </div>
+
               ))}
+
             </div>
+
           </div>
 
-          {/* Hero image and sign in */}
-          <div className="relative flex min-h-[420px] flex-col items-center justify-center gap-6">
-            {/* ========================================================
-                EXO HERO IMAGE
+          {/* ====================================================
+              HERO PRODUCT IMAGE + SIGN IN
+          ==================================================== */}
 
-                The image container is transparent.
-                No backdrop blur.
-                No white overlay.
-                No blue/orange gradient overlay.
+          <div className="relative z-10 flex min-h-[420px] flex-col items-center justify-center gap-6">
 
-                The actual product image remains crisp and colourful.
-            ======================================================== */}
-            <div className="relative w-full overflow-hidden rounded-3xl border border-white/70 bg-transparent shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)]">
+            {/* ==================================================
+                PRODUCT IMAGE
+
+                Removed:
+                - backdrop-blur
+                - white transparent background
+                - gradient color overlay
+
+                The EXO image itself is therefore clear.
+            ================================================== */}
+
+            <div className="relative w-full overflow-hidden rounded-3xl border border-white/80 bg-transparent shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)]">
+
               <img
                 src={creamHeroImage}
                 alt="EXO moisture intensive creams and oils"
@@ -461,33 +666,46 @@ function Landing() {
                 fetchPriority="high"
                 decoding="async"
                 onError={(event) => {
-                  event.currentTarget.src = "/packs.png";
+                  event.currentTarget.src =
+                    "/packs.png";
                 }}
                 className="block h-full w-full object-cover"
               />
 
-              {/* Subtle border only. No colour overlay. */}
               <div
-                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/40"
+                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/60"
                 aria-hidden="true"
               />
+
             </div>
 
+            {/* ==================================================
+                SIGN IN BUTTON / FORM
+            ================================================== */}
+
             {!signInOpen ? (
+
               <Button
                 size="lg"
                 className="group rounded-full bg-[#0b3b8f] px-8 font-bold text-white shadow-lg shadow-blue-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#082d6d] hover:shadow-xl"
-                onClick={() => setSignInOpen(true)}
+                onClick={() =>
+                  setSignInOpen(true)
+                }
               >
                 Sign in{" "}
+
                 <ArrowRight
                   className="transition-transform group-hover:translate-x-1"
                   data-icon="inline-end"
                 />
               </Button>
+
             ) : (
-              <Card className="w-full border-blue-100 bg-white/95 p-6 shadow-[0_20px_50px_rgba(11,59,143,0.12)] backdrop-blur-md">
+
+              <Card className="w-full border-blue-100 bg-white/95 p-6 shadow-[0_20px_50px_rgba(11,59,143,0.12)]">
+
                 <div className="mb-5">
+
                   <h2 className="text-xl font-bold text-[#07152f]">
                     Sign in
                   </h2>
@@ -495,14 +713,25 @@ function Landing() {
                   <p className="mt-1 text-sm text-slate-500">
                     Staff access only. Accounts are created by the manager.
                   </p>
+
                 </div>
 
+                {/* ==============================================
+                    LOGIN TYPE TABS
+                ============================================== */}
+
                 <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-gradient-to-r from-blue-50 to-orange-50 p-1">
-                  {(["cashier", "manager"] as const).map((t) => (
+
+                  {(
+                    ["cashier", "manager"] as const
+                  ).map((t) => (
+
                     <button
                       key={t}
                       type="button"
-                      onClick={() => setTab(t)}
+                      onClick={() =>
+                        setTab(t)
+                      }
                       className={`rounded-md px-3 py-2 text-sm font-bold capitalize transition ${
                         tab === t
                           ? "bg-white text-[#0b3b8f] shadow-sm"
@@ -511,12 +740,24 @@ function Landing() {
                     >
                       {t}
                     </button>
+
                   ))}
+
                 </div>
 
+                {/* ==============================================
+                    CASHIER FORM
+                ============================================== */}
+
                 {tab === "cashier" ? (
-                  <form onSubmit={handleCashier} className="space-y-4">
+
+                  <form
+                    onSubmit={handleCashier}
+                    className="space-y-4"
+                  >
+
                     <div className="space-y-2">
+
                       <Label
                         htmlFor="code1"
                         className="font-semibold text-[#0b3b8f]"
@@ -527,13 +768,17 @@ function Landing() {
                       <Input
                         id="code1"
                         value={c1}
-                        onChange={(e) => setC1(e.target.value)}
+                        onChange={(e) =>
+                          setC1(e.target.value)
+                        }
                         autoComplete="off"
                         className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
+
                     </div>
 
                     <div className="space-y-2">
+
                       <Label
                         htmlFor="code2"
                         className="font-semibold text-[#0b3b8f]"
@@ -545,10 +790,13 @@ function Landing() {
                         id="code2"
                         type="password"
                         value={c2}
-                        onChange={(e) => setC2(e.target.value)}
+                        onChange={(e) =>
+                          setC2(e.target.value)
+                        }
                         autoComplete="off"
                         className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
+
                     </div>
 
                     <Button
@@ -556,12 +804,26 @@ function Landing() {
                       className="w-full bg-[#f15922] font-bold text-white hover:bg-[#d94816]"
                       disabled={busy}
                     >
-                      {busy ? "Opening the till..." : "Open the till"}
+                      {busy
+                        ? "Opening the till..."
+                        : "Open the till"}
                     </Button>
+
                   </form>
+
                 ) : (
-                  <form onSubmit={handleManager} className="space-y-4">
+
+                  /* ============================================
+                     MANAGER FORM
+                  ============================================ */
+
+                  <form
+                    onSubmit={handleManager}
+                    className="space-y-4"
+                  >
+
                     <div className="space-y-2">
+
                       <Label
                         htmlFor="email"
                         className="font-semibold text-[#0b3b8f]"
@@ -573,13 +835,17 @@ function Landing() {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) =>
+                          setEmail(e.target.value)
+                        }
                         autoComplete="username"
                         className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
+
                     </div>
 
                     <div className="space-y-2">
+
                       <Label
                         htmlFor="password"
                         className="font-semibold text-[#0b3b8f]"
@@ -591,10 +857,13 @@ function Landing() {
                         id="password"
                         type="password"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
+                        onChange={(e) =>
+                          setPassword(e.target.value)
+                        }
                         autoComplete="current-password"
                         className="border-blue-100 bg-white/90 focus-visible:ring-[#f15922]"
                       />
+
                     </div>
 
                     <Button
@@ -602,53 +871,90 @@ function Landing() {
                       className="w-full bg-[#0b3b8f] font-bold text-white hover:bg-[#082d6d]"
                       disabled={busy}
                     >
-                      {busy ? "Signing in..." : "Sign in"}
+                      {busy
+                        ? "Signing in..."
+                        : "Sign in"}
                     </Button>
+
                   </form>
                 )}
 
                 <div className="mt-5 flex items-center gap-2 text-xs text-slate-500">
+
                   <ShieldCheck className="h-4 w-4 text-[#f15922]" />
+
                   Every sale is recorded against the person signed in.
+
                 </div>
+
               </Card>
+
             )}
+
           </div>
+
         </section>
 
-        {/* Trust strip */}
-        <section className="mt-6 grid gap-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-md sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
-          {trustItems.map(({ icon: TrustIcon, title, body }, index) => (
-            <div
-              key={title}
-              className={`flex items-center gap-3 px-4 py-2 ${
-                index > 0 ? "lg:border-l lg:border-blue-100" : ""
-              }`}
-            >
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-50 to-orange-50 text-[#0b3b8f]">
-                <TrustIcon className="h-5 w-5" />
-              </span>
+        {/* ========================================================
+            TRUST STRIP
+        ======================================================== */}
 
-              <div>
-                <div className="text-xs font-bold tracking-wide text-[#f15922]">
-                  {title}
+        <section className="mt-6 grid gap-4 rounded-3xl border border-white/60 bg-white/85 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+
+          {trustItems.map(
+            ({
+              icon: TrustIcon,
+              title,
+              body,
+            }, index) => (
+
+              <div
+                key={title}
+                className={`flex items-center gap-3 px-4 py-2 ${
+                  index > 0
+                    ? "lg:border-l lg:border-blue-100"
+                    : ""
+                }`}
+              >
+
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-50 to-orange-50 text-[#0b3b8f]">
+
+                  <TrustIcon className="h-5 w-5" />
+
+                </span>
+
+                <div>
+
+                  <div className="text-xs font-bold tracking-wide text-[#f15922]">
+                    {title}
+                  </div>
+
+                  <div className="mt-1 text-xs text-slate-500">
+                    {body}
+                  </div>
+
                 </div>
 
-                <div className="mt-1 text-xs text-slate-500">
-                  {body}
-                </div>
               </div>
-            </div>
-          ))}
+
+            ),
+          )}
+
         </section>
 
-        {/* Product range */}
+        {/* ========================================================
+            PRODUCT RANGE
+        ======================================================== */}
+
         <section
           id="range"
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
         >
+
           <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+
             <div>
+
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
                 EXO skincare
               </span>
@@ -658,21 +964,26 @@ function Landing() {
               </h2>
 
               <p className="mt-2 max-w-2xl text-slate-500">
-                Creams and oils that work together - moisture first, then
-                repair.
+                Creams and oils that work together - moisture first, then repair.
               </p>
+
             </div>
 
             <div className="hidden h-1 w-24 rounded-full bg-gradient-to-r from-[#f15922] to-[#0b3b8f] sm:block" />
+
           </div>
 
           <div className="relative z-10 mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
             {products.map((p, index) => (
+
               <article
                 key={p.name}
-                className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
+                className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
               >
+
                 <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60 p-5">
+
                   <div
                     className={`absolute left-0 top-0 h-1 w-full ${
                       index % 2 === 0
@@ -687,13 +998,16 @@ function Landing() {
                     loading="lazy"
                     decoding="async"
                     onError={(event) => {
-                      event.currentTarget.src = "/packs.png";
+                      event.currentTarget.src =
+                        "/packs.png";
                     }}
                     className="h-full w-full object-contain transition duration-300 group-hover:scale-[1.03]"
                   />
+
                 </div>
 
                 <div className="p-5">
+
                   <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f15922]">
                     EXO skincare
                   </div>
@@ -705,18 +1019,28 @@ function Landing() {
                   <p className="mt-2 text-sm leading-relaxed text-slate-500">
                     {p.body}
                   </p>
+
                 </div>
+
               </article>
+
             ))}
+
           </div>
+
         </section>
 
-        {/* Shades */}
+        {/* ========================================================
+            SHADES
+        ======================================================== */}
+
         <section
           id="shades"
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
         >
+
           <div className="relative z-10">
+
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
               Product identification
             </span>
@@ -726,13 +1050,19 @@ function Landing() {
             </h2>
 
             <p className="mt-2 max-w-2xl text-slate-500">
-              The colour of each cap and lid tells you which oil or cream is in
-              the bottle.
+              The colour of each cap and lid tells you which oil or cream is in the bottle.
             </p>
 
             <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
-              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
+
+              {/* ==================================================
+                  OIL COLOURS
+              ================================================== */}
+
+              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
+
                 <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
+
                   <img
                     src={productImages.oilColors}
                     alt="Ignited BrandZ oil colour chart showing each oil variant"
@@ -740,19 +1070,31 @@ function Landing() {
                     decoding="async"
                     className="w-full object-contain transition duration-300 hover:scale-[1.01]"
                     onError={(event) => {
-                      event.currentTarget.src = "/packs.png";
+                      event.currentTarget.src =
+                        "/packs.png";
                     }}
                   />
+
                 </div>
 
                 <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
+
                   <span className="h-2 w-2 rounded-full bg-[#f15922]" />
+
                   Oil colours
+
                 </figcaption>
+
               </figure>
 
-              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
+              {/* ==================================================
+                  CREAM COLOURS
+              ================================================== */}
+
+              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
+
                 <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
+
                   <img
                     src={productImages.creamColors}
                     alt="Ignited BrandZ cream colour chart showing each cream variant"
@@ -760,33 +1102,51 @@ function Landing() {
                     decoding="async"
                     className="w-full object-contain transition duration-300 hover:scale-[1.01]"
                     onError={(event) => {
-                      event.currentTarget.src = "/packs.png";
+                      event.currentTarget.src =
+                        "/packs.png";
                     }}
                   />
+
                 </div>
 
                 <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
+
                   <span className="h-2 w-2 rounded-full bg-[#f15922]" />
+
                   Cream colours
+
                 </figcaption>
+
               </figure>
+
             </div>
+
           </div>
+
         </section>
+
       </main>
 
-      {/* Footer */}
-      <footer className="relative border-t border-white/40 bg-white/60 py-8 text-center text-sm text-slate-500 backdrop-blur-md">
+      {/* ========================================================
+          FOOTER
+      ======================================================== */}
+
+      <footer className="relative border-t border-white/40 bg-white/60 py-8 text-center text-sm text-slate-500">
+
         <div className="mx-auto mb-3 h-1 w-16 rounded-full bg-gradient-to-r from-[#0b3b8f] to-[#f15922]" />
 
         <span className="font-semibold text-[#0b3b8f]">
           {new Date().getFullYear()} Ignited BrandZ
         </span>
 
-        <span className="mx-2 text-slate-300">•</span>
+        <span className="mx-2 text-slate-300">
+          •
+        </span>
 
         Affordable skincare for healthy skin.
+
       </footer>
+
     </div>
   );
 }
