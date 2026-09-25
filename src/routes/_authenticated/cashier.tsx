@@ -1321,7 +1321,7 @@ export function CashierManualContent() {
         </h3>
         <p className="text-slate-700">
           Use the search bar at the top of the product grid. You can search by product name,
-          variant, or category.
+          variant or category.
         </p>
       </section>
 
@@ -1340,18 +1340,8 @@ export function CashierManualContent() {
           4. Taking payment
         </h3>
         <p className="text-slate-700">
-          Choose the payment method, confirm the total with the customer, and tap Complete sale.
+          Choose the payment method, confirm the total with the customer and tap Complete sale.
           Stock updates automatically.
-        </p>
-      </section>
-
-      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
-        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
-          5. Voice commands
-        </h3>
-        <p className="text-slate-700">
-          Tap Voice and say commands such as add Coke, add 3 Coke, remove Coke, search sugar, new,
-          cash, ecocash, or checkout. Use Voice help in the cashier top bar for the full list.
         </p>
       </section>
 
@@ -1361,7 +1351,7 @@ export function CashierManualContent() {
         </h3>
         <p className="text-slate-700">
           If the connection drops, keep serving customers. Sales are stored securely on this device,
-          a pending badge shows what is waiting, and sync runs automatically when the device comes
+          a pending badge shows what is waiting and sync runs automatically when the device comes
           back online. You can also press Sync while online.
         </p>
       </section>
@@ -1393,20 +1383,10 @@ export function CashierManualContent() {
 
       <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
         <h3 className="mb-1.5 text-base font-bold text-indigo-900">
-          8. Installing on a device
-        </h3>
-        <p className="text-slate-700">
-          Tap Install in Chrome or Edge on the published site. The app appears with the other apps
-          on the device and keeps the cashier dashboard available after it has loaded once.
-        </p>
-      </section>
-
-      <section className="rounded-lg border border-indigo-100 bg-white p-4 shadow-sm">
-        <h3 className="mb-1.5 text-base font-bold text-indigo-900">
           9. Signing out
         </h3>
         <p className="text-slate-700">
-          Tap Sign out at the end of your shift when using a named account. Shared cashier mode can
+          Tap Sign out at the end of your shift when using a named account. Cashier mode can
           be opened again from the auth page.
         </p>
       </section>
