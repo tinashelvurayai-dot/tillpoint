@@ -61,28 +61,27 @@ const creamHeroImage =
 
 /*
  * MAIN FULL-PAGE BACKGROUND
- *
- * This image is displayed directly and clearly.
- * No opacity reduction.
- * No blur.
- * No glass layer.
  */
 const sectionBackdropImage =
   "https://i.postimg.cc/3RCtGGN2/Chat-GPT-Image-Sep-18-2026-07-57-56-PM.png";
 
 /*
  * HERO BACKGROUND
- *
- * This image sits directly behind:
- * "Affordable Skincare Products"
- * "Healthy Skin."
- *
- * No blur.
- * No opacity reduction.
- * No duplicate overlay.
  */
 const glassFrameBackdropImage =
   "https://i.postimg.cc/QdxWbTM4/Chat-GPT-Image-Sep-18-2026-08-46-17-PM.png";
+
+/*
+ * PRODUCTS + SHADES BACKGROUND
+ *
+ * This image sits behind:
+ * - The Ignited BrandZ range section
+ * - The Shades & variants section
+ *
+ * No blur. No opacity reduction. No overlay.
+ */
+const productsBackdropImage =
+  "https://i.postimg.cc/qvSTX5x5/Chat-GPT-Image-Sep-18-2026-08-46-17-PM.png";
 
 const productImages = {
   oilColors:
@@ -429,14 +428,6 @@ function Landing() {
 
       {/* ========================================================
           FULL PAGE BACKGROUND
-
-          IMPORTANT:
-          - sectionBackdropImage is displayed directly.
-          - opacity is 100%.
-          - no blur.
-          - no backdrop-blur.
-          - no tint overlay.
-          - no duplicate glass layer.
       ======================================================== */}
 
       <div className="pointer-events-none fixed inset-0 -z-20">
@@ -506,27 +497,9 @@ function Landing() {
 
         {/* ======================================================
             HERO
-
-            glassFrameBackdropImage is now the direct background
-            of this hero.
-
-            There is:
-            - NO backdrop-blur
-            - NO opacity reduction
-            - NO white overlay
-            - NO second copy of this image
         ====================================================== */}
 
         <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-transparent px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.14)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
-
-          {/* ====================================================
-              SECOND BACKGROUND IMAGE
-
-              This is the image containing the blue/orange
-              ribbons, leaves and oil droplets.
-
-              It is completely clear.
-          ==================================================== */}
 
           <img
             src={glassFrameBackdropImage}
@@ -536,10 +509,6 @@ function Landing() {
             decoding="async"
             className="pointer-events-none absolute inset-0 z-0 h-full w-full object-cover opacity-100"
           />
-
-          {/* ====================================================
-              HERO TEXT
-          ==================================================== */}
 
           <div className="relative z-10">
 
@@ -585,10 +554,6 @@ function Landing() {
                 data-icon="inline-end"
               />
             </Button>
-
-            {/* ==================================================
-                FEATURE CARDS
-            ================================================== */}
 
             <div className="mt-8 grid gap-4 sm:grid-cols-3">
 
@@ -639,22 +604,7 @@ function Landing() {
 
           </div>
 
-          {/* ====================================================
-              HERO PRODUCT IMAGE + SIGN IN
-          ==================================================== */}
-
           <div className="relative z-10 flex min-h-[420px] flex-col items-center justify-center gap-6">
-
-            {/* ==================================================
-                PRODUCT IMAGE
-
-                Removed:
-                - backdrop-blur
-                - white transparent background
-                - gradient color overlay
-
-                The EXO image itself is therefore clear.
-            ================================================== */}
 
             <div className="relative w-full overflow-hidden rounded-3xl border border-white/80 bg-transparent shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)]">
 
@@ -678,10 +628,6 @@ function Landing() {
               />
 
             </div>
-
-            {/* ==================================================
-                SIGN IN BUTTON / FORM
-            ================================================== */}
 
             {!signInOpen ? (
 
@@ -716,10 +662,6 @@ function Landing() {
 
                 </div>
 
-                {/* ==============================================
-                    LOGIN TYPE TABS
-                ============================================== */}
-
                 <div className="mb-5 grid grid-cols-2 gap-1 rounded-lg bg-gradient-to-r from-blue-50 to-orange-50 p-1">
 
                   {(
@@ -744,10 +686,6 @@ function Landing() {
                   ))}
 
                 </div>
-
-                {/* ==============================================
-                    CASHIER FORM
-                ============================================== */}
 
                 {tab === "cashier" ? (
 
@@ -812,10 +750,6 @@ function Landing() {
                   </form>
 
                 ) : (
-
-                  /* ============================================
-                     MANAGER FORM
-                  ============================================ */
 
                   <form
                     onSubmit={handleManager}
@@ -943,187 +877,216 @@ function Landing() {
         </section>
 
         {/* ========================================================
-            PRODUCT RANGE
+            PRODUCTS + SHADES WRAPPER
+
+            This wrapper holds the productsBackdropImage behind
+            BOTH the "Ignited BrandZ range" section AND the
+            "Shades & variants" section, extending all the way
+            down to the bottom of the page.
         ======================================================== */}
 
-        <section
-          id="range"
-          className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
-        >
+        <div className="relative mt-24">
 
-          <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          {/* ==================================================
+              PRODUCTS + SHADES BACKGROUND
 
-            <div>
+              Displayed directly.
+              No blur. No opacity reduction. No overlay.
+          ================================================== */}
+
+          <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-[2rem]">
+
+            <img
+              src={productsBackdropImage}
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover opacity-100"
+            />
+
+          </div>
+
+          {/* ==================================================
+              PRODUCT RANGE
+          ================================================== */}
+
+          <section
+            id="range"
+            className="relative overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
+          >
+
+            <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+
+              <div>
+
+                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
+                  EXO skincare
+                </span>
+
+                <h2 className="mt-2 text-3xl font-black tracking-tight text-[#07152f]">
+                  The Ignited BrandZ range
+                </h2>
+
+                <p className="mt-2 max-w-2xl text-slate-500">
+                  Creams and oils that work together - moisture first, then repair.
+                </p>
+
+              </div>
+
+              <div className="hidden h-1 w-24 rounded-full bg-gradient-to-r from-[#f15922] to-[#0b3b8f] sm:block" />
+
+            </div>
+
+            <div className="relative z-10 mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+
+              {products.map((p, index) => (
+
+                <article
+                  key={p.name}
+                  className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
+                >
+
+                  <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60 p-5">
+
+                    <div
+                      className={`absolute left-0 top-0 h-1 w-full ${
+                        index % 2 === 0
+                          ? "bg-gradient-to-r from-[#0b3b8f] to-[#1557b0]"
+                          : "bg-gradient-to-r from-[#f15922] to-[#ff7a45]"
+                      }`}
+                    />
+
+                    <img
+                      src={p.img}
+                      alt={p.name}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "/packs.png";
+                      }}
+                      className="h-full w-full object-contain transition duration-300 group-hover:scale-[1.03]"
+                    />
+
+                  </div>
+
+                  <div className="p-5">
+
+                    <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f15922]">
+                      EXO skincare
+                    </div>
+
+                    <h3 className="font-bold leading-snug text-[#07152f]">
+                      {p.name}
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-relaxed text-slate-500">
+                      {p.body}
+                    </p>
+
+                  </div>
+
+                </article>
+
+              ))}
+
+            </div>
+
+          </section>
+
+          {/* ==================================================
+              SHADES
+          ================================================== */}
+
+          <section
+            id="shades"
+            className="relative overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
+          >
+
+            <div className="relative z-10">
 
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
-                EXO skincare
+                Product identification
               </span>
 
               <h2 className="mt-2 text-3xl font-black tracking-tight text-[#07152f]">
-                The Ignited BrandZ range
+                Shades & variants
               </h2>
 
               <p className="mt-2 max-w-2xl text-slate-500">
-                Creams and oils that work together - moisture first, then repair.
+                The colour of each cap and lid tells you which oil or cream is in the bottle.
               </p>
 
-            </div>
+              <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
 
-            <div className="hidden h-1 w-24 rounded-full bg-gradient-to-r from-[#f15922] to-[#0b3b8f] sm:block" />
+                {/* OIL COLOURS */}
 
-          </div>
+                <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
 
-          <div className="relative z-10 mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
 
-            {products.map((p, index) => (
+                    <img
+                      src={productImages.oilColors}
+                      alt="Ignited BrandZ oil colour chart showing each oil variant"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full object-contain transition duration-300 hover:scale-[1.01]"
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "/packs.png";
+                      }}
+                    />
 
-              <article
-                key={p.name}
-                className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
-              >
-
-                <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60 p-5">
-
-                  <div
-                    className={`absolute left-0 top-0 h-1 w-full ${
-                      index % 2 === 0
-                        ? "bg-gradient-to-r from-[#0b3b8f] to-[#1557b0]"
-                        : "bg-gradient-to-r from-[#f15922] to-[#ff7a45]"
-                    }`}
-                  />
-
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    loading="lazy"
-                    decoding="async"
-                    onError={(event) => {
-                      event.currentTarget.src =
-                        "/packs.png";
-                    }}
-                    className="h-full w-full object-contain transition duration-300 group-hover:scale-[1.03]"
-                  />
-
-                </div>
-
-                <div className="p-5">
-
-                  <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-[#f15922]">
-                    EXO skincare
                   </div>
 
-                  <h3 className="font-bold leading-snug text-[#07152f]">
-                    {p.name}
-                  </h3>
+                  <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
 
-                  <p className="mt-2 text-sm leading-relaxed text-slate-500">
-                    {p.body}
-                  </p>
+                    <span className="h-2 w-2 rounded-full bg-[#f15922]" />
 
-                </div>
+                    Oil colours
 
-              </article>
+                  </figcaption>
 
-            ))}
+                </figure>
 
-          </div>
+                {/* CREAM COLOURS */}
 
-        </section>
+                <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
 
-        {/* ========================================================
-            SHADES
-        ======================================================== */}
+                  <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
 
-        <section
-          id="shades"
-          className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
-        >
+                    <img
+                      src={productImages.creamColors}
+                      alt="Ignited BrandZ cream colour chart showing each cream variant"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full object-contain transition duration-300 hover:scale-[1.01]"
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "/packs.png";
+                      }}
+                    />
 
-          <div className="relative z-10">
+                  </div>
 
-            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
-              Product identification
-            </span>
+                  <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
 
-            <h2 className="mt-2 text-3xl font-black tracking-tight text-[#07152f]">
-              Shades & variants
-            </h2>
+                    <span className="h-2 w-2 rounded-full bg-[#f15922]" />
 
-            <p className="mt-2 max-w-2xl text-slate-500">
-              The colour of each cap and lid tells you which oil or cream is in the bottle.
-            </p>
+                    Cream colours
 
-            <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
+                  </figcaption>
 
-              {/* ==================================================
-                  OIL COLOURS
-              ================================================== */}
+                </figure>
 
-              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
-
-                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
-
-                  <img
-                    src={productImages.oilColors}
-                    alt="Ignited BrandZ oil colour chart showing each oil variant"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full object-contain transition duration-300 hover:scale-[1.01]"
-                    onError={(event) => {
-                      event.currentTarget.src =
-                        "/packs.png";
-                    }}
-                  />
-
-                </div>
-
-                <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
-
-                  <span className="h-2 w-2 rounded-full bg-[#f15922]" />
-
-                  Oil colours
-
-                </figcaption>
-
-              </figure>
-
-              {/* ==================================================
-                  CREAM COLOURS
-              ================================================== */}
-
-              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
-
-                <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
-
-                  <img
-                    src={productImages.creamColors}
-                    alt="Ignited BrandZ cream colour chart showing each cream variant"
-                    loading="lazy"
-                    decoding="async"
-                    className="w-full object-contain transition duration-300 hover:scale-[1.01]"
-                    onError={(event) => {
-                      event.currentTarget.src =
-                        "/packs.png";
-                    }}
-                  />
-
-                </div>
-
-                <figcaption className="mt-3 flex items-center gap-2 text-sm font-bold text-[#0b3b8f]">
-
-                  <span className="h-2 w-2 rounded-full bg-[#f15922]" />
-
-                  Cream colours
-
-                </figcaption>
-
-              </figure>
+              </div>
 
             </div>
 
-          </div>
+          </section>
 
-        </section>
+        </div>
 
       </main>
 
