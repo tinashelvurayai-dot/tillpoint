@@ -81,7 +81,7 @@ const glassFrameBackdropImage =
  * No blur. No opacity reduction. No overlay.
  */
 const productsBackdropImage =
-  "https://i.postimg.cc/qvSTX5x5/Chat-GPT-Image-Sep-18-2026-08-46-17-PM.png";
+  "https://i.postimg.cc/V6yb8QcX/Chat-GPT-Image-Sep-25-2026-10-25-22-PM.png";
 
 const productImages = {
   oilColors:
@@ -438,7 +438,7 @@ function Landing() {
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-100"
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-100"
         />
 
       </div>
@@ -913,7 +913,7 @@ function Landing() {
 
           <section
             id="range"
-            className="relative overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
+            className="relative overflow-hidden rounded-[2rem] bg-transparent px-4 py-8 sm:px-8"
           >
 
             <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
@@ -1001,7 +1001,7 @@ function Landing() {
 
           <section
             id="shades"
-            className="relative overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
+            className="relative overflow-hidden rounded-[2rem] bg-transparent px-4 py-8 sm:px-8"
           >
 
             <div className="relative z-10">
