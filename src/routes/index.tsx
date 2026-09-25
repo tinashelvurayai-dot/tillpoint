@@ -172,18 +172,25 @@ function Landing() {
       });
 
       if (error) {
-        // First time this till account is used on the live site: register it, then sign in.
-        const { data: signed, error: signUpError } = await supabase.auth.signUp({
-          email: res.email,
-          password: res.password,
-          options: { data: { full_name: res.name ?? "Cashier", cashier_id: c1.trim().toUpperCase() } },
-        });
+        const { data: signed, error: signUpError } =
+          await supabase.auth.signUp({
+            email: res.email,
+            password: res.password,
+            options: {
+              data: {
+                full_name: res.name ?? "Cashier",
+                cashier_id: c1.trim().toUpperCase(),
+              },
+            },
+          });
+
         if (!signUpError) {
           if (!signed.session) {
             const retry = await supabase.auth.signInWithPassword({
               email: res.email,
               password: res.password,
             });
+
             error = retry.error;
           } else {
             error = null;
@@ -197,6 +204,7 @@ function Landing() {
       }
 
       const { data: me } = await supabase.auth.getUser();
+
       if (me.user) {
         await supabase.rpc("cashier_link_user", {
           p_code1: c1.trim().toUpperCase(),
@@ -277,66 +285,36 @@ function Landing() {
 
   return (
     <div className="relative min-h-screen">
-      {/* ═══════════════════════════════════════════════════════════
+      {/* ============================================================
           FIXED FULL-PAGE BACKGROUND
-          Two fixed backdrop images stacked over a tri-color wash.
-          Section content scrolls over this — the images stay put.
-          Images are kept CRISP: no blur, no blend modes, high opacity.
-      ═══════════════════════════════════════════════════════════ */}
-      <div className="pointer-events-none fixed inset-0 -z-20">
-        {/* Base gradient wash: orange → white → blue */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, #fff5ed 0%, #ffffff 38%, #eef4ff 68%, #e8f0ff 100%)",
-          }}
-        />
 
-        {/* glassFrameBackdropImage — clear, no blur, no blend */}
+          Both background images are displayed directly and crisply.
+          There is intentionally:
+          - no backdrop-blur
+          - no white glass layer
+          - no gradient wash
+          - no tint overlay
+          - no duplicate glass image inside the Hero
+
+          This keeps the original artwork and its colours visible.
+      ============================================================ */}
+      <div className="pointer-events-none fixed inset-0 -z-20">
         <img
           src={glassFrameBackdropImage}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-80"
+          className="absolute inset-0 h-full w-full object-cover"
         />
 
-        {/* sectionBackdropImage — clear, no blur, no blend */}
         <img
           src={sectionBackdropImage}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-70"
-        />
-
-        {/* Very light tint pass — kept subtle so images stay clear */}
-        <div
-          className="absolute inset-0"
-          aria-hidden="true"
-          style={{
-            background:
-              "linear-gradient(120deg, rgba(241,89,34,0.05) 0%, rgba(255,255,255,0.12) 45%, rgba(11,59,143,0.06) 100%)",
-          }}
-        />
-
-        {/* Ambient gradient orbs — NO blur, kept crisp */}
-        <div
-          className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-20"
-          style={{
-            background:
-              "linear-gradient(135deg, #f15922 0%, #f15922 35%, #0b3b8f 100%)",
-          }}
-        />
-        <div
-          className="absolute -bottom-48 -left-48 h-[560px] w-[560px] rounded-full opacity-15"
-          style={{
-            background:
-              "linear-gradient(135deg, #0b3b8f 0%, #1557b0 60%, #f15922 100%)",
-          }}
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
 
@@ -374,18 +352,17 @@ function Landing() {
       </header>
 
       <main className="relative mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
-        {/* Hero — translucent so the fixed background shows through */}
-        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-white/55 px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.14)] backdrop-blur-md sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
-          {/* Subtle glass-frame image inside the hero for depth — crisp */}
-          <img
-            src={glassFrameBackdropImage}
-            alt=""
-            aria-hidden="true"
-            loading="eager"
-            decoding="async"
-            className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-40"
-          />
+        {/* ============================================================
+            HERO
 
+            IMPORTANT:
+            The large Hero container is now transparent.
+            There is no backdrop-blur here.
+
+            This allows the background artwork to remain sharp behind
+            "Affordable Skincare Products / Healthy Skin."
+        ============================================================ */}
+        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/40 bg-transparent px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.10)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
           {/* Hero content */}
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922] backdrop-blur-sm">
@@ -465,7 +442,17 @@ function Landing() {
 
           {/* Hero image and sign in */}
           <div className="relative flex min-h-[420px] flex-col items-center justify-center gap-6">
-            <div className="relative w-full overflow-hidden rounded-3xl border border-white/80 bg-white/10 shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)] backdrop-blur-[1px]">
+            {/* ========================================================
+                EXO HERO IMAGE
+
+                The image container is transparent.
+                No backdrop blur.
+                No white overlay.
+                No blue/orange gradient overlay.
+
+                The actual product image remains crisp and colourful.
+            ======================================================== */}
+            <div className="relative w-full overflow-hidden rounded-3xl border border-white/70 bg-transparent shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)]">
               <img
                 src={creamHeroImage}
                 alt="EXO moisture intensive creams and oils"
@@ -479,13 +466,9 @@ function Landing() {
                 className="block h-full w-full object-cover"
               />
 
+              {/* Subtle border only. No colour overlay. */}
               <div
-                className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-[#0b3b8f]/15"
-                aria-hidden="true"
-              />
-
-              <div
-                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/60"
+                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/40"
                 aria-hidden="true"
               />
             </div>
@@ -659,7 +642,7 @@ function Landing() {
           ))}
         </section>
 
-        {/* Product range — now transparent so the fixed background shows through */}
+        {/* Product range */}
         <section
           id="range"
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
@@ -728,7 +711,7 @@ function Landing() {
           </div>
         </section>
 
-        {/* Shades — transparent too */}
+        {/* Shades */}
         <section
           id="shades"
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
