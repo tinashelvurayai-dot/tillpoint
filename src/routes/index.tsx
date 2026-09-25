@@ -50,34 +50,19 @@ const glassFrameBackdropImage =
 const productImages = {
   oilColors:
     "https://i.postimg.cc/HLC8SD6Y/Chat-GPT-Image-Sep-14-2026-09-00-32-AM.png",
-
   creamColors:
     "https://i.postimg.cc/m2fcZGGt/Chat-GPT-Image-Sep-14-2026-08-48-36-AM.png",
-
   tissueOil:
     "https://i.postimg.cc/yNGfkTBH/Whats-App-Image-2026-09-07-at-9-24-42-AM.jpg",
-
   firmingOil:
     "https://i.postimg.cc/mgRKsV2b/Whats-App-Image-2026-09-07-at-9-24-43-AM.jpg",
-
   scarOil:
     "https://i.postimg.cc/BvpY4G7J/Whats-App-Image-2026-09-07-at-9-24-43-AM-(1).jpg",
-
-  tripleGlycerine:
-    "https://i.postimg.cc/vZbRwnWf/a.png",
-
-  tissueOilCream:
-    "https://i.postimg.cc/HkQNSkRh/e.png",
-
-  camphorCream:
-    "https://i.postimg.cc/rwrTqTbx/f.png",
-
-  q10Cream:
-    "https://i.postimg.cc/YCGrjYvT/d.png",
-
-  maxMoisture:
-    "https://i.postimg.cc/FzpRgvvM/c.png",
-
+  tripleGlycerine: "https://i.postimg.cc/vZbRwnWf/a.png",
+  tissueOilCream: "https://i.postimg.cc/HkQNSkRh/e.png",
+  camphorCream: "https://i.postimg.cc/rwrTqTbx/f.png",
+  q10Cream: "https://i.postimg.cc/YCGrjYvT/d.png",
+  maxMoisture: "https://i.postimg.cc/FzpRgvvM/c.png",
   menTissueOilCream:
     "https://i.postimg.cc/Kv5LJXQY/50ml-Exo-Tissue-oil-Men-768x802.png",
 };
@@ -187,8 +172,6 @@ function Landing() {
       });
 
       if (error) {
-        // First time this till account is used on the live site:
-        // register it, then sign in.
         const { data: signed, error: signUpError } =
           await supabase.auth.signUp({
             email: res.email,
@@ -302,76 +285,45 @@ function Landing() {
 
   return (
     <div className="relative min-h-screen">
-
-      {/* ═══════════════════════════════════════════════════════════
+      {/* ============================================================
           FIXED FULL-PAGE BACKGROUND
 
-          Background images are kept fully opaque and crisp.
-          No backdrop blur or translucent tint is placed over them.
-      ═══════════════════════════════════════════════════════════ */}
+          Both background images are displayed directly and crisply.
+          There is intentionally:
+          - no backdrop-blur
+          - no white glass layer
+          - no gradient wash
+          - no tint overlay
+          - no duplicate glass image inside the Hero
 
+          This keeps the original artwork and its colours visible.
+      ============================================================ */}
       <div className="pointer-events-none fixed inset-0 -z-20">
-
-        {/* Base gradient wash */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(135deg, #fff5ed 0%, #ffffff 38%, #eef4ff 68%, #e8f0ff 100%)",
-          }}
-        />
-
-        {/* Main background image — CRISP */}
         <img
           src={glassFrameBackdropImage}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-100"
+          className="absolute inset-0 h-full w-full object-cover"
         />
 
-        {/* Second background image — CRISP */}
         <img
           src={sectionBackdropImage}
           alt=""
           aria-hidden="true"
           loading="eager"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover opacity-100"
-        />
-
-        {/* 
-          IMPORTANT:
-          The old translucent tint layer has been removed.
-          This prevents the artwork colors from becoming washed out.
-        */}
-
-        {/* Ambient gradient orbs */}
-        <div
-          className="absolute -right-48 -top-48 h-[600px] w-[600px] rounded-full opacity-20"
-          style={{
-            background:
-              "linear-gradient(135deg, #f15922 0%, #f15922 35%, #0b3b8f 100%)",
-          }}
-        />
-
-        <div
-          className="absolute -bottom-48 -left-48 h-[560px] w-[560px] rounded-full opacity-15"
-          style={{
-            background:
-              "linear-gradient(135deg, #0b3b8f 0%, #1557b0 60%, #f15922 100%)",
-          }}
+          className="absolute inset-0 h-full w-full object-cover"
         />
       </div>
 
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70">
+      <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-5 py-4 sm:px-8">
           <BrandLogo />
 
           <div className="flex items-center gap-2">
-
             <Button
               asChild
               variant="ghost"
@@ -400,27 +352,26 @@ function Landing() {
       </header>
 
       <main className="relative mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-8 md:pt-12">
+        {/* ============================================================
+            HERO
 
-        {/* Hero */}
-        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/70 bg-white/20 px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.14)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
+            IMPORTANT:
+            The large Hero container is now transparent.
+            There is no backdrop-blur here.
 
-          {/* 
-            Removed the old glassFrameBackdropImage from inside
-            this hero. The fixed page background already provides
-            the artwork without creating another glass layer.
-          */}
-
+            This allows the background artwork to remain sharp behind
+            "Affordable Skincare Products / Healthy Skin."
+        ============================================================ */}
+        <section className="relative isolate grid items-center gap-10 overflow-hidden rounded-[2rem] border border-white/40 bg-transparent px-6 py-10 shadow-[0_20px_60px_rgba(11,59,143,0.10)] sm:px-10 lg:grid-cols-[0.92fr_1.08fr] lg:px-12 lg:py-14">
           {/* Hero content */}
           <div>
-
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922]">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#f15922]/20 bg-orange-50/90 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[#f15922] backdrop-blur-sm">
               Ignited BrandZ
             </span>
 
             <h1 className="mt-5 max-w-2xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-[#07152f] md:text-7xl">
               Affordable Skincare Products
               <br />
-
               <span
                 className="bg-clip-text text-transparent"
                 style={{
@@ -471,13 +422,11 @@ function Landing() {
               ].map((f, index) => (
                 <div
                   key={f.t}
-                  className="group rounded-2xl border border-blue-100 bg-white/85 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.12)]"
+                  className="group rounded-2xl border border-blue-100 bg-white/85 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_15px_35px_rgba(11,59,143,0.12)]"
                 >
                   <f.icon
                     className={`h-5 w-5 ${
-                      index === 1
-                        ? "text-[#f15922]"
-                        : "text-[#0b3b8f]"
+                      index === 1 ? "text-[#f15922]" : "text-[#0b3b8f]"
                     }`}
                   />
 
@@ -485,9 +434,7 @@ function Landing() {
                     {f.t}
                   </div>
 
-                  <div className="text-xs text-slate-500">
-                    {f.b}
-                  </div>
+                  <div className="text-xs text-slate-500">{f.b}</div>
                 </div>
               ))}
             </div>
@@ -495,16 +442,17 @@ function Landing() {
 
           {/* Hero image and sign in */}
           <div className="relative flex min-h-[420px] flex-col items-center justify-center gap-6">
+            {/* ========================================================
+                EXO HERO IMAGE
 
-            {/* 
-              Product image container:
-              - Removed backdrop-blur
-              - Removed translucent white background
-              - Removed gradient overlay
-              - Product image remains sharp
-            */}
-            <div className="relative w-full overflow-hidden rounded-3xl border border-white/80 bg-transparent shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)]">
+                The image container is transparent.
+                No backdrop blur.
+                No white overlay.
+                No blue/orange gradient overlay.
 
+                The actual product image remains crisp and colourful.
+            ======================================================== */}
+            <div className="relative w-full overflow-hidden rounded-3xl border border-white/70 bg-transparent shadow-[0_0_0_1px_rgba(241,89,34,0.2),0_18px_38px_rgba(241,89,34,0.24),0_28px_70px_rgba(11,59,143,0.18)]">
               <img
                 src={creamHeroImage}
                 alt="EXO moisture intensive creams and oils"
@@ -518,9 +466,9 @@ function Landing() {
                 className="block h-full w-full object-cover"
               />
 
-              {/* Thin clean frame only */}
+              {/* Subtle border only. No colour overlay. */}
               <div
-                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/60"
+                className="pointer-events-none absolute inset-0 rounded-3xl ring-1 ring-inset ring-white/40"
                 aria-hidden="true"
               />
             </div>
@@ -538,7 +486,7 @@ function Landing() {
                 />
               </Button>
             ) : (
-              <Card className="w-full border-blue-100 bg-white/95 p-6 shadow-[0_20px_50px_rgba(11,59,143,0.12)]">
+              <Card className="w-full border-blue-100 bg-white/95 p-6 shadow-[0_20px_50px_rgba(11,59,143,0.12)] backdrop-blur-md">
                 <div className="mb-5">
                   <h2 className="text-xl font-bold text-[#07152f]">
                     Sign in
@@ -568,7 +516,6 @@ function Landing() {
 
                 {tab === "cashier" ? (
                   <form onSubmit={handleCashier} className="space-y-4">
-
                     <div className="space-y-2">
                       <Label
                         htmlFor="code1"
@@ -614,7 +561,6 @@ function Landing() {
                   </form>
                 ) : (
                   <form onSubmit={handleManager} className="space-y-4">
-
                     <div className="space-y-2">
                       <Label
                         htmlFor="email"
@@ -671,33 +617,29 @@ function Landing() {
         </section>
 
         {/* Trust strip */}
-        <section className="mt-6 grid gap-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
-          {trustItems.map(
-            ({ icon: TrustIcon, title, body }, index) => (
-              <div
-                key={title}
-                className={`flex items-center gap-3 px-4 py-2 ${
-                  index > 0
-                    ? "lg:border-l lg:border-blue-100"
-                    : ""
-                }`}
-              >
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-50 to-orange-50 text-[#0b3b8f]">
-                  <TrustIcon className="h-5 w-5" />
-                </span>
+        <section className="mt-6 grid gap-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_8px_25px_rgba(11,59,143,0.07)] backdrop-blur-md sm:grid-cols-2 lg:grid-cols-4 lg:gap-0">
+          {trustItems.map(({ icon: TrustIcon, title, body }, index) => (
+            <div
+              key={title}
+              className={`flex items-center gap-3 px-4 py-2 ${
+                index > 0 ? "lg:border-l lg:border-blue-100" : ""
+              }`}
+            >
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-gradient-to-br from-blue-50 to-orange-50 text-[#0b3b8f]">
+                <TrustIcon className="h-5 w-5" />
+              </span>
 
-                <div>
-                  <div className="text-xs font-bold tracking-wide text-[#f15922]">
-                    {title}
-                  </div>
+              <div>
+                <div className="text-xs font-bold tracking-wide text-[#f15922]">
+                  {title}
+                </div>
 
-                  <div className="mt-1 text-xs text-slate-500">
-                    {body}
-                  </div>
+                <div className="mt-1 text-xs text-slate-500">
+                  {body}
                 </div>
               </div>
-            )
-          )}
+            </div>
+          ))}
         </section>
 
         {/* Product range */}
@@ -728,10 +670,9 @@ function Landing() {
             {products.map((p, index) => (
               <article
                 key={p.name}
-                className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
+                className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:-translate-y-1 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_18px_40px_rgba(11,59,143,0.15)]"
               >
                 <div className="relative grid aspect-square place-items-center overflow-hidden bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60 p-5">
-
                   <div
                     className={`absolute left-0 top-0 h-1 w-full ${
                       index % 2 === 0
@@ -776,7 +717,6 @@ function Landing() {
           className="relative mt-24 overflow-hidden rounded-[2rem] px-4 py-8 sm:px-8"
         >
           <div className="relative z-10">
-
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#f15922]">
               Product identification
             </span>
@@ -786,15 +726,12 @@ function Landing() {
             </h2>
 
             <p className="mt-2 max-w-2xl text-slate-500">
-              The colour of each cap and lid tells you which oil or cream is
-              in the bottle.
+              The colour of each cap and lid tells you which oil or cream is in
+              the bottle.
             </p>
 
             <div className="relative z-10 mt-8 grid gap-6 lg:grid-cols-2">
-
-              {/* Oil colours */}
-              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
-
+              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
                 <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
                   <img
                     src={productImages.oilColors}
@@ -814,9 +751,7 @@ function Landing() {
                 </figcaption>
               </figure>
 
-              {/* Cream colours */}
-              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
-
+              <figure className="overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_8px_25px_rgba(11,59,143,0.10)] backdrop-blur-md transition duration-300 hover:border-orange-200 hover:bg-white/95 hover:shadow-[0_15px_35px_rgba(11,59,143,0.13)]">
                 <div className="overflow-hidden rounded-xl bg-gradient-to-br from-blue-50/80 via-white/60 to-orange-50/60">
                   <img
                     src={productImages.creamColors}
@@ -841,7 +776,7 @@ function Landing() {
       </main>
 
       {/* Footer */}
-      <footer className="relative border-t border-white/40 bg-white/60 py-8 text-center text-sm text-slate-500">
+      <footer className="relative border-t border-white/40 bg-white/60 py-8 text-center text-sm text-slate-500 backdrop-blur-md">
         <div className="mx-auto mb-3 h-1 w-16 rounded-full bg-gradient-to-r from-[#0b3b8f] to-[#f15922]" />
 
         <span className="font-semibold text-[#0b3b8f]">
