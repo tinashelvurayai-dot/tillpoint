@@ -1024,6 +1024,9 @@ function ProductsPage() {
                 />
               </div>
 
+              <SellingOptionsFields accent="purple" />
+
+
               <DialogFooter>
                 <Button
                   type="submit"
