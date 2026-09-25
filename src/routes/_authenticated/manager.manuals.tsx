@@ -130,14 +130,6 @@ function ManagerManualContent() {
         </p>
       </Section>
 
-      <Section title="Orders" index={next()}>
-        <p>
-          Dated restock requests raised by cashiers when they flag an item out of stock. Work
-          through the list, buy the goods, then close the loop by recording the delivery in
-          Stock-In Records - that is what returns the item to sale.
-        </p>
-      </Section>
-
       <Section title="Low Stock Alerts" index={next()}>
         <p>
           Every variant at or below 10 units, ranked by urgency. This page is the shortlist for your
@@ -164,7 +156,7 @@ function ManagerManualContent() {
           to the customer; a <span className="font-semibold text-rose-600">void</span> cancels a sale entered by
           mistake. Leave <span className="font-semibold text-emerald-700">Return items to stock</span> on and the sold
           quantities go straight back into Stock. Every reversal is written to the reversal history
-          with reason, amount and date, the sale is marked refunded or voided, and it drops out of
+          with reason, amount and date, the sale is marked refunded or voided and it drops out of
           Today&apos;s sales, Sales net revenue, cash expected in the drawer and Profit - so refunds
           and sales always balance.
         </p>
